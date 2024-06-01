@@ -1,0 +1,174 @@
+env:
+  TERM: alacritty
+  PATH: "$PATH:/opt/homebrew/bin"
+
+window:
+  dynamic_padding: true
+  decorations: buttonless
+  startup_mode: Maximized
+  option_as_alt: Both
+
+scrolling:
+  history: 100000
+
+font:
+  size: 16
+  normal:
+    family: DankMono Nerd Font Mono
+    style: Regular
+
+  bold:
+    family: DankMono Nerd Font Mono
+    style: Bold
+
+  italics:
+    family: DankMono Nerd Font Mono
+    style: Italic
+
+  bold_italic:
+    family: DankMono Nerd Font Mono
+    style: Italic
+
+  builtin_box_drawing: true
+
+  draw_bold_text_with_bright_colors: true
+
+live_config_reload: true
+
+shell:
+  program: /bin/zsh
+  args:
+    - --login
+    - -c
+    - 'tmux new-session -A -s main -t main && /bin/zsh --login'
+
+hints:
+  alphabet: 'jfkdls;ahgurieowpq'
+  enabled:
+
+# find key hexcodes with:  echo -n "k" | xxd -g 1
+key_bindings:
+  - { key: Key1, mods: Command, chars: "\x011" }
+  - { key: Key2, mods: Command, chars: "\x012" }
+  - { key: Key3, mods: Command, chars: "\x013" }
+  - { key: Key4, mods: Command, chars: "\x014" }
+  - { key: Key5, mods: Command, chars: "\x015" }
+  - { key: Key6, mods: Command, chars: "\x016" }
+  - { key: Key7, mods: Command, chars: "\x017" }
+  - { key: Key8, mods: Command, chars: "\x018" }
+  - { key: Key9, mods: Command, chars: "\x019" }
+  - { key: Return, mods: Command, chars: "\x01z" }
+  - { key: Key0, mods: Command, chars: "\x010" }
+  - { key: W, mods: Command, chars: "\x01w" }
+  - { key: B, mods: Command, chars: "\x01b" }
+  - { key: G, mods: Command, chars: "\x01g" }
+  - { key: Back, mods: Super, chars: "\x15" }
+  # delete word/line
+  - { key: Left, mods: Alt, chars: "\eb" }
+  # one word left
+  - { key: Right, mods: Alt, chars: "\ef" }
+  # one word right
+  - {
+      key: Left,
+      mods: Command,
+      chars: "\eOH",
+      mode: AppCursor
+    }
+  # Home
+  - {
+      key: Right,
+      mods: Command,
+      chars: "\eOF",
+      mode: AppCursor
+    }
+  # End
+  - {
+      key: Slash,
+      mods: Control,
+      mode: ~Search,
+      action: ToggleViMode
+    }
+  - {
+      key: K,
+      mods: Shift,
+      mode: Vi,
+      action: ScrollHalfPageUp
+    }
+  - {
+      key: J,
+      mods: Shift,
+      mode: Vi,
+      action: ScrollHalfPageDown
+    }
+  - { key: Escape, mode: Vi, action: ToggleViMode }
+  - { key: Return, mods: Alt, action: ToggleSimpleFullscreen }
+
+colors:
+  # Default colors
+  primary:
+    background: '#1E1D1D'
+    foreground: '#E3CA9A'
+    bright_foreground: '#E8D2A9'
+
+  # Normal colors
+  normal:
+    black: '#2D2C2B'
+    blue: '#799173'
+    cyan: '#799173'
+    green: '#979764'
+    magenta: '#DB8747'
+    red: '#d5695c'
+    white: '#DCBB7E'
+    yellow: '#E3A138'
+  bright:
+    black: '#414035'
+    blue: '#799173'
+    cyan: '#799173'
+    green: '#979764'
+    magenta: '#DB8747'
+    red: '#d5695c'
+    white: '#E3CA9A'
+    yellow: '#E3A138'
+  dim:
+    black: '#6c6b58'
+    blue: '#799173'
+    cyan: '#799173'
+    green: '#979764'
+    magenta: '#DB8747'
+    red: '#d5695c'
+    white: '#DCBB7E'
+    yellow: '#E3A138'
+  # Light mode WIP
+  # primary:
+  #   bright_foreground: '#1E1D1D'
+  #   foreground: '#2D2C2B'
+  #   background: '#E8D2A9'
+  #
+  # # Normal colors
+  # normal:
+  #   white: '#2D2C2B'
+  #   blue: '#3c4939'
+  #   cyan: '#3c4939'
+  #   green: '#4a482c'
+  #   magenta: '#794218'
+  #   red: '#9C3428'
+  #   black: '#DCBB7E'
+  #   yellow: '#7b5212'
+  # bright:
+  #   white: '#414035'
+  #   blue: '#3c4939'
+  #   cyan: '#3c4939'
+  #   green: '#4a482c'
+  #   magenta: '#794218'
+  #   red: '#9C3428'
+  #   black: '#E3CA9A'
+  #   yellow: '#7b5212'
+  # dim:
+  #   white: '#6c6b58'
+  #   blue: '#3c4939'
+  #   cyan: '#3c4939'
+  #   green: '#4a482c'
+  #   magenta: '#794218'
+  #   red: '#9C3428'
+  #   black: '#DCBB7E'
+  #   yellow: '#7b5212'
