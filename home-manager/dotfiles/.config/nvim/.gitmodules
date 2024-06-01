@@ -1,0 +1,3 @@
+[submodule "submodules/nvimpager"]
+	path = submodules/nvimpager
+	url = git@github.com:lucc/nvimpager.git

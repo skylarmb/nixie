@@ -1,0 +1,10 @@
+snippet hg "highlight group"
+	local M = {}
+
+	function M.highlight(c, opts)
+		return {
+			Foo = { fg = palette.fg0 },
+		}
+	end
+
+	return M

@@ -1,0 +1,188 @@
+# .private/.gitconfig file must define at minimum [user] and [core]
+[include]
+  path = .private/.gitconfig
+[core]
+  pager = delta
+  excludesfile = ~/.config/git/.gitignore_global
+
+; ------------ DIFFSITTER ------------
+; [pager]
+;   difftool = true
+; [diff]
+;   tool = diffsitter
+;   colorMoved = default
+; [difftool]
+;   prompt = false
+; [difftool "diffsitter"]
+;   cmd = diffsitter --color=on --config="$HOME/diffsitter.json5" "$LOCAL" "$REMOTE"
+
+; ----------------- DIFFTASTIC -----------------
+; [diff]
+;   tool = difftastic
+;
+;
+
+[difftool "difft"]
+  cmd = difft "$LOCAL" "$REMOTE"
+
+;----------------- PRETTIERDIFF -----------------
+; [diff]
+;   colorMoved = default
+;
+; [difftool]
+;   prompt = false
+;
+; [difftool "prettierdiff"]
+;   cmd = prettierdiff "$LOCAL" "$REMOTE"
+;
+[pull]
+  rebase = false
+
+[status]
+  relativePaths = true
+
+; [interactive]
+;   diffFilter = delta --color-only --features=interactive
+
+[delta]
+   navigate = true
+   features = side-by-side line-numbers decorations
+; map-styles = bold purple => syntax magenta, bold cyan => syntax blue
+
+[delta "decorations"]
+   commit-decoration-style = bold yellow box ul
+   file-style = bold yellow ul
+   ; file-decoration-style = none
+   hunk-header-decoration-style = cyan box ul
+
+[delta "line-numbers"]
+    line-numbers-left-style = cyan
+    line-numbers-right-style = cyan
+    line-numbers-minus-style = 124
+    line-numbers-plus-style = 28
+[color]
+  ui = auto
+
+[merge]
+  tool = vim_mergetool
+  conflictStyle = diff3
+
+[mergetool "vim_mergetool"]
+  cmd = vim -f -c "MergetoolStart" "$MERGED" "$BASE" "$LOCAL" "$REMOTE"
+  trustExitCode = true
+
+[alias]
+  pdiff = difftool --tool=prettierdiff --no-symlinks --dir-diff origin/master...
+  fp = merge-base --fork-point origin/master HEAD
+  dp = !"git diff "$(git merge-base --fork-point origin/master HEAD)""
+  difft = difftool --tool=difftastic
+  diffs = difftool --no-symlinks --tool=diffsitter
+  undo = !"git reset --soft HEAD~1; git reset HEAD ."
+  o = !"gh repo view --web --branch "$(git rev-parse --abbrev-ref HEAD)""
+  c = commit
+  cop = !"f() { git checkout "$(git merge-base --fork-point origin/master HEAD)" -- $@; }; f $@"
+  com = checkout origin/master --
+  dom = diff origin/master
+  cc = !"echo $(git rev-parse HEAD) | tee /dev/tty | pbcopy"
+  ca = commit -a
+  d = diff --ignore-all-space
+  dd = "!f() { \
+    merge_base=$(git merge-base origin/master HEAD); \
+    git diff --relative $merge_base $@; \
+  }; f $@"
+  do = diff --ignore-all-space origin/master
+  dw = diff --ignore-all-space --word-diff
+  dc = diff --cached --ignore-all-space
+  ds = diff --ignore-all-space --compact-summary
+  rb = rebase -i $(git merge-base --fork-point master)
+  rbc = rebase --continue
+  p = push -u origin HEAD
+  pn = push -u origin HEAD --no-verify
+  pf = push -f origin HEAD
+  f = fetch --no-tags --prune
+  a = add
+  b = git rev-parse --abbrev-ref HEAD
+  aa = add --all
+  am = commit --amend --no-edit
+  rh = reset HEAD
+  untracked = !"git status --porcelain | grep -E '^\\?\\?' | awk '{print $2}'"
+  modified = !"git status --porcelain | grep -E '^ M' | awk '{print $2}'"
+  added = !"git status --porcelain | grep -E '^A ' | awk '{print $2}'"
+  unmerged = !"git status --porcelain | grep -E '^UU|^DU' | awk '{print $2}'"
+  fuzzy = "!f() { \
+    files="$(git status --porcelain | grep "$2" | awk '{print $2}')"; \
+    echo "git $1 $files"; \
+    git "$1" $files; \
+  }; f $@"
+  s = -c color.ui=always status --short
+  sc = diff --name-only --cached
+  co = checkout
+  g = log --pretty=format:"%C(yellow)%h\\ %C(green)%ad%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate --date=short --graph
+  l = diff HEAD^ HEAD
+  ll = diff HEAD^^ HEAD^
+  lf = diff HEAD^  HEAD --name-only
+  llf = diff HEAD^^  HEAD^ --name-only
+  mc = merge --continue
+  reup = !"git fetch; git rebase origin/master"
+  big-files    = !"git rev-list --objects --all \
+                 | git cat-file --batch-check='%(objecttype) %(objectname) %(objectsize) %(rest)' \
+                 | sed -n 's/^blob //p' \
+                 | sort -nk2 \
+                 | cut -c 1-12,41- \
+                 | $(command -v gnumfmt || echo numfmt) --field=2 --to=iec-i --suffix=B --padding=7 --round=nearest"
+  big-objects = !"git rev-list --all \
+                | parallel git ls-tree -r --long \"{}\" \
+                | sort -uk3 \
+                | sort -nk4"#  nuke = reset --hard origin/master
+  yolo = "!f() { \
+    curr_branch=$(git rev-parse --abbrev-ref HEAD); \
+    if [ \"$curr_branch\" = \"master\" ]; then \
+      lolexec yolo echo "👀 cant yolo on master..."; return; \
+    fi; \
+    lolexec yolo git push -f --no-verify origin head; \
+  }; f"
+  fire= "!f() { \
+    newbranch=\"sb-FIRE-$(date +%s)\"; \
+    git checkout -b \"$newbranch\"; \
+    git add -A; \
+    git commit -m \"🔥\"; \
+    git push --no-verify -u origin \"$newbranch\"; \
+  }; f; unset f"
+  autosave = "!f() { \
+    HASH=`git stash create`; \
+    MESSAGE=`git log --no-walk --pretty=\"format:%-s\" \"$HASH\"`; \
+    git update-ref -m \"AUTOSAVE: $MESSAGE\" refs/stash \"$HASH\"; \
+    git stash list; \
+  }; f; unset f"
+  mu = "!f() { \
+    lolexec autosave git autosave; \
+    lolexec fetch git fetch origin master:master; \
+    lolexec update-ref git update-ref --create-reflog refs/heads/master refs/remotes/origin/master; \
+  }; f"
+  mo = "!f() { \
+    git fetch origin master:master; \
+    git merge --no-ff --no-edit origin/master; \
+  }; f"
+  r = rebase -i --autosquash
+
+[rerere]
+	enabled = true
+; [commit]
+; 	gpgSign = true
+[gpg]
+	program = gpg
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+[commit]
+	gpgsign = true
+[url "git@github.com:"]
+	insteadOf = https://github.com/
+[init]
+	defaultbranch = main
+[user]
+	email = skylar.brown@kurtosistech.com
+	name = Skylar Brown
+	signingkey = E7EF108EA17E65540B8C3FF2220607381B56A4C2

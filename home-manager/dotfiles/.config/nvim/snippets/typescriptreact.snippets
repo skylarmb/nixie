@@ -1,0 +1,43 @@
+extends typescript
+snippet sc "styled-components" b
+	import styled from 'styled-components';
+	namespace S {
+
+	}
+snippet rc "react component" b
+	import styled from 'styled-components';
+
+	namespace S {
+		export const ${1:Component} = styled.div\`
+			display: flex;
+			background-color: pink;
+		\`;
+	}
+
+	const ${1:Component} = () => {
+		return <S.${1:Component}>${1:Component}</S.${1:Component}>;
+	};
+
+	export default ${1:Component};
+snippet rcc "react component" b
+	import { ReactNode } from 'react';
+	import styled from 'styled-components';
+
+	namespace S {
+		export const ${1:Component} = styled.div\`
+			display: flex;
+			background-color: pink;
+		\`;
+	}
+
+	const ${1:Component} = ({ children }: { children?: ReactNode }) => {
+		return <S.${1:Component}>{children}</S.${1:Component}>;
+	};
+
+	export default ${1:Component};
+snippet im "import mobile" b
+	import { mobile } from 'src/breakpoints';
+snippet mob "mobile styles" b
+	@media \${mobile} {
+		${0}
+	}
