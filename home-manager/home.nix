@@ -12,7 +12,7 @@
     ".antigenrc".source = dotfiles/.antigenrc;
     "antigen.zsh".source = dotfiles/antigen.zsh;
     ".p10k.zsh".source = dotfiles/.p10k.zsh;
-    ".fzf.zsh".source = dotfiles/.fzf.zsh;
+    # ".fzf.zsh".source = dotfiles/.fzf.zsh;
     ".lessfilter".source = dotfiles/.lessfilter;
 
     # applications

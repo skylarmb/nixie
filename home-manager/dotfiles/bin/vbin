@@ -6,7 +6,7 @@ main(){
   self="$(basename "$0")"
   log() { debug_log "$self" "$*" ; }
 
-  local script="$HOME/.local/bin/${1}"
+  local script="$DOTFILES/bin/${1}"
   if [[ -f "${script}" ]]; then
     $EDITOR "${script}"
     return 0

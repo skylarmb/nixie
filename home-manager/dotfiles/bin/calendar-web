@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+firefox \
+  -p calendar \
+  --no-remote \
+  --new-window \
+  --class calendar-web \
+  --kiosk=https://calendar.google.com/calendar/u/0/r

@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+firefox \
+  -p slack \
+  --no-remote \
+  --new-window \
+  --class slack-web \
+  --kiosk=https://app.slack.com/client/T016VMW1064
