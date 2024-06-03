@@ -138,77 +138,80 @@ export TMUX_PLUGIN_MANAGER_PATH="$HOME/.tmux/plugins"
 # custom vars
 # export NVIM_DAEMON_SOCK=~/.cache/nvim/server.sock
 export DEFAULT_USER="$(whoami)"
+export DOTFILES='/home/skylar/nixie/home-manager/dotfiles'
 
 # ---------------- ALIAS ----------------
 
 # alias v='nv'
-alias v='nvim'
-alias vi='v' # dont open mega-broken vi/vim
-alias vim='v' # dont open mega-broken vi/vim
-alias vo='FZF_DEFAULT_COMMAND="git ls-files | sort -nr" fzf_edit_file'
-alias voo='fzf_edit_file'
-alias vc='fzf_edit_grep'
-alias q='exit'
-alias qq='q'
-alias qa='q'
+# alias ag='ag --path-to-ignore ~/.ignore'
+# alias ccat='cat'
+# alias docker="podman"
+# alias pip="$(pyenv which pip3)"
+# alias python="$(pyenv which python3)"
+# switch between light and dark themes
+alias :Man='f(){ nvim "+:Man $* | only" };f'
+alias :h='nvim_help'
 alias :q='q'
 alias :qa='q'
-alias :h='nvim_help'
-alias :Man='f(){ nvim "+:Man $* | only" };f'
-alias tt="nvim +'execute \"ToDoTxtTasksToggle\" | wincmd o'"
-alias tn="nvim +'execute \"ToDoTxtTasksToggle\" | wincmd o | execute \"ToDoTxtTasksCapture\"'"
-alias workspace='cd $WORKSPACE'
-alias dotfiles='cd ~/dotfiles'
-alias vimc='v ~/.config/nvim'
-alias vimcd='cd ~/.config/nvim && v .'
-alias zc='v ~/.zshrc && exec zsh'
-alias hyc='v ~/.config/hypr/hyprland.conf'
-alias nxc='sudo -Es nvim /etc/nixos/configuration.nix'
-alias nxb='sudo nixos-rebuild switch'
-alias nxl='sudo nix-env --profile /nix/var/nix/profiles/system --list-generations'
-alias nxd='sudo nix-env --profile /nix/var/nix/profiles/system --delete-generations'
-alias hyc='v ~/.config/hypr/hyprland.conf'
-alias gitc='v ~/.gitconfig'
-alias zcp='v ~/.private/.zshrc && exec zsh'
-alias alc='v ~/.config/alacritty/alacritty.toml'
-alias tc='v ~/.config/tmux/tmux.conf'
-alias tcc='v ~/.config/tmux/colorscheme.conf'
-alias zu='exec zsh'
-alias dka='docker kill $(docker ps -q)'
-alias vimwipe='rm -rf $HOME/.vim/tmp/swap; mkdir -p $HOME/.vim/tmp/swap'
-alias g='git'
-alias cc='git rev-parse HEAD | pbcopy'
-alias ccwd='pwd | pbcopy'
-alias unwip='git reset --soft HEAD~'
-alias vm='v `git --no-pager diff --name-only --diff-filter=U`'
-alias todo='gg "todo before"'
-alias installglobals='npm install -g prettier diff-so-fancy neovim npm-why serve serverless nodemon markdown-toc ts-node lebab'
-alias scr='v $WORKSPACE/scratchpad/scratch.tsx'
-# alias ccat='cat'
-alias cat='bat --style=plain,header,grid'
-alias ccat='command cat'
-# alias ag='ag --path-to-ignore ~/.ignore'
-alias notes='cd ~/notes'
 alias aa='cp ~/notes/all_around.template.md ~/notes/candidates/new.md && v ~/notes/candidates/new.md'
-alias todo='v ~/notes/life.todo.md'
+alias alc='dotfiles && nvim .config/alacritty/alacritty.toml'
+alias brewfast='HOMEBREW_NO_AUTO_UPDATE=1 HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK=1 brew'
+alias cat='bat --style=plain,header,grid'
+alias cc='git rev-parse HEAD | pbcopy'
+alias ccat='command cat'
+alias ccwd='pwd | pbcopy'
+alias dka='docker kill $(docker ps -q)'
+alias dnd='makoctl mode -a do-not-disturb'
+alias dndoff='makoctl mode -r do-not-disturb'
+alias dotfiles='cd $DOTFILES'
 alias fgf='fg %$(jobs | fzf | grep -Eo "[0-9]{1,}" | head -1)'
+alias g='git'
+alias gitc='dotfiles && nvim .gitconfig'
+alias hs='home-manager switch'
+alias hyc='dotfiles && nvim .config/hypr/hyprland.conf'
+alias hyc='dotfiles && nvim .config/hypr/hyprland.conf'
+alias installglobals='npm install -g prettier diff-so-fancy neovim npm-why serve serverless nodemon markdown-toc ts-node lebab'
+alias notes='cd ~/notes'
+alias nxb='sudo nixos-rebuild switch'
+alias nxc='sudo -Es nvim /etc/nixos/configuration.nix'
+alias nxd='sudo nix-env --profile /nix/var/nix/profiles/system --delete-generations'
+alias nxl='sudo nix-env --profile /nix/var/nix/profiles/system --list-generations'
+alias open='xdg-open'
 alias p='pnpm'
 alias pi='pnpm install'
 alias plr='git checkout origin/master **/pnpm-lock.yaml && pnpm install'
 alias prs='gh pr status'
-alias w='~/.tmux/plugins/tmux-fzf/scripts/window.sh switch'
-alias ta='tmux new-session -A -s main -t main'
 alias psg='ps aux | grep'
-# switch between light and dark themes
-alias tl="export THEME=light; tmux set-environment THEME 'light'; tmux source-file ~/.tmux.conf; alacritty-themes Atelierdune.light;"
+alias q='exit'
+alias qa='q'
+alias qq='q'
+alias scr='v $WORKSPACE/scratchpad/scratch.tsx'
+alias ta='tmux new-session -A -s main -t main'
+alias tc='dotfiles && nvim .config/tmux/tmux.conf'
+alias tcc='dotfiles && nvim .config/tmux/colorscheme.conf'
 alias td="export THEME=dark; tmux set-environment THEME 'dark'; tmux source-file ~/.tmux.conf; alacritty-themes Atelierdune.dark;"
+alias tl="export THEME=light; tmux set-environment THEME 'light'; tmux source-file ~/.tmux.conf; alacritty-themes Atelierdune.light;"
 alias tm="tmux select-layout main-horizontal; tmux resize-pane -y80% -t 1;"
-# alias python="$(pyenv which python3)"
-# alias pip="$(pyenv which pip3)"
-alias brewfast='HOMEBREW_NO_AUTO_UPDATE=1 HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK=1 brew'
-# alias docker="podman"
-alias dnd='makoctl mode -a do-not-disturb'
-alias dndoff='makoctl mode -r do-not-disturb'
+alias tn="nvim +'execute \"ToDoTxtTasksToggle\" | wincmd o | execute \"ToDoTxtTasksCapture\"'"
+alias todo='gg "todo before"'
+alias todo='v ~/notes/life.todo.md'
+alias tt="nvim +'execute \"ToDoTxtTasksToggle\" | wincmd o'"
+alias unwip='git reset --soft HEAD~'
+alias v='nvim'
+alias vc='fzf_edit_grep'
+alias vi='v' # dont open mega-broken vi/vim
+alias vim='v' # dont open mega-broken vi/vim
+alias vimc='dotfiles && nvim .config/nvim'
+alias vimcd='dotfiles && cd .config/nvim && nvim .'
+alias vimwipe='rm -rf $HOME/.vim/tmp/swap; mkdir -p $HOME/.vim/tmp/swap'
+alias vm='v `git --no-pager diff --name-only --diff-filter=U`'
+alias vo='FZF_DEFAULT_COMMAND="git ls-files | sort -nr" fzf_edit_file'
+alias voo='fzf_edit_file'
+alias w='~/.tmux/plugins/tmux-fzf/scripts/window.sh switch'
+alias workspace='cd $WORKSPACE'
+alias zc='dotfiles && nvim .zshrc && exec zsh'
+alias zcp='dotfiles && nvim .private/.zshrc && exec zsh'
+alias zu='exec zsh'
 # ---------------- PLUGINS ----------------
 # export NVM_LAZY_LOAD=true
 # export NVM_COMPLETION=true
@@ -238,8 +241,8 @@ alias dndoff='makoctl mode -r do-not-disturb'
 #     antigen init $HOME/.antigenrc
 # fi
 
-    source $HOME/antigen.zsh
-    antigen init $HOME/.antigenrc
+source $HOME/antigen.zsh
+antigen init $HOME/.antigenrc
 bindkey '^Xh' _complete_help
 # bindkey '\t' autosuggest-accept
 

@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+main() {
+
+  local curr_volume;
+  curr_volume="$(wpctl get-volume @DEFAULT_AUDIO_SINK@ | cut -d' ' -f2-)";
+  if [[ "$curr_volume" == "0.00" ]]; then
+    exit 0
+  fi
+
+  wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
+}
+
+main
+
