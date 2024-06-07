@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+SCRIPT_DIR=$(dirname "$0")
+
+electron \
+  "$SCRIPT_DIR/electron-wrapper-src" \
+  "$1" # URL argument

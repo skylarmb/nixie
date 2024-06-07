@@ -92,6 +92,6 @@
 		"path": "/"
 	},
 	"tray": {
-		"icon-size": 24
+		"icon-size": 32
 	}
 }

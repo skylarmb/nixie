@@ -7,6 +7,7 @@
 
   home.file = {
     # shell stuff
+    ".profile".source = dotfiles/.profile;
     ".zprofile".source = dotfiles/.zprofile;
     ".zshrc".source = dotfiles/.zshrc;
     ".antigenrc".source = dotfiles/.antigenrc;
@@ -30,6 +31,21 @@
     #   org.gradle.console=verbose
     #   org.gradle.daemon.idletimeout=3600000
     # '';
+  };
+
+  xdg.desktopEntries = {
+    slack = {
+      name = "Slack";
+      exec = "/home/skylar/bin/electron-wrappper https://app.slack.com/client/T016VMW1064/C015Z55806S";
+      terminal = false;
+    };
+  };
+
+  dconf.settings = {
+    "org/virt-manager/virt-manager/connections" = {
+      autoconnect = ["qemu:///system"];
+      uris = ["qemu:///system"];
+    };
   };
 
   # Let Home Manager install and manage itself.
