@@ -176,6 +176,7 @@ alias nxb='sudo nixos-rebuild switch'
 alias nxc='sudo -Es nvim /etc/nixos/configuration.nix'
 alias nxd='sudo nix-env --profile /nix/var/nix/profiles/system --delete-generations'
 alias nxl='sudo nix-env --profile /nix/var/nix/profiles/system --list-generations'
+alias hc='nvim $HOME/nixie/home-manager/home.nix'
 alias open='xdg-open'
 alias p='pnpm'
 alias pi='pnpm install'
@@ -193,8 +194,7 @@ alias td="export THEME=dark; tmux set-environment THEME 'dark'; tmux source-file
 alias tl="export THEME=light; tmux set-environment THEME 'light'; tmux source-file ~/.tmux.conf; alacritty-themes Atelierdune.light;"
 alias tm="tmux select-layout main-horizontal; tmux resize-pane -y80% -t 1;"
 alias tn="nvim +'execute \"ToDoTxtTasksToggle\" | wincmd o | execute \"ToDoTxtTasksCapture\"'"
-alias todo='gg "todo before"'
-alias todo='v ~/notes/life.todo.md'
+alias todo='nvim ~/todo.md'
 alias tt="nvim +'execute \"ToDoTxtTasksToggle\" | wincmd o'"
 alias unwip='git reset --soft HEAD~'
 alias v='nvim'

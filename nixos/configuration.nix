@@ -31,28 +31,34 @@
 
   # Enable graphical desktop environment
   services.xserver.enable = true;
-  # services.xserver.desktopManager.gnome.enable = true;
-  # services.xserver.displayManager.gdm.enable = true;
-  services.displayManager.sddm.enable = true;
-  services.displayManager.sddm.wayland.enable = true;
-  services.desktopManager.plasma6.enable = true;
+  services.xserver.xkb.options = "ctrl:nocaps";
+  services.xserver.desktopManager.gnome.enable = true;
+  services.xserver.displayManager.gdm.enable = true;
+  # services.displayManager.sddm.enable = true;
+  # services.displayManager.sddm.wayland.enable = true;
+  # services.desktopManager.plasma6.enable = true;
+  services.flatpak.enable = true;
 
   hardware.opengl = {
     enable = true;
     driSupport = true;
     driSupport32Bit = lib.mkForce false;
   };
+
   hardware.asahi = {
     useExperimentalGPUDriver = true;
     experimentalGPUInstallMode = "replace";
     setupAsahiSound = true;
     withRust = true;
   };
+
   programs.hyprland = {
     enable = true;
     xwayland.enable = true;
     portalPackage = pkgs.xdg-desktop-portal-hyprland;
   };
+
+  programs.nix-ld.enable = true;
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
@@ -72,7 +78,7 @@
   # Define user account.
   users.users.skylar = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "docker" ]; # Enable ‘sudo’ for the user.
+    extraGroups = [ "wheel" "docker" "libvirtd" ]; # Enable ‘sudo’ for the user.
     shell = pkgs.zsh;
   };
   security.sudo.extraRules= [
@@ -97,43 +103,61 @@
 
   programs._1password-gui.enable = true;
   programs.zsh.enable = true;
+  programs.virt-manager.enable = true;
 
   nixpkgs.config.allowUnfree = true;
   home-manager.useUserPackages = true;
 
+  environment.sessionVariables = {
+    NIXOS_OZONE_WL = "1";
+  };
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    wget
-    firefox
-    neovim
     alacritty
-    wofi
-    wl-clipboard
-    gcc
-    git
     bat
-    tmux
-    nodejs
-    ripgrep
-    fzf
-    unzip
-    delta
-    gh
-    libsForQt5.bismuth
-    hyprpaper
-    libnotify
-    swaynotificationcenter
+    bc
     brightnessctl
+    bun
+    chromium
     cliphist
     clipman
-    wtype
-    home-manager
+    delta
+    electron
     eza
+    firefox
+    flatpak
+    fzf
+    gcc
+    gh
+    git
+    gnome.gnome-software
+    home-manager
+    hyprpaper
+    hyprshot
+    libnotify
+    libsForQt5.polonium
+    menulibre
+    neovim
+    nodejs
+    ripgrep
+    spot
+    swaynotificationcenter
+    tmux
+    unzip
+    wget
+    wl-clipboard
+    wofi
+    wtype
+    # vm stuff
+    cloud-utils
+    spice
+    virtiofsd
   ];
 
 
   virtualisation.docker.enable = true;
+  virtualisation.libvirtd.enable = true;
 
   nix.settings.experimental-features = [ "nix-command" "flakes"];
 
