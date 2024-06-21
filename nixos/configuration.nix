@@ -2,11 +2,19 @@
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
 
 { config, lib, pkgs, ... }:
+let
+  nix-software-center = import (pkgs.fetchFromGitHub {
+    owner = "snowfallorg";
+    repo = "nix-software-center";
+    rev = "0.1.2";
+    sha256 = "xiqF1mP8wFubdsAQ1BmfjzCgOD3YZf7EGWl9i69FTls=";
+  }) {};
+in
 {
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
-      ./apple-silicon-support
+      <apple-silicon-support/apple-silicon-support>
       <home-manager/nixos>
     ];
 
@@ -25,6 +33,13 @@
   # Network
   networking.hostName = "nixos";
   networking.networkmanager.enable = true;  # Easiest to use and most distros use this by default.
+  networking.firewall = {
+    enable = true;
+    allowedTCPPorts = [ 80 443 ];
+    allowedUDPPortRanges = [
+      { from = 1234; to = 1234; } # spotifyd
+    ];
+  };
 
   # Set time zone.
   time.timeZone = "America/Los_Angeles";
@@ -34,6 +49,16 @@
   services.xserver.xkb.options = "ctrl:nocaps";
   services.xserver.desktopManager.gnome.enable = true;
   services.xserver.displayManager.gdm.enable = true;
+  # services.greetd = {
+  #   enable = true;
+  #   settings = rec {
+  #     initial_session = {
+  #       command = "${pkgs.hyprland}/bin/Hyprland";
+  #       user = "skylar";
+  #     };
+  #     default_session = initial_session;
+  #   };
+  # };
   # services.displayManager.sddm.enable = true;
   # services.displayManager.sddm.wayland.enable = true;
   # services.desktopManager.plasma6.enable = true;
@@ -114,50 +139,91 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
+    # graphical apps
+    _1password
     alacritty
+    blueberry
+    firefox
+    flatpak
+    gnome.gnome-software
+    gnome.gnome-tweaks
+    helvum
+    spot
+    spotifyd
+
+    # shell utils
+    alsa-utils
     bat
     bc
     brightnessctl
-    bun
-    chromium
-    cliphist
-    clipman
     delta
-    electron
+    dig
     eza
-    firefox
-    flatpak
     fzf
     gcc
     gh
+    gimp
     git
-    gnome.gnome-software
-    home-manager
-    hyprpaper
-    hyprshot
-    libnotify
-    libsForQt5.polonium
-    menulibre
-    neovim
-    nodejs
+    htop
+    jq
     ripgrep
-    spot
-    swaynotificationcenter
+    tig
     tmux
     unzip
     wget
+
+    # desktop environment
+    cliphist
+    clipman
+    home-manager
+    hyprlock
+    hyprpaper
+    hyprshot
+    kooha
+    libnotify
+    libsecret
+    menulibre
+    swayidle
+    swaynotificationcenter
     wl-clipboard
     wofi
     wtype
+    nix-software-center
+
+    # dev tools
+    bun
+    chromium
+    electron
+    neovim
+    nodejs
+
     # vm stuff
-    cloud-utils
-    spice
-    virtiofsd
+    # cloud-utils
+    # spice
+    # virtiofsd
+    # qemu_full
+    # edk2
+    # edk2-uefi-shell
+    # virt-viewer
   ];
 
 
   virtualisation.docker.enable = true;
-  virtualisation.libvirtd.enable = true;
+  virtualisation.libvirtd = {
+    enable = true;
+    qemu = {
+      package = pkgs.qemu_kvm;
+      runAsRoot = true;
+      swtpm.enable = true;
+      ovmf = {
+        enable = true;
+        packages = [(pkgs.OVMF.override {
+          secureBoot = true;
+          tpmSupport = true;
+        }).fd];
+      };
+    };
+  };
 
   nix.settings.experimental-features = [ "nix-command" "flakes"];
 
