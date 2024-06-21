@@ -212,6 +212,8 @@ alias workspace='cd $WORKSPACE'
 alias zc='dotfiles && nvim .zshrc && exec zsh'
 alias zcp='dotfiles && nvim .private/.zshrc && exec zsh'
 alias zu='exec zsh'
+alias fpi='flatpak install flathub'
+
 # ---------------- PLUGINS ----------------
 # export NVM_LAZY_LOAD=true
 # export NVM_COMPLETION=true
@@ -617,6 +619,10 @@ gs(){
   fi
 }
 
+calc(){
+  echo "${@}" | bc -l
+}
+
 # Profiler
 if [[ -n "$DEBUG_ZPROF" ]]; then
   zprof
@@ -636,3 +642,6 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 
 # bun completions
 [ -s "/home/skylar/.bun/_bun" ] && source "/home/skylar/.bun/_bun"
+
+# 1password
+# eval $(op signin)
