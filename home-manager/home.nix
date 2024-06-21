@@ -23,6 +23,8 @@
     ".config/nvim".source = dotfiles/.config/nvim;
     ".config/tmux".source = dotfiles/.config/tmux;
     ".config/waybar".source = dotfiles/.config/waybar;
+    ".config/systemd".source = dotfiles/.config/systemd;
+    ".config/spotifyd".source = dotfiles/.config/spotifyd;
 
     "bin".source = dotfiles/bin;
 

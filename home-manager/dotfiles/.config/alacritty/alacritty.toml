@@ -36,7 +36,9 @@ live_config_reload = true
   # yellow_dim = '#D9923B',
 
 [colors.bright]
-black = "#302F2E"
+# black = "#302F2E"
+# black = "#FF00FF"
+black = "#575547"
 white = "#E8D2A9"
 blue = "#848A68"
 cyan = "#799173"
