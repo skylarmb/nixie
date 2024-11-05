@@ -1,30 +1,5 @@
-function _ADD_CURR_DIR_TO_PROJECTS()
-  local historyfile = require("project_nvim.utils.path").historyfile
-  vim.notify("Adding current directory to projects")
-  vim.notify(historyfile)
-  local curr_directory = vim.fn.expand("%:p:h")
-  local history = require("project_nvim.utils.history")
-  local results = history.get_recent_projects()
-  vim.notify(vim.inspect(results))
-  -- vim.cmd("!echo " .. curr_directory .. " >> " .. historyfile)
-end
 
 return {
-  {
-    "ahmedkhalf/project.nvim",
-    event = "VeryLazy",
-    config = function()
-      require("project_nvim").setup({
-        -- detection_methods = { "pattern" },
-        -- patterns = { "package.json" },
-        -- show_hidden = true,
-        -- -- get a message when project.nvim changes the directory.
-        -- silent_chdir = false,
-        -- datapath = vim.fn.stdpath("data"),
-      })
-      vim.cmd("command! ProjectAdd lua _ADD_CURR_DIR_TO_PROJECTS()")
-    end,
-  },
   {
     "nvim-telescope/telescope.nvim",
     event = "VeryLazy",
@@ -48,6 +23,7 @@ return {
             override_file_sorter = false, -- override the file sorter
             case_mode = "ignore_case", -- or "ignore_case" or "smart_case"
           },
+          notify = {}
         },
         defaults = {
           prompt_prefix = " ",

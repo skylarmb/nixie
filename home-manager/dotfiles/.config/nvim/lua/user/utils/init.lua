@@ -62,6 +62,33 @@ function M.prequire(module)
   end
 end
 
+-- run a list of vim.cmds sequentially
+function M.run_sequential_commands(commands)
+  local function run_next(index)
+    if index <= #commands then
+      vim.schedule(function()
+        vim.cmd(commands[index])
+        run_next(index + 1)
+      end)
+    end
+  end
+  run_next(1)
+end
+
+-- Helper function to run async functions sequentially
+-- @param fns Array of functions to run in sequence
+function M.sequence_calls(fns)
+  local function run_next(index)
+    if index <= #fns then
+      vim.schedule(function()
+        fns[index]()
+        run_next(index + 1)
+      end)
+    end
+  end
+  run_next(1)
+end
+
 M.keymap = require("user.utils.keymap")
 
 return M

@@ -23,20 +23,6 @@ return {
       end)
     end,
   },
-  -- ripgrep multi-file/buffer/quickfix search and replace
-  {
-    "wincent/ferret",
-    cmd = { "Ack", "Back" },
-    branch = "main",
-    config = function()
-      vim.g.FerretMap = 0
-      -- vim.g.FerretExecutable = 'ag,rg' -- prefer ag
-      vim.g.FerretExecutableArguments = {
-        ag = ag_opts,
-      }
-      vim.g.FerretVeryMagic = 0
-    end,
-  },
   {
     "jremmen/vim-ripgrep",
     cmd = { "Rg" },
