@@ -34,7 +34,8 @@ return {
             local is_last = tab.number() == table.maxn(line.api.get_tabs())
             return {
               line.sep((is_first or is_curr) and "" or "", is_first and theme.head or theme.tab, hl),
-              is_curr and "" or "",
+              -- is_curr and "󰧞" or " ",
+              "",
               tab.number(),
               tab.name(),
               -- tab.close_btn("󱎘"),

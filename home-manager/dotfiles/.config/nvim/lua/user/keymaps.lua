@@ -13,6 +13,9 @@ local cmd = keymap.cmd
 local cword = keymap.expand.cword
 local cexpr = keymap.expand.cexpr
 
+local diag_err = { buffer = 0, severity = vim.diagnostic.severity.ERROR }
+local diag_any = { buffer = 0 }
+
 -- Config --
 
 n("<S-l>", "<cmd>bnext<CR>")
@@ -39,39 +42,6 @@ v(">", ">gv")
 
 -- NvimTree
 n("`", "<cmd>NvimTreeFindFileToggle<CR>")
-
--- Comment
--- keymap("n", "<leader>/", "<cmd>lua require('Comment.api').toggle.linewise.current()<CR>")
--- keymap("x", "<leader>/", "<esc><cmd>lua require('Comment.api').toggle.linewise(vim.fn.visualmode())<CR>")
-
--- DAP
-leader("db", function()
-  require("dap").toggle_breakpoint()
-end)
-leader("dc", function()
-  require("dap").continue()
-end)
-leader("di", function()
-  require("dap").step_into()
-end)
-leader("do", function()
-  require("dap").step_over()
-end)
-leader("dO", function()
-  require("dap").step_out()
-end)
-leader("dr", function()
-  require("dap").repl.toggle()
-end)
-leader("dl", function()
-  require("dap").run_last()
-end)
-leader("du", function()
-  require("dapui").toggle()
-end)
-leader("dt", function()
-  require("dap").terminate()
-end)
 
 ------------ Movement ------------
 -- always move by display lines when wrapping
@@ -248,3 +218,8 @@ c("<C-f>", "")
 c("<ESC>", "<C-c>")
 -- open floating term
 n("<C-t>", "<cmd>ToggleTerm<cr><insert>")
+
+----- LSP -----
+n("ge", function()
+ vim.diagnostic.goto_next(diag_any)
+end)

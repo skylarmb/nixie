@@ -3,27 +3,12 @@ return {
   {
     "nvim-treesitter/nvim-treesitter",
     dependencies = {
-      {
-        "nvim-treesitter/playground",
-        cmd = "TSPlaygroundToggle",
-        lazy = true,
-      },
-      -- { "nvim-treesitter/nvim-tree-docs" },
-      -- { "nvim-treesitter/nvim-treesitter-context" },
       { "nvim-treesitter/nvim-treesitter-textobjects" },
     },
+    build = ":TSUpdate",
     config = function()
       local configs = require("nvim-treesitter.configs")
       configs.setup({
-        -- generate JSDoc comments
-        tree_docs = {
-          enable = true,
-          keymaps = {
-            doc_node_at_cursor = "gcd",
-            doc_all_in_range = "gcd",
-            edit_doc_at_cursor = "gce",
-          },
-        },
         auto_install = true,
         ensure_installed = {
           "lua",
@@ -48,16 +33,16 @@ return {
         autopairs = {
           enable = true,
         },
-        indent = { enable = true, disable = { "python", "yaml" } },
-        -- context_commentstring = {
-        --   enable = true,
-        --   enable_autocmd = false,
-        -- },
+        indent = { enable = true },
       })
     end,
   },
   -- treesitter powered auto-closing tags for html, tsx, etc.
-  { "windwp/nvim-ts-autotag", event = "InsertEnter" },
+  {
+    "windwp/nvim-ts-autotag", event = "InsertEnter", config = function()
+    require("nvim-ts-autotag").setup()
+  end
+  },
   -- context aware comment formatting, e.g. for jsx render() fn
   -- { "JoosepAlviste/nvim-ts-context-commentstring", event = "VeryLazy" },
 }
