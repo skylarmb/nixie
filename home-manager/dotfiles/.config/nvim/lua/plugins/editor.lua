@@ -16,8 +16,6 @@ return {
   },
   -- respect editorconfig files
   { "editorconfig/editorconfig-vim", lazy = false },
-  -- nuke whitespace
-  { "ntpeters/vim-better-whitespace", lazy = false },
   -- sorting as a motion
   { "christoomey/vim-sort-motion", event = "VeryLazy" },
   -- treesitter-aware commenting that works with TSX

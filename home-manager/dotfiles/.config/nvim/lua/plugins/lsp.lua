@@ -1,15 +1,124 @@
 local utils = require("user.utils")
 
-local border = {
-  { "┗", "FloatBorder" },
-  { "━", "FloatBorder" },
-  { "┛", "FloatBorder" },
-  { "┃", "FloatBorder" },
-  { "┏", "FloatBorder" },
-  { "▁", "FloatBorder" },
-  { "┓", "FloatBorder" },
-  { "┃", "FloatBorder" },
-}
+-- local border = {
+--   { "┏", "NormalFloat" },
+--   { "━", "NormalFloat" },
+--   { "┓", "NormalFloat" },
+--   { "┃", "NormalFloat" },
+--   { "┛", "NormalFloat" },
+--   { "━", "NormalFloat" },
+--   { "┗", "NormalFloat" },
+--   { "┃", "NormalFloat" },
+-- }
+
+local smart_goto_definition = function()
+  -- Get the current buffer number
+  local current_bufnr = vim.api.nvim_get_current_buf()
+
+  -- Make an LSP request for definition
+  local params = vim.lsp.util.make_position_params()
+
+  vim.lsp.buf_request(0, "textDocument/definition", params, function(err, result, ctx)
+    if err then
+      vim.notify("Error getting definition: " .. err.message, vim.log.levels.ERROR)
+      return
+    end
+
+    if not result or vim.tbl_isempty(result) then
+      vim.notify("No definition found", vim.log.levels.INFO)
+      return
+    end
+
+    -- Handle both single response and response array
+    local target = vim.tbl_islist(result) and result[1] or result
+
+    -- Get the target URI and convert it to a buffer number if it's already loaded
+    local target_uri = target.uri or target.targetUri
+    local target_bufnr = vim.uri_to_bufnr(target_uri)
+
+    -- If the target is in the same buffer, use regular definition jump
+    if target_bufnr == current_bufnr then
+      vim.lsp.buf.definition()
+    else
+      -- If target is in a different buffer, use preview
+      require("goto-preview").goto_preview_definition()
+    end
+  end)
+end
+
+-- Text Box Border Wrapper Function
+local create_box_border = function(contents)
+  if not contents or #contents == 0 then
+    return {}
+  end
+  local max_width = 0 -- Find the longest line to determine box width
+  for _, line in ipairs(contents) do
+    max_width = math.max(max_width, #line)
+  end
+  local box_width = max_width + 2 -- Add 2 for left and right padding
+  local result = {} -- Create the bordered box
+  table.insert(result, "╭" .. string.rep("─", box_width) .. "╮") -- Top border
+  for _, line in ipairs(contents) do -- Content lines
+    local padded_line = line .. string.rep(" ", max_width - #line) -- Right-pad the line to max_width
+    table.insert(result, "│ " .. padded_line .. " │")
+  end
+  table.insert(result, "╰" .. string.rep("─", box_width) .. "╯") -- Bottom border
+  return result
+end
+
+local setup_cmp = function()
+  local cmp = require("cmp")
+  require("copilot").setup({
+    suggestion = { enabled = false },
+    panel = { enabled = false },
+  })
+  require("copilot_cmp").setup()
+  local popup_style = {
+    border = "shadow",
+    col_offset = -2,
+    scrollbar = false,
+    scrolloff = 0,
+    zindex = 1001,
+  }
+  cmp.setup({
+    snippet = {
+      expand = function(args)
+        require("luasnip").lsp_expand(args.body)
+      end,
+    },
+    sources = cmp.config.sources({
+      { name = "luasnip" },
+      { name = "copilot" },
+      { name = "nvim_lsp" },
+      { name = "path" },
+      { name = "buffer" },
+    }),
+    experimental = {
+      ghost_text = true,
+    },
+    window = {
+      completion = popup_style,
+      documentation = popup_style,
+    },
+    formatting = {
+      format = require("lspkind").cmp_format({
+        mode = "text_symbol", -- show only symbol annotations
+        ellipsis_char = "...",
+        show_labelDetails = true, -- show labelDetails in menu. Disabled by default
+      }),
+    },
+    mapping = cmp.mapping.preset.insert({
+      ["<C-d>"] = cmp.mapping.scroll_docs(-4),
+      ["<C-f>"] = cmp.mapping.scroll_docs(4),
+      ["<C-Space>"] = cmp.mapping.complete(),
+      ["<C-y>"] = cmp.mapping.confirm({
+        behavior = cmp.ConfirmBehavior.Replace,
+        select = false,
+      }),
+    }),
+  })
+  require("luasnip.loaders.from_snipmate").lazy_load({ paths = "~/.config/nvim/snippets" })
+end
 
 local on_attach = function(client, bufnr)
   local opts = { buffer = true, silent = true, noremap = true }
@@ -20,9 +129,6 @@ local on_attach = function(client, bufnr)
     vim.diagnostic.setloclist()
   end, opts)
 
-  ---------------------------------------------------------------------------
-  -- DIAGNOSTIC
-  ---------------------------------------------------------------------------
   -- errors
   keymap.n("gE", function()
     vim.diagnostic.goto_prev(diag_err)
@@ -62,10 +168,9 @@ local on_attach = function(client, bufnr)
     require("cosmic-ui").range_code_actions()
   end, opts)
 
-  -- preview lsp jumps by default
-  keymap.n("gd", function()
-    require("goto-preview").goto_preview_definition()
-  end, opts)
+  --
+  keymap.n("gd", smart_goto_definition, opts)
+
   keymap.n("gD", function()
     require("goto-preview").goto_preview_type_definition()
   end)
@@ -115,7 +220,7 @@ local on_attach = function(client, bufnr)
 
   -- fix everything
   keymap.nvo("gf", function()
-    vim.cmd(":FormatWrite")
+    vim.cmd("FormatWriteLock")
 
     local filetype = vim.bo[bufnr].filetype
     if vim.tbl_contains({ "typescript", "typescriptreact", "javascript", "javascriptreact" }, filetype) then
@@ -164,11 +269,13 @@ return {
         ensure_installed = { "lua_ls" },
         automatic_installation = true,
       })
-      -- To instead override globally
+
+      -- Override floating window appearance to add both border + shadow
       local orig_util_open_floating_preview = vim.lsp.util.open_floating_preview
       function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
         opts = opts or {}
-        opts.border = opts.border or border
+        opts.border = "shadow"
+        contents = create_box_border(contents)
         return orig_util_open_floating_preview(contents, syntax, opts, ...)
       end
 
@@ -187,20 +294,29 @@ return {
           require("rust-tools").setup({})
         end,
       })
+
+      setup_cmp()
     end,
   },
   {
     "mhartington/formatter.nvim",
     lazy = false,
     config = function()
+      local es_formatters = {
+        require("formatter.filetypes.typescript").eslint_d,
+        require("formatter.filetypes.typescript").prettierd,
+      }
       require("formatter").setup({
         logging = true,
         log_level = vim.log.levels.WARN,
         filetype = {
-          lua = {
-            -- "formatter.filetypes.lua" defines default configurations for the
-            -- "lua" filetype
-            require("formatter.filetypes.lua").stylua,
+          lua = { require("formatter.filetypes.lua").stylua },
+          typescript = es_formatters,
+          typescriptreact = es_formatters,
+          javascript = es_formatters,
+          javascriptreact = es_formatters,
+          ["*"] = {
+            require("formatter.filetypes.any").remove_trailing_whitespace,
           },
         },
       })
@@ -216,6 +332,25 @@ return {
         "<leader>t",
         "<cmd>Trouble diagnostics toggle filter.buf=0<cr>",
         desc = "Buffer Diagnostics (Trouble)",
+      },
+    },
+  },
+  {
+    "hrsh7th/nvim-cmp",
+    event = { "InsertEnter", "LspAttach" },
+    dependencies = {
+      "neovim/nvim-lspconfig",
+      "hrsh7th/cmp-buffer",
+      "hrsh7th/cmp-path",
+      "hrsh7th/cmp-nvim-lsp",
+      "hrsh7th/cmp-cmdline",
+      "onsails/lspkind.nvim", -- vs-code like pictograms
+      "zbirenbaum/copilot.lua",
+      "zbirenbaum/copilot-cmp",
+      {
+        "L3MON4D3/LuaSnip",
+        version = "v2.*",
+        build = "make install_jsregexp",
       },
     },
   },
