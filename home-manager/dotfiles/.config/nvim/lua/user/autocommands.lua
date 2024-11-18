@@ -5,31 +5,6 @@
 --   end,
 -- })
 
--- If accidentally editing a git-relative absolute file path that does not
--- exist, but it is an actual file path relative to the git root, edit the file
-vim.api.nvim_create_autocmd("BufWinEnter", {
-  once = true,
-  pattern = "*",
-  callback = function()
-    local path = vim.fn.expand("<afile>")
-    local git_root = vim.fn.system("git rev-parse --show-toplevel"):gsub("%s+", "")
-    local git_relative_path = vim.fn.system("git ls-files --full-name | grep -o " .. path):gsub("%s+", "")
-    local git_path = git_root .. "/" .. git_relative_path
-    local exists = vim.fn.filereadable
-    -- edit git path instead of absolute path
-    if exists(path) == 0 and exists(git_path) == 1 then
-      vim.cmd("new " .. git_path)
-      vim.cmd("wincmd o")
-      vim.cmd("filetype detect")
-      vim.schedule(function()
-        vim.notify("Editing git path instead:")
-        vim.notify(git_relative_path)
-      end)
-      return
-    end
-  end,
-})
-
 vim.api.nvim_create_autocmd({ "BufEnter" }, {
   pattern = { "*.Jenkinsfile", "Jenkinsfile" },
   callback = function()
@@ -52,17 +27,11 @@ vim.api.nvim_create_autocmd("User", {
   end,
 })
 
--- autocmd InsertLeave * execute 'normal! mI'
+-- set mark when leaving insert mode
 vim.api.nvim_create_autocmd({ "InsertLeave" }, {
   callback = function()
     vim.cmd("normal! m'")
     vim.cmd("normal! mI")
-  end,
-})
-
-vim.api.nvim_create_autocmd({ "QuitPre" }, {
-  callback = function()
-    require("project_nvim.utils.history").write_projects_to_history()
   end,
 })
 
@@ -83,11 +52,6 @@ vim.api.nvim_create_autocmd({ "BufEnter" }, {
   end,
 })
 
-local function safe_path_name(path)
-  local name = path:gsub("/", "_")
-  return name
-end
-
 -- help window in right split if term is large enough
 vim.api.nvim_create_autocmd({ "FileType" }, {
   pattern = { "help", "man" },
@@ -100,6 +64,7 @@ vim.api.nvim_create_autocmd({ "FileType" }, {
   end,
 })
 
+-- check spelling in commit messages and READMEs
 vim.api.nvim_create_autocmd({ "FileType" }, {
   pattern = { "gitcommit", "markdown" },
   callback = function()
@@ -108,9 +73,7 @@ vim.api.nvim_create_autocmd({ "FileType" }, {
   end,
 })
 
--- -- Automatically close tab/vim when nvim-tree is the last window in the tab
--- vim.cmd "autocmd BufEnter * ++nested if winnr('$') == 1 && bufname() == 'NvimTree_' . tabpagenr() | quit | endif"
-
+-- auto resize splits when window is resized
 vim.api.nvim_create_autocmd({ "VimResized" }, {
   callback = function()
     vim.cmd("tabdo wincmd =")
@@ -123,13 +86,6 @@ vim.api.nvim_create_autocmd({ "TextYankPost" }, {
   end,
 })
 
-vim.api.nvim_create_autocmd({ "BufWritePre" }, {
-  pattern = { "*" },
-  callback = function()
-    vim.cmd("StripWhitespace")
-  end,
-})
-
 vim.api.nvim_create_autocmd({ "BufWritePost" }, {
   pattern = { "*.java" },
   callback = function()
@@ -137,19 +93,11 @@ vim.api.nvim_create_autocmd({ "BufWritePost" }, {
   end,
 })
 
+-- reset highlight groups before switching colorschemes
 vim.api.nvim_create_autocmd({ "ColorSchemePre" }, {
   pattern = { "*" },
   callback = function()
     vim.cmd([[highlight clear]])
-  end,
-})
-
-vim.api.nvim_create_autocmd({ "BufWritePost" }, {
-  pattern = { "kanagawa-kai.lua" },
-  callback = function()
-    vim.cmd("colorscheme kanagawa-kai")
-    -- refresh remote nvim instances
-    os.execute("nvr -cc 'colorscheme kanagawa-kai'")
   end,
 })
 
@@ -174,15 +122,6 @@ vim.api.nvim_create_autocmd({ "BufEnter" }, {
     })
   end,
 })
-vim.keymap.set("n", "<Leader>b", function()
-  local curbufnr = vim.api.nvim_get_current_buf()
-  local buflist = vim.api.nvim_list_bufs()
-  for _, bufnr in ipairs(buflist) do
-    if vim.bo[bufnr].buflisted and bufnr ~= curbufnr and (vim.fn.getbufvar(bufnr, "bufpersist") ~= 1) then
-      vim.cmd("bd " .. tostring(bufnr))
-    end
-  end
-end, { silent = true, desc = "Close unused buffers" })
 
 -- pause illuminate and colorizer on large files
 vim.api.nvim_create_autocmd({ "BufWinEnter" }, {
@@ -195,15 +134,7 @@ vim.api.nvim_create_autocmd({ "BufWinEnter" }, {
   end,
 })
 
--- override some plugin keymaps to noop
-vim.api.nvim_create_autocmd({ "BufWinEnter" }, {
-  callback = function()
-    vim.keymap.set({ "n", "v", "o" }, ")", function() end, { noremap = true, silent = true, buffer = true })
-    vim.keymap.set({ "n", "v", "o" }, "(", function() end, { noremap = true, silent = true, buffer = true })
-  end,
-})
-
--- -- refresh lualine on LSP progress
+-- refresh lualine on LSP progress
 vim.api.nvim_create_augroup("lualine_augroup", {
   clear = false,
 })
