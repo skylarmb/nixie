@@ -1,43 +1,4 @@
-live_config_reload = true
-  # bg_dim = '#131312',
-  # bg0 = '#1E1D1D',
-  # bg1 = '#212120',
-  # bg2 = '#252424',
-  # bg3 = '#292827',
-  # bg4 = '#2D2C2B',
-  # bg5 = '#302F2E',
-  #
-  # fg0 = '#E3CA9A',
-  # fg1 = '#DCBB7E',
-  # fg2 = '#D5AF67',
-  # fg3 = '#CFA351',
-  # fg4 = '#C9973A',
-  # fg5 = '#C49138',
-  # fg_bright = '#E8D2A9',
-  # fg_dim = '#C6AA77',
-  #
-  # debug = '#FF00FF',
-  #
-  # blue = '#848A68',
-  # cyan = '#799173',
-  # green = '#979764',
-  # green_dim = '#7E7B4C',
-  # grey0 = '#414035',
-  # grey1 = '#575547',
-  # grey2 = '#6c6b58',
-  # orange = '#D97E4A',
-  # orange_dim = '#8C5627',
-  # red = '#c48b6d',
-  # red_dim = '#B5412C',
-  # red_bright = '#D0654B',
-  # yellow_light = '#D2A860',
-  # yellow = '#E3A138',
-  # yellow_bright = '#E3A138',
-  # yellow_dim = '#D9923B',
-
 [colors.bright]
-# black = "#302F2E"
-# black = "#FF00FF"
 black = "#575547"
 white = "#E8D2A9"
 blue = "#848A68"
@@ -73,38 +34,24 @@ bright_foreground = "#E8D2A9"
 foreground = "#E3CA9A"
 
 [env]
-TERM = "alacritty"
 PATH = "$PATH:/run/current-system/sw/bin"
-#
+
+
 [font]
 builtin_box_drawing = true
-size = 32
+size = 24
 offset = { x = 0, y = 0 }
 
 [font.bold]
-# family = "DankMono Nerd Font Mono"
-family = "UbuntuMono Nerd Font"
-style = "Bold"
-#
+family = "DankMono Nerd Font Mono"
 [font.bold_italic]
-# family = "DankMono Nerd Font Mono"
-family = "UbuntuMono Nerd Font"
-style = "Bold Italic"
-#
+family = "DankMono Nerd Font Mono"
 [font.italic]
-# family = "DankMono Nerd Font Mono"
-family = "UbuntuMono Nerd Font"
-style = "Italic"
-# #
+family = "DankMono Nerd Font Mono"
 [font.normal]
-# family = "DankMono Nerd Font Mono"
-# family = "Monospace"
-family = "UbuntuMono Nerd Font"
-# style = "Regular"
-#
+family = "DankMono Nerd Font Mono"
 [hints]
 alphabet = "jfkdls;ahgurieowpq"
-#
 [[hints.enabled]]
 binding = { key = "U", mods = "Control|Shift" }
 command = "/usr/bin/open"
@@ -243,12 +190,17 @@ mods = "Alt"
 [scrolling]
 history = 100000
 #
-[shell]
-args = ["--login", "-c", "tmux new-session -A -s main -t main && /run/current-system/sw/bin/zsh --login"]
+[terminal.shell]
+args = ["--login", "-c", "tmux new-session -A -s main -t main"]
 program = "/bin/zsh"
 #
 [window]
-decorations = "buttonless"
+# decorations = "buttonless"
+
+[general]
+live_config_reload = true
+
+[terminal]
 # dynamic_padding = true
 # option_as_alt = "Both"
 # startup_mode = "Maximized"
