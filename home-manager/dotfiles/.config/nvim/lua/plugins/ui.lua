@@ -9,16 +9,24 @@ return {
   { "kevinhwang91/nvim-bqf", event = "VeryLazy" },
 
   -- unobstrusive notifier
+  -- {
+  --   "vigoux/notifier.nvim",
+  --   event = { "VimEnter" },
+  --   opts = {
+  --     components = {
+  --       "nvim", -- Nvim notifications (vim.notify and such)
+  --       "lsp",
+  --     },
+  --     component_name_recall = true,
+  --   },
+  -- },
+  -- Notifications
   {
-    "vigoux/notifier.nvim",
-    event = { "VimEnter" },
-    opts = {
-      components = {
-        "nvim", -- Nvim notifications (vim.notify and such)
-        "lsp",
-      },
-      component_name_recall = true,
-    },
+    "rcarriga/nvim-notify",
+    lazy = false,
+    config = function()
+      vim.notify = require("notify")
+    end,
   },
   -- dynamic identation guides
   {

@@ -5,7 +5,7 @@ return {
     cmd = { "NvimTreeFindFileToggle" },
     opts = {
       sync_root_with_cwd = true,
-      respect_buf_cwd = true,
+      respect_buf_cwd = false,
       update_focused_file = {
         enable = true,
         update_root = false,
@@ -39,6 +39,9 @@ return {
           },
         },
       },
+      filters = {
+        dotfiles = false,
+      },
       diagnostics = {
         enable = true,
         show_on_dirs = true,
@@ -53,7 +56,7 @@ return {
         },
       },
       view = {
-        width = 30,
+        width = 40,
       },
       on_attach = function(bufnr)
         local api = require("nvim-tree.api")
@@ -80,6 +83,13 @@ return {
         vim.keymap.set("n", "<CR>", api.node.open.no_window_picker, opts("Open"))
         vim.keymap.set("n", "o", api.node.run.system, opts("Run System"))
         vim.keymap.set("n", "?", api.tree.toggle_help, opts("Help"))
+
+        -- set root to git root if it exists
+        local git_root = vim.fn.system("git rev-parse --show-toplevel"):gsub("%s+", "")
+        local exists = vim.fn.isdirectory
+        if exists(git_root) ~= 0 then
+          vim.cmd("cd " .. git_root)
+        end
       end,
     },
   },

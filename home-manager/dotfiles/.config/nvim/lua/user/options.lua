@@ -1,9 +1,11 @@
 -- local utils = require("user/utils")
 HOME = os.getenv("HOME")
 
+vim.opt.background = "dark"
+vim.opt.termguicolors = true
+
 vim.opt.pumblend = 0
 vim.opt.winblend = 0
-vim.opt.termguicolors = true
 vim.opt.sessionoptions = "blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal"
 vim.opt.shada = [['50,f1,<100,s50,:50,/50,@50,h]] -- default value: "!,'100,<50,s10,h"
 vim.opt.backup = true -- creates a backup file
@@ -53,17 +55,6 @@ vim.opt.linebreak = true
 -- show window title
 vim.opt.title = true
 
--- DIRs
-vim.opt.autochdir = true -- auto change dir when opening a file
-
--- backups / undo history
--- vim.opt.undodir = HOME .. "/.local/share/nvim/undo//"
--- vim.opt.directory = HOME .. "/.local/share/nvim/swap//"
--- vim.opt.undofile = true
--- vim.opt.backup = true
--- do not use swap file (backup + undofile is enough)
--- vim.opt.swapfile = false
-
 -- files to ignore
 vim.opt.wildmode = "list:longest,list:full"
 vim.opt.wildignore:append("*.o,*.obj,*.rbc,*.class,vendor/gems/*,*.pb.go")
@@ -102,12 +93,6 @@ vim.opt.list = true
 vim.opt.listchars = "tab:▸\\ ,trail:·,extends:»,precedes:«,nbsp:␣"
 -- distinct wrapping indicator
 vim.opt.showbreak = " ↳ "
--- formatting preferences for all text, regardless of language/LSP
--- q: comment formatting
--- n: use numbered lists
--- j: remove comments when joining lines
--- 1: don't break after one-letter word
--- vim.opt.formatoptions = "qnj1"
 
 -------------- SEARCH --------------
 
@@ -121,9 +106,9 @@ vim.g.ag_working_path_mode = "r"
 -- make mergetool use 3 way split
 vim.g.mergetool_layout = "bmr"
 
--- vim.g.neovide_scale_factor = 1.2
+vim.g.neovide_scale_factor = 1.2
 -- GUI font
-vim.o.guifont = "DankMono Nerd Font Mono:h14"
+vim.o.guifont = "DankMono Nerd Font Mono:h20"
 vim.opt.guicursor:append("a:blinkon0")
 vim.opt.linespace = 0
 
@@ -133,7 +118,6 @@ vim.opt.linespace = 0
 --   return string.format("%x", math.floor(255 * (vim.g.transparency or 0.8)))
 -- end
 vim.g.neovide_transparency = 1.0
--- vim.g.transparency = 1.0
 vim.g.neovide_background_color = "#131312"
 vim.g.neovide_scroll_animation_length = 0.3
 vim.g.neovide_hide_mouse_when_typing = true
@@ -146,4 +130,14 @@ vim.g.neovide_floating_blur_amount_x = 1.0
 vim.g.neovide_floating_blur_amount_y = 1.0
 vim.g.neovide_confirm_quit = true
 vim.g.neovide_remember_window_size = true
+
+-- vim.g.neovide_floating_corner_radius = 0.0
+
+-- vim.g.neovide_floating_blur_amount_x = 2.0
+-- vim.g.neovide_floating_blur_amount_y = 2.0
+
+vim.g.neovide_floating_shadow = true
+-- vim.g.neovide_floating_z_height = 100
+-- vim.g.neovide_light_radius = 3
+
 -- vim.g.neovide_fullscreen = true

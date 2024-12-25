@@ -1,4 +1,3 @@
-
 return {
   {
     "nvim-telescope/telescope.nvim",
@@ -19,11 +18,11 @@ return {
         extensions = {
           fzf = {
             fuzzy = true, -- false will only do exact matching
-            override_generic_sorter = false, -- override the generic sorter
-            override_file_sorter = false, -- override the file sorter
+            override_generic_sorter = true, -- override the generic sorter
+            override_file_sorter = true, -- override the file sorter
             case_mode = "ignore_case", -- or "ignore_case" or "smart_case"
           },
-          notify = {}
+          notify = {},
         },
         defaults = {
           prompt_prefix = " ",
@@ -52,7 +51,6 @@ return {
             "rg",
             -- added
             "--no-config",
-            "--hidden",
             "--follow",
             -- defaults
             "--color=never",
