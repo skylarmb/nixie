@@ -127,6 +127,7 @@ leader("W", "<cmd>StripWhitespace<CR>")
 
 ------------ Search ------------
 n("<C-p>", "<cmd>Telescope find_files<cr>")
+n("<C-g>", "<cmd>Telescope git_files<cr>")
 n("<C-b>", "<cmd>Telescope buffers<CR>")
 n("<c-f>", "<cmd>Telescope live_grep<CR>")
 leader("s", "/\\%V", { silent = false })
@@ -148,7 +149,7 @@ n("f", "*N")
 -- non-recursive . motion
 n(",", ".n")
 -- Ack / ripgrep
-n("F", cmd(":Ack!", cword), { silent = false })
+n("F", cmd(":Rg", cword), { silent = false })
 leader("f", ":Ack ", { silent = false, remap = true })
 leader("s", ":Acks /" .. expand("%s") .. "//<left><left>", { silent = false })
 -- ack lines in listed buffers
@@ -221,5 +222,5 @@ n("<C-t>", "<cmd>ToggleTerm<cr><insert>")
 
 ----- LSP -----
 n("ge", function()
- vim.diagnostic.goto_next(diag_any)
+  vim.diagnostic.goto_next(diag_any)
 end)

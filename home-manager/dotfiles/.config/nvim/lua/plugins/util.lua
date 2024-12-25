@@ -13,4 +13,5 @@ return {
       disable_when_zoomed = true, -- defaults to false
     },
   },
+  { "akinsho/toggleterm.nvim", version = "*", config = true },
 }

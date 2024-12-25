@@ -47,34 +47,35 @@ local smart_goto_definition = function()
 end
 
 -- Text Box Border Wrapper Function
-local create_box_border = function(contents)
-  if not contents or #contents == 0 then
-    return {}
-  end
-  local max_width = 0 -- Find the longest line to determine box width
-  for _, line in ipairs(contents) do
-    max_width = math.max(max_width, #line)
-  end
-  local box_width = max_width + 2 -- Add 2 for left and right padding
-  local result = {} -- Create the bordered box
-  table.insert(result, "╭" .. string.rep("─", box_width) .. "╮") -- Top border
-  for _, line in ipairs(contents) do -- Content lines
-    local padded_line = line .. string.rep(" ", max_width - #line) -- Right-pad the line to max_width
-    table.insert(result, "│ " .. padded_line .. " │")
-  end
-  table.insert(result, "╰" .. string.rep("─", box_width) .. "╯") -- Bottom border
-  return result
-end
+-- local create_box_border = function(contents)
+--   if not contents or #contents == 0 then
+--     return {}
+--   end
+--   local max_width = 0 -- Find the longest line to determine box width
+--   for _, line in ipairs(contents) do
+--     max_width = math.max(max_width, #line)
+--   end
+--   local box_width = max_width + 2 -- Add 2 for left and right padding
+--   local result = {} -- Create the bordered box
+--   table.insert(result, "╭" .. string.rep("─", box_width) .. "╮") -- Top border
+--   for _, line in ipairs(contents) do -- Content lines
+--     local padded_line = line .. string.rep(" ", max_width - #line) -- Right-pad the line to max_width
+--     table.insert(result, "│ " .. padded_line .. " │")
+--   end
+--   table.insert(result, "╰" .. string.rep("─", box_width) .. "╯") -- Bottom border
+--   return result
+-- end
 
 local setup_cmp = function()
   local cmp = require("cmp")
   require("copilot").setup({
     suggestion = { enabled = false },
     panel = { enabled = false },
+    -- copilot_node_command = "~/.nvm/versions/node/v20.11.1/bin/node",
   })
   require("copilot_cmp").setup()
   local popup_style = {
-    border = "shadow",
+    border = "rounded",
     col_offset = -2,
     scrollbar = false,
     scrolloff = 0,
@@ -88,10 +89,10 @@ local setup_cmp = function()
     },
     sources = cmp.config.sources({
       { name = "luasnip" },
-      { name = "copilot" },
       { name = "nvim_lsp" },
-      { name = "path" },
       { name = "buffer" },
+      { name = "copilot" },
+      { name = "path" },
     }),
     experimental = {
       ghost_text = true,
@@ -220,8 +221,6 @@ local on_attach = function(client, bufnr)
 
   -- fix everything
   keymap.nvo("gf", function()
-    vim.cmd("FormatWriteLock")
-
     local filetype = vim.bo[bufnr].filetype
     if vim.tbl_contains({ "typescript", "typescriptreact", "javascript", "javascriptreact" }, filetype) then
       local ts_tools = require("typescript-tools.api")
@@ -248,19 +247,72 @@ return {
   {
     "pmizio/typescript-tools.nvim",
     dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
-    opts = {},
+    config = function()
+      require("typescript-tools").setup({
+        settings = {
+          -- spawn additional tsserver instance to calculate diagnostics on it
+          separate_diagnostic_server = true,
+          -- "change"|"insert_leave" determine when the client asks the server about diagnostic
+          publish_diagnostic_on = "insert_leave",
+          -- array of strings("fix_all"|"add_missing_imports"|"remove_unused"|
+          -- "remove_unused_imports"|"organize_imports") -- or string "all"
+          -- to include all supported code actions
+          -- specify commands exposed as code_actions
+          expose_as_code_action = {},
+          -- string|nil - specify a custom path to `tsserver.js` file, if this is nil or file under path
+          -- not exists then standard path resolution strategy is applied
+          tsserver_path = nil,
+          -- specify a list of plugins to load by tsserver, e.g., for support `styled-components`
+          -- (see 💅 `styled-components` support section)
+          tsserver_plugins = {},
+          -- this value is passed to: https://nodejs.org/api/cli.html#--max-old-space-sizesize-in-megabytes
+          -- memory limit in megabytes or "auto"(basically no limit)
+          tsserver_max_memory = "auto",
+          -- described below
+          tsserver_format_options = {},
+          tsserver_file_preferences = {},
+          -- locale of all tsserver messages, supported locales you can find here:
+          -- https://github.com/microsoft/TypeScript/blob/3c221fc086be52b19801f6e8d82596d04607ede6/src/compiler/utilitiesPublic.ts#L620
+          tsserver_locale = "en",
+          -- mirror of VSCode's `typescript.suggest.completeFunctionCalls`
+          complete_function_calls = true,
+          include_completions_with_insert_text = true,
+          -- CodeLens
+          -- WARNING: Experimental feature also in VSCode, because it might hit performance of server.
+          -- possible values: ("off"|"all"|"implementations_only"|"references_only")
+          code_lens = "off",
+          -- by default code lenses are displayed on all referencable values and for some of you it can
+          -- be too much this option reduce count of them by removing member references from lenses
+          disable_member_code_lens = true,
+          -- JSXCloseTag
+          -- WARNING: it is disabled by default (maybe you configuration or distro already uses nvim-ts-autotag,
+          -- that maybe have a conflict if enable this feature. )
+          jsx_close_tag = {
+            enable = false,
+            filetypes = { "javascriptreact", "typescriptreact" },
+          },
+        },
+      })
+    end,
+  },
+  {
+    "neovim/nvim-lspconfig",
+    -- opts = function(_, opts)
+    --   opts.diagnostics = {
+    --     float = {
+    --       border = "rounded",
+    --     },
+    --   }
+    --   return opts
+    -- end,
   },
 
   -- floating previews for LSP definitions, references etc
   {
     "williamboman/mason-lspconfig.nvim",
     dependencies = {
-      {
-        "williamboman/mason.nvim",
-      },
-      {
-        "neovim/nvim-lspconfig",
-      },
+      "williamboman/mason.nvim",
+      "neovim/nvim-lspconfig",
     },
 
     config = function()
@@ -271,13 +323,13 @@ return {
       })
 
       -- Override floating window appearance to add both border + shadow
-      local orig_util_open_floating_preview = vim.lsp.util.open_floating_preview
-      function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
-        opts = opts or {}
-        opts.border = "shadow"
-        contents = create_box_border(contents)
-        return orig_util_open_floating_preview(contents, syntax, opts, ...)
-      end
+      -- local orig_util_open_floating_preview = vim.lsp.util.open_floating_preview
+      -- function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
+      --   opts = opts or {}
+      --   opts.border = "shadow"
+      --   contents = create_box_border(contents)
+      --   return orig_util_open_floating_preview(contents, syntax, opts, ...)
+      -- end
 
       require("mason-lspconfig").setup_handlers({
         -- The first entry (without a key) will be the default handler
@@ -288,12 +340,9 @@ return {
             on_attach = on_attach,
           })
         end,
-        -- Next, you can provide a dedicated handler for specific servers.
-        -- For example, a handler override for the `rust_analyzer`:
-        ["rust_analyzer"] = function()
-          require("rust-tools").setup({})
-        end,
       })
+
+      require("lspconfig").gleam.setup({})
 
       setup_cmp()
     end,
@@ -311,6 +360,7 @@ return {
         log_level = vim.log.levels.WARN,
         filetype = {
           lua = { require("formatter.filetypes.lua").stylua },
+          json = es_formatters,
           typescript = es_formatters,
           typescriptreact = es_formatters,
           javascript = es_formatters,

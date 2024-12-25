@@ -5,10 +5,30 @@
 --   end,
 -- })
 
+vim.api.nvim_create_autocmd({ "BufWritePost" }, {
+  pattern = { "~/.config/kitty/kitty.conf" },
+  callback = function()
+    vim.cmd(":silent !kill -SIGUSR1 $(pgrep -a kitty)")
+  end,
+})
+
+vim.api.nvim_create_augroup("__formatter__", { clear = true })
+vim.api.nvim_create_autocmd("BufWritePost", {
+  group = "__formatter__",
+  command = ":FormatWrite",
+})
+
 vim.api.nvim_create_autocmd({ "BufEnter" }, {
   pattern = { "*.Jenkinsfile", "Jenkinsfile" },
   callback = function()
     vim.cmd("set ft=groovy")
+  end,
+})
+
+vim.api.nvim_create_autocmd({ "BufEnter" }, {
+  pattern = { ".env", ".env.*" },
+  callback = function()
+    vim.cmd("set ft=bash")
   end,
 })
 
@@ -123,16 +143,16 @@ vim.api.nvim_create_autocmd({ "BufEnter" }, {
   end,
 })
 
--- pause illuminate and colorizer on large files
-vim.api.nvim_create_autocmd({ "BufWinEnter" }, {
-  callback = function()
-    local line_count = vim.api.nvim_buf_line_count(0)
-    if line_count >= 1000 then
-      vim.cmd("IlluminatePauseBuf")
-      vim.notify("Illuminate paused")
-    end
-  end,
-})
+-- -- pause illuminate and colorizer on large files
+-- vim.api.nvim_create_autocmd({ "BufWinEnter" }, {
+--   callback = function()
+--     local line_count = vim.api.nvim_buf_line_count(0)
+--     if line_count >= 1000 then
+--       vim.cmd("IlluminatePauseBuf")
+--       vim.notify("Illuminate paused")
+--     end
+--   end,
+-- })
 
 -- refresh lualine on LSP progress
 vim.api.nvim_create_augroup("lualine_augroup", {
