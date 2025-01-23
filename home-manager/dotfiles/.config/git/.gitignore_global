@@ -11,3 +11,4 @@ Session.vim
 .idea
 .*_idea
 nohup.out
+session_control.json
