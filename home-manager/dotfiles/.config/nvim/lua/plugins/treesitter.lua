@@ -39,9 +39,11 @@ return {
   },
   -- treesitter powered auto-closing tags for html, tsx, etc.
   {
-    "windwp/nvim-ts-autotag", event = "InsertEnter", config = function()
-    require("nvim-ts-autotag").setup()
-  end
+    "windwp/nvim-ts-autotag",
+    event = "InsertEnter",
+    config = function()
+      require("nvim-ts-autotag").setup()
+    end,
   },
   -- context aware comment formatting, e.g. for jsx render() fn
   -- { "JoosepAlviste/nvim-ts-context-commentstring", event = "VeryLazy" },

@@ -7,14 +7,12 @@ zmodload zsh/parameter
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
-
-# nix home-manager
-[[ ! -f ~/.nix-profile/etc/profile.d/hm-session-vars.sh ]] || source ~/.nix-profile/etc/profile.d/hm-session-vars.sh
+# export POWERLEVEL9K_INSTANT_PROMPT=quiet
+# if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+#   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+# fi
+# # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+# [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 # ---------------- SHELL ----------------
 
@@ -39,11 +37,11 @@ COMPLETION_WAITING_DOTS="true"
 
 # compinit, runs once a day
 autoload -Uz compinit
-for dump in ~/.zcompdump(N.mh+24); do
-  compinit
-done
-compinit -C
-
+if [[ -n ~/.zcompdump(#qN.mh+24) ]]; then
+	compinit;
+else
+	compinit -C;
+fi;
 # easily rename filenames to kebab-case
 autoload -Uz zmv
 autoload -Uz edit-command-line
@@ -56,6 +54,7 @@ bindkey "^X^X" expand-all
 
 ## Private
 # .private should define:
+# - $WORKSPACE
 # - $GITHUB_TOKEN
 # - $GITHUB_EMAIL
 # - $TMUX_DEFAULT_PATH
@@ -65,13 +64,12 @@ if [ -d "$HOME/.private" ]; then
 fi
 
 # ---------------- ENV ----------------
-# fpath=($fpath "$HOME/.zfunctions")
+fpath=($fpath "$HOME/.zfunctions")
 
 # shell
 export GPG_TTY=$(tty)
 export PERIOD="1"
 export EDITOR='nvim'
-export SUDO_EDITOR='nvim'
 export LESS='--RAW-CONTROL-CHARS'
 export THEME="$(tmux show-environment -g THEME 2>/dev/null | sed 's/THEME=//g')"
 if command -v lesspipe.sh &>/dev/null; then
@@ -84,8 +82,6 @@ export BAT_THEME="base16"
 # fi
 
 # PATH
-
-export WORKSPACE="$HOME/workspace"
 export ANDROID_HOME="~/Library/Android/sdk"
 export GIT_EDITOR="$EDITOR"
 export GO111MODULE=on
@@ -94,14 +90,14 @@ export GOBIN="$GOPATH/bin";
 export LIBRARY_PATH=$LIBRARY_PATH:/usr/local/opt/openssl/lib/
 export MANPATH="/usr/local/man:$MANPATH"
 export PATH="$HOME/.gem/bin:$PATH"
-export PATH="$HOME/bin:$PATH"
-export PATH="/usr/local/bin:$PATH"
-export PATH="/run/wrappers/bin:$PATH"
+export PATH="$HOME/bin:/usr/local/bin:$PATH"
 export PATH="$PATH:$GOBIN";
 export PATH="$PATH:/Applications/Sublime Text.app/Contents/SharedSupport/bin"
 export PATH="$PATH:/usr/local/go/bin"
+export PATH="$PATH:$HOME/.local/bin"
 export PATH="$PATH:$HOME/.cargo/bin"
-export PATH="$PATH:$HOME/bin"
+export PATH="$PATH:$HOME/dotfiles/bin"
+export PATH="$PATH:/Applications/Postgres.app/Contents/Versions/latest/bin"
 
 # pnpm
 export PNPM_HOME="$HOME/Library/pnpm"
@@ -111,14 +107,18 @@ case ":$PATH:" in
 esac
 # pnpm end
 
-# brew
-# eval "$(/opt/homebrew/bin/brew shellenv)"
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
 
-# # pyenv
-# export PATH="$HOME/.pyenv/bin:$PATH"
-# if command -v pyenv 1>/dev/null 2>&1; then
-#   eval "$(pyenv init -)"
-# fi
+# brew
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
+# pyenv
+export PATH="$HOME/.pyenv/bin:$PATH"
+if command -v pyenv 1>/dev/null 2>&1; then
+  eval "$(pyenv init -)"
+fi
 
 # config
 export BAT_PAGER="less -F -x4"
@@ -129,139 +129,114 @@ export FZF_CTRL_R_OPTS="--reverse --preview 'echo {}' --preview-window down:3:hi
 export FZF_DEFAULT_COMMAND='rg -l --follow --color=never --hidden ""'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export BAT_PREVIEW_COMMAND="bat --color=always --paging=never --line-range :200 {}"
-export FZF_DEFAULT_OPTS="--ansi --no-mouse --inline-info --border --multi"
+export FZF_DEFAULT_OPTS="--ansi --no-mouse --inline-info --border"
 export TMUX_FZF_OPTIONS="-p -w 75% -h 75% -m"
 export TMUX_FZF_WINDOW_FORMAT="[#{window_name}] #{pane_current_command}"
 export TMUX_PLUGIN_MANAGER_PATH="$HOME/.tmux/plugins"
 # export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc"
-
-# custom vars
-# export NVIM_DAEMON_SOCK=~/.cache/nvim/server.sock
-export DEFAULT_USER="$(whoami)"
-export DOTFILES='/home/skylar/nixie/home-manager/dotfiles'
+export DEFAULT_USER=$USER
 
 # ---------------- ALIAS ----------------
 
 # alias v='nv'
-# alias ag='ag --path-to-ignore ~/.ignore'
-# alias ccat='cat'
-# alias docker="podman"
-# alias pip="$(pyenv which pip3)"
-# alias python="$(pyenv which python3)"
-# switch between light and dark themes
-alias :Man='f(){ nvim "+:Man $* | only" };f'
-alias :h='nvim_help'
+alias v='nvim'
+alias vi='v' # dont open mega-broken vi/vim
+alias vim='v' # dont open mega-broken vi/vim
+alias vo='FZF_DEFAULT_COMMAND="git ls-files | sort -nr" fzf_edit_file'
+alias b='git checkout -b'
+alias voo='fzf_edit_file'
+alias vc='fzf_edit_grep'
+alias q='exit'
+alias qq='q'
+alias qa='q'
 alias :q='q'
 alias :qa='q'
-alias aa='cp ~/notes/all_around.template.md ~/notes/candidates/new.md && v ~/notes/candidates/new.md'
-alias alc='dotfiles && nvim .config/alacritty/alacritty.toml'
-alias brewfast='HOMEBREW_NO_AUTO_UPDATE=1 HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK=1 brew'
-alias cat='bat --style=plain,header,grid'
-alias cc='git rev-parse HEAD | pbcopy'
-alias ccat='command cat'
-alias ccwd='pwd | pbcopy'
+alias :h='nvim_help'
+alias :man='f(){ nvim "+:Man $* | only" };f'
+alias tt="nvim +'execute \"ToDoTxtTasksToggle\" | wincmd o'"
+alias tn="nvim +'execute \"ToDoTxtTasksToggle\" | wincmd o | execute \"ToDoTxtTasksCapture\"'"
+alias workspace='cd $WORKSPACE'
+alias dotfiles='cd ~/dotfiles'
+alias vimc='cd ~/.config/nvim && nvim . && cd -'
+alias vimcd='cd ~/.config/nvim && v .'
+alias zc='v ~/.zshrc && exec zsh'
+alias gitc='v ~/.gitconfig'
+alias zcp='v ~/.private/.zshrc && exec zsh'
+alias alc='v ~/.config/alacritty/alacritty.toml'
+alias tc='v ~/.config/tmux/tmux.conf'
+alias tcc='v ~/.config/tmux/colorscheme.conf'
+alias zu='exec zsh'
 alias dka='docker kill $(docker ps -q)'
-alias dnd='makoctl mode -a do-not-disturb'
-alias dndoff='makoctl mode -r do-not-disturb'
-alias dotfiles='cd $DOTFILES'
-alias fgf='fg %$(jobs | fzf | grep -Eo "[0-9]{1,}" | head -1)'
+alias vimwipe='rm -rf $HOME/.vim/tmp/swap; mkdir -p $HOME/.vim/tmp/swap'
 alias g='git'
-alias gitc='dotfiles && nvim .gitconfig'
-alias hs='home-manager switch'
-alias hyc='dotfiles && nvim .config/hypr/hyprland.conf'
-alias hyc='dotfiles && nvim .config/hypr/hyprland.conf'
+alias cc='git rev-parse HEAD | pbcopy'
+alias ccwd='pwd | pbcopy'
+alias unwip='git reset --soft HEAD~'
+alias vm='v `git --no-pager diff --name-only --diff-filter=U`'
+alias todo='gg "todo before"'
 alias installglobals='npm install -g prettier diff-so-fancy neovim npm-why serve serverless nodemon markdown-toc ts-node lebab'
+alias scr='v $WORKSPACE/scratchpad/scratch.tsx'
+# alias ccat='cat'
+alias cat='bat --style=plain,header,grid'
+alias ccat='command cat'
+# alias ag='ag --path-to-ignore ~/.ignore'
 alias notes='cd ~/notes'
-alias nxb='sudo nixos-rebuild switch'
-alias nxc='sudo -Es nvim /etc/nixos/configuration.nix'
-alias nxd='sudo nix-env --profile /nix/var/nix/profiles/system --delete-generations'
-alias nxl='sudo nix-env --profile /nix/var/nix/profiles/system --list-generations'
-alias hc='nvim $HOME/nixie/home-manager/home.nix'
-alias open='xdg-open'
+alias aa='cp ~/notes/all_around.template.md ~/notes/candidates/new.md && v ~/notes/candidates/new.md'
+alias todo='v ~/notes/life.todo.md'
+alias fgf='fg %$(jobs | fzf | grep -Eo "[0-9]{1,}" | head -1)'
 alias p='pnpm'
 alias pi='pnpm install'
 alias plr='git checkout origin/master **/pnpm-lock.yaml && pnpm install'
 alias prs='gh pr status'
-alias psg='ps aux | grep'
-alias q='exit'
-alias qa='q'
-alias qq='q'
-alias scr='v $WORKSPACE/scratchpad/scratch.tsx'
-alias ta='tmux new-session -A -s main -t main'
-alias tc='dotfiles && nvim .config/tmux/tmux.conf'
-alias tcc='dotfiles && nvim .config/tmux/colorscheme.conf'
-alias td="export THEME=dark; tmux set-environment THEME 'dark'; tmux source-file ~/.tmux.conf; alacritty-themes Atelierdune.dark;"
-alias tl="export THEME=light; tmux set-environment THEME 'light'; tmux source-file ~/.tmux.conf; alacritty-themes Atelierdune.light;"
-alias tm="tmux select-layout main-horizontal; tmux resize-pane -y80% -t 1;"
-alias tn="nvim +'execute \"ToDoTxtTasksToggle\" | wincmd o | execute \"ToDoTxtTasksCapture\"'"
-alias todo='nvim ~/todo.md'
-alias tt="nvim +'execute \"ToDoTxtTasksToggle\" | wincmd o'"
-alias unwip='git reset --soft HEAD~'
-alias v='nvim'
-alias vc='fzf_edit_grep'
-alias vi='v' # dont open mega-broken vi/vim
-alias vim='v' # dont open mega-broken vi/vim
-alias vimc='dotfiles && nvim .config/nvim'
-alias vimcd='dotfiles && cd .config/nvim && nvim .'
-alias vimwipe='rm -rf $HOME/.vim/tmp/swap; mkdir -p $HOME/.vim/tmp/swap'
-alias vm='v `git --no-pager diff --name-only --diff-filter=U`'
-alias vo='FZF_DEFAULT_COMMAND="git ls-files | sort -nr" fzf_edit_file'
-alias voo='fzf_edit_file'
 alias w='~/.tmux/plugins/tmux-fzf/scripts/window.sh switch'
-alias workspace='cd $WORKSPACE'
-alias zc='dotfiles && nvim .zshrc && exec zsh'
-alias zcp='dotfiles && nvim .private/.zshrc && exec zsh'
-alias zu='exec zsh'
-alias fpi='flatpak install flathub'
+alias ta='tmux new-session -A -s main -t main'
+alias psg='ps aux | grep'
+# switch between light and dark themes
+alias tl="export THEME=light; tmux set-environment THEME 'light'; tmux source-file ~/.tmux.conf; alacritty-themes Atelierdune.light;"
+alias td="export THEME=dark; tmux set-environment THEME 'dark'; tmux source-file ~/.tmux.conf; alacritty-themes Atelierdune.dark;"
+alias tm="tmux select-layout main-horizontal; tmux resize-pane -y80% -t 1;"
+# alias python="$(pyenv which python3)"
+# alias pip="$(pyenv which pip3)"
+alias brewfast='HOMEBREW_NO_AUTO_UPDATE=1 HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK=1 brew'
+alias nd="nix develop -c $SHELL"
+alias pr='poetry run'
+alias dr='docker run -it --rm'
+alias dive="docker run -ti --rm  -v /var/run/docker.sock:/var/run/docker.sock ghcr.io/joschi/dive"
 
 # ---------------- PLUGINS ----------------
-# export NVM_LAZY_LOAD=true
-# export NVM_COMPLETION=true
-# export NVM_AUTO_USE=true
-# export NVM_LAZY_LOAD_EXTRA_COMMANDS=('vim', 'nvim', 'v')
-# export NVM_DIR="$HOME/.nvm"
-# # this is overwritten later by nvm lazy load
-# export NVM_DEFAULT="$(cat $NVM_DIR/alias/default)"
-# export NVM_BIN="$NVM_DIR/versions/node/v$NVM_DEFAULT/bin"
-# export PATH="$NVM_BIN:$PATH"
-
-# source $HOME/antigen.zsh
 #
 # if [[ -n "$DEBUG_ANTIGEN" ]]; then
 #   cat $ANTIGEN_LOG
 # fi
 # If there is cache available
-# if [[ -f ${ADOTDIR:-$HOME/.antigen}/.cache/.zcache-payload ]]; then
-#     # Load bundles statically
-#     source ${ADOTDIR:-$HOME/.antigen}/.cache/.zcache-payload
-#     # You will need to call compinit
-#     # autoload -Uz compinit
-#     # compinit -d ${HOME}/.zcompdump
-# else
-#     # If there is no cache available, load normally and create cache
-#     source $HOME/antigen.zsh
-#     antigen init $HOME/.antigenrc
-# fi
+if [[ -f ${ADOTDIR:-$HOME/.antigen}/.cache/.zcache-payload ]]; then
+    # Load bundles statically
+    source ${ADOTDIR:-$HOME/.antigen}/.cache/.zcache-payload
+    # You will need to call compinit
+    autoload -Uz compinit
+    compinit -d ${HOME}/.zcompdump
+else
+    # If there is no cache available, load normally and create cache
+    source $HOME/antigen.zsh
+    antigen init $HOME/.antigenrc
+fi
 
-source $HOME/antigen.zsh
-antigen init $HOME/.antigenrc
 bindkey '^Xh' _complete_help
 # bindkey '\t' autosuggest-accept
 
-zstyle ':completion:*'                accept-exact '*(N)'
-zstyle ':completion:*'                use-cache yes
-zstyle ':completion::complete:*'      cache-path ~/
 zstyle ':completion:*:git-checkout:*' sort false
 zstyle ':completion:*:descriptions'   format '[%d]'
 zstyle ':completion:*'                list-colors ${(s.:.)LS_COLORS}
-zstyle ':fzf-tab:complete:*:*'        fzf-preview 'less ${(Q)realpath}'
+zstyle ':completion:*'                menu no
+zstyle ':fzf-tab:complete:cd:*'       fzf-preview 'eza --all -1 --color=always $realpath'
+zstyle ':fzf-tab:complete:eza:*'      fzf-preview 'eza --all -1 --color=always $realpath'
+zstyle ':fzf-tab:*'                   fzf-flags --bind=enter:accept --min-height=20 --height=20 --border
 zstyle ':fzf-tab:*'                   continuous-trigger 'tab'
 zstyle ':fzf-tab:*'                   accept-line enter
-zstyle ':fzf-tab:*'                   switch-group ',' '.'
-zstyle ':fzf-tab:*:'                  prefix ''
-zstyle ':fzf-tab:*:'                  fzf-min-height 20
-zstyle ':fzf-tab:*:'                  fzf-pad 4
-zstyle ':fzf-tab:*'                   popup-min-size "$(($(tput cols) - 10))" 20
+
+# switch group using `<` and `>`
+zstyle ':fzf-tab:*' switch-group '<' '>'
+
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 enable-fzf-tab
 
@@ -301,17 +276,17 @@ switch_to_app() {
 }
 
 alias ff='fd'
-alias _exa='eza --all --oneline --group-directories-first'
-alias ls='_exa'
-alias cls='clear;_exa'
-alias clsa='clear;_exa -a'
-alias lsa='_exa -lah'
+alias _eza='eza --all --oneline --group-directories-first --no-user --git'
+alias ls='_eza'
+alias cls='clear;_eza'
+alias clsa='clear;_eza -a'
+alias lsa='_eza -lah'
 
 t() {
   local d="${1}"
   [[ "${d}" =~ ^[0-9]+$ ]] && shift || d=1
   local t="${1:-.}"
-  _exa -T -L$d $t
+  _eza -T -L$d $t
 }
 
 git_nvim(){
@@ -433,10 +408,10 @@ fzf_checkout_pr() {
 
 alias vlf='fzf_last_commit'
 fzf_last_commit() {
-  nvim "$(git rev-parse --show-toplevel)/$(git diff HEAD^ HEAD --name-only | fzf)"
+  v "$(git rev-parse --show-toplevel)/$(git diff HEAD^ HEAD --name-only | fzf)"
 }
 
-alias vpr='nvim $(fzf_all_pr_files)'
+alias vpr='v $(fzf_all_pr_files)'
 fzf_all_pr_files() {
   echo "$(git rev-parse --show-toplevel)/$(git diff master...HEAD --name-only | fzf)"
 }
@@ -483,7 +458,9 @@ grep_inuse_ports() {
 }
 
 replace() {
-  ag -iQ -l "$1" | xargs sed -i "" -e "s|$1|$2|g" --
+    local search_pattern=$1
+    local replacement=$2
+    rg -l "$search_pattern" | xargs -I{} sed -i "s/$search_pattern/$replacement/g" {}
 }
 
 # ag / the_silver_searcher
@@ -590,12 +567,12 @@ toggle_tmux_popup() {
   fi
 }
 
-# _nvr="$(which nvr)"
-# nvr_socket="/tmp/nvimsocket"
-# nvrd() {
-#   nohup nvim --listen ${nvr_socket} --headless >/dev/null &
-#   nvim --server ${nvr_socket} --remote-send ":e /tmp/.KEEPALIVE<CR>:call KeepAlive()<CR>"
-# }
+_nvr="$(which nvr)"
+nvr_socket="/tmp/nvimsocket"
+nvrd() {
+  nohup nvim --listen ${nvr_socket} --headless >/dev/null &
+  nvim --server ${nvr_socket} --remote-send ":e /tmp/.KEEPALIVE<CR>:call KeepAlive()<CR>"
+}
 
 # get the hex bytes of a string, e.g. for getting tmux/alacritty key codes
 gethex(){
@@ -619,8 +596,12 @@ gs(){
   fi
 }
 
-calc(){
-  echo "${@}" | bc -l
+# re-instal nix after a system update
+renix() {
+  sudo mv /etc/zshrc.backup-before-nix /etc/zshrc
+  sudo mv /etc/bash.bashrc.backup-before-nix /etc/bash.bashrc
+  sudo mv /etc/bashrc.backup-before-nix /etc/bashrc
+  sh <(curl -L https://nixos.org/nix/install)
 }
 
 # Profiler
@@ -628,20 +609,27 @@ if [[ -n "$DEBUG_ZPROF" ]]; then
   zprof
 fi
 
-# export NVM_DIR="$HOME/.nvm"
-# [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-# [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
-# Add Kurtosis command-line completion
-# source <(kurtosis completion zsh)
-# compdef _kurtosis kurtosis
-
-# bun
-export BUN_INSTALL="$HOME/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
+# Kardinal CLI config
+export PATH=$PATH:/Users/skylar/.local/bin
+autoload -U +X compinit && compinit
+source <(/Users/skylar/.local/bin/kardinal completion zsh)
 
 # bun completions
-[ -s "/home/skylar/.bun/_bun" ] && source "/home/skylar/.bun/_bun"
+[ -s "/Users/skylar/.bun/_bun" ] && source "/Users/skylar/.bun/_bun"
 
-# 1password
-# eval $(op signin)
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/opt/homebrew/Caskroom/miniconda/base/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/opt/homebrew/Caskroom/miniconda/base/etc/profile.d/conda.sh" ]; then
+        . "/opt/homebrew/Caskroom/miniconda/base/etc/profile.d/conda.sh"
+    else
+        export PATH="/opt/homebrew/Caskroom/miniconda/base/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+
+eval "$(direnv hook zsh)"

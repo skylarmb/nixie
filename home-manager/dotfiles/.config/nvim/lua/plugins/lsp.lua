@@ -71,7 +71,7 @@ local setup_cmp = function()
   require("copilot").setup({
     suggestion = { enabled = false },
     panel = { enabled = false },
-    -- copilot_node_command = "~/.nvm/versions/node/v20.11.1/bin/node",
+    copilot_node_command = os.getenv("HOME") .. "/.nvm/versions/node/v20.11.1/bin/node",
   })
   require("copilot_cmp").setup()
   local popup_style = {
@@ -275,7 +275,7 @@ return {
           -- https://github.com/microsoft/TypeScript/blob/3c221fc086be52b19801f6e8d82596d04607ede6/src/compiler/utilitiesPublic.ts#L620
           tsserver_locale = "en",
           -- mirror of VSCode's `typescript.suggest.completeFunctionCalls`
-          complete_function_calls = true,
+          -- complete_function_calls = true,
           include_completions_with_insert_text = true,
           -- CodeLens
           -- WARNING: Experimental feature also in VSCode, because it might hit performance of server.

@@ -91,4 +91,47 @@ end
 
 M.keymap = require("user.utils.keymap")
 
+function M.get_current_selection()
+  -- Check if we're in visual mode
+  local mode = vim.fn.mode()
+  if not (mode == "v" or mode == "V" or mode == "") then
+    return ""
+  end
+
+  -- Get the start and end positions of the visual selection
+  local start_pos = vim.fn.getpos("'<")
+  local end_pos = vim.fn.getpos("'>")
+
+  -- Get the current buffer
+  local bufnr = vim.api.nvim_get_current_buf()
+
+  -- Get the lines in the selection
+  local start_line, start_col = start_pos[2], start_pos[3]
+  local end_line, end_col = end_pos[2], end_pos[3]
+
+  -- Get the selected lines
+  local lines = vim.api.nvim_buf_get_lines(bufnr, start_line - 1, end_line, false)
+
+  -- Handle the selection
+  if #lines == 0 then
+    return ""
+  elseif #lines == 1 then
+    -- Single line selection
+    return string.sub(lines[1], start_col, end_col)
+  else
+    -- Multi-line selection
+    lines[1] = string.sub(lines[1], start_col)
+    lines[#lines] = string.sub(lines[#lines], 1, end_col)
+    return table.concat(lines, "\n")
+  end
+end
+
+-- get the contents of the current buffer
+function M.get_current_buffer_contents()
+  local bufnr = vim.api.nvim_get_current_buf()
+  local line_count = vim.api.nvim_buf_line_count(bufnr)
+  local lines = vim.api.nvim_buf_get_lines(bufnr, 0, line_count, false)
+  return table.concat(lines, "\n")
+end
+
 return M

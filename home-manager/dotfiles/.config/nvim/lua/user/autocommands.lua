@@ -5,13 +5,6 @@
 --   end,
 -- })
 
-vim.api.nvim_create_autocmd({ "BufWritePost" }, {
-  pattern = { "~/.config/kitty/kitty.conf" },
-  callback = function()
-    vim.cmd(":silent !kill -SIGUSR1 $(pgrep -a kitty)")
-  end,
-})
-
 vim.api.nvim_create_augroup("__formatter__", { clear = true })
 vim.api.nvim_create_autocmd("BufWritePost", {
   group = "__formatter__",
@@ -19,23 +12,9 @@ vim.api.nvim_create_autocmd("BufWritePost", {
 })
 
 vim.api.nvim_create_autocmd({ "BufEnter" }, {
-  pattern = { "*.Jenkinsfile", "Jenkinsfile" },
-  callback = function()
-    vim.cmd("set ft=groovy")
-  end,
-})
-
-vim.api.nvim_create_autocmd({ "BufEnter" }, {
   pattern = { ".env", ".env.*" },
   callback = function()
     vim.cmd("set ft=bash")
-  end,
-})
-
-vim.api.nvim_create_autocmd({ "BufEnter" }, {
-  pattern = { "Dockerfile.handlebars", "*.Dockerfile.handlebars" },
-  callback = function()
-    vim.cmd("set ft=dockerfile")
   end,
 })
 
@@ -106,25 +85,11 @@ vim.api.nvim_create_autocmd({ "TextYankPost" }, {
   end,
 })
 
-vim.api.nvim_create_autocmd({ "BufWritePost" }, {
-  pattern = { "*.java" },
-  callback = function()
-    vim.lsp.codelens.refresh()
-  end,
-})
-
--- reset highlight groups before switching colorschemes
-vim.api.nvim_create_autocmd({ "ColorSchemePre" }, {
-  pattern = { "*" },
-  callback = function()
-    vim.cmd([[highlight clear]])
-  end,
-})
-
 -- close unused buffers
 local id = vim.api.nvim_create_augroup("startup", {
   clear = false,
 })
+
 local persistbuffer = function(bufnr)
   bufnr = bufnr or vim.api.nvim_get_current_buf()
   vim.fn.setbufvar(bufnr, "bufpersist", 1)
@@ -147,7 +112,7 @@ vim.api.nvim_create_autocmd({ "BufEnter" }, {
 -- vim.api.nvim_create_autocmd({ "BufWinEnter" }, {
 --   callback = function()
 --     local line_count = vim.api.nvim_buf_line_count(0)
---     if line_count >= 1000 then
+--     if line_count >= 500 then
 --       vim.cmd("IlluminatePauseBuf")
 --       vim.notify("Illuminate paused")
 --     end
@@ -167,12 +132,5 @@ vim.api.nvim_create_autocmd("User", {
       scope = "tabpage", -- scope of refresh all/tabpage/window
       place = { "statusline" }, -- lualine segment ro refresh.
     })
-  end,
-})
-
-vim.api.nvim_create_autocmd("BufEnter", {
-  pattern = { "*.slint" },
-  callback = function()
-    vim.cmd("setlocal filetype=slint")
   end,
 })
