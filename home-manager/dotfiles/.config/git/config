@@ -167,8 +167,6 @@
 
 [rerere]
 	enabled = true
-; [commit]
-; 	gpgSign = true
 [gpg]
 	program = gpg
 [filter "lfs"]
@@ -185,3 +183,6 @@
 [user]
 	name = Skylar Brown
 	email = skylar.brown@kurtosistech.com
+	signingkey = FFF30D537B93303F
+[tag]
+	gpgSign = true

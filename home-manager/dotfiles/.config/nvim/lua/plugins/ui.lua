@@ -25,6 +25,11 @@ return {
     "rcarriga/nvim-notify",
     lazy = false,
     config = function()
+      require("notify").setup({
+        stages = "fade_in_slide_out",
+        background_colour = "FloatShadow",
+        timeout = 3000,
+      })
       vim.notify = require("notify")
     end,
   },
@@ -37,9 +42,9 @@ return {
   },
 
   -- preview dialog for LSP actions
-  {
-    "aznhe21/actions-preview.nvim",
-  },
+  -- {
+  --   "aznhe21/actions-preview.nvim",
+  -- },
   -- preview definition in floating window
   {
     "rmagatti/goto-preview",
@@ -62,6 +67,55 @@ return {
         height = 68, -- 16:10 ratio
         stack_floating_preview_windows = false, -- re-use float
       })
+    end,
+  },
+  {
+    "rachartier/tiny-glimmer.nvim",
+    event = "VeryLazy",
+    priority = 10, -- Needs to be a really low priority, to catch others plugins keybindings.
+    config = function()
+      require("tiny-glimmer").setup({
+        overwrite = {
+          yank = {
+            enabled = true,
+          },
+          search = {
+            enabled = true,
+            default_animation = {
+              name = "pulse",
+
+              settings = {
+                from_color = "Normal",
+                to_color = "CursorLine",
+              },
+            },
+          },
+          paste = {
+            enabled = true,
+          },
+          undo = {
+            enabled = true,
+          },
+          redo = {
+            enabled = true,
+            redo_mapping = "U",
+          },
+        },
+        -- Animations for other operations
+        presets = {
+          pulsar = {
+            enabled = true,
+            on_events = { "CursorMoved", "CmdlineEnter", "WinEnter" },
+          },
+        },
+        animations = {
+          pulse = {
+            from_color = "Normal",
+            to_color = "CursorLine",
+          },
+        },
+      })
+      require("tiny-glimmer").change_hl("all", { from_color = "Normal", to_color = "CursorLine" })
     end,
   },
 }

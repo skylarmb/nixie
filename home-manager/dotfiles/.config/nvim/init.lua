@@ -65,4 +65,3 @@ require("lazy").setup({
 
 require("user/keymaps")
 require("user/autocommands")
-require("user/debug")

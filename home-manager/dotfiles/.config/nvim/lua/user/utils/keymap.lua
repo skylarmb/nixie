@@ -40,7 +40,7 @@ end
 
 M.c = setter("c")
 M.i = setter("i")
-M.leader = setter("n", "<leader>")
+M.leader = setter({ "n", "v", "o" }, "<leader>")
 M.n = setter("n")
 M.nvo = setter({ "n", "v", "o" })
 M.t = setter("t")

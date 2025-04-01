@@ -1,5 +1,6 @@
 local expand = vim.fn.expand
 local keymap = require("user.utils").keymap
+local utils = require("user.utils")
 local set = keymap.set
 local c = keymap.c
 local i = keymap.i
@@ -207,6 +208,16 @@ leader("a", "cs\"'", opts.remap) -- change quotes
 leader("s", "cs'\"", opts.remap) -- change quotes
 leader("I", cmd("Inspect")) -- Inspect highlight group under cursor
 leader("c", cmd("cd ~/.config/nvim | tabe ./init.lua")) -- Inspect highlight group under cursor
+leader("db", function()
+  require("dbee").toggle()
+end)
+v("<C-e>", function()
+  local selection = utils.get_current_selection()
+  if selection == "" then
+    selection = utils.get_current_buffer_contents()
+  end
+  require("dbee").execute(selection)
+end)
 
 ------------ Command & Term mode ------------
 -- expand %% to current dir name
@@ -218,7 +229,8 @@ c("<C-f>", "")
 -- get me out of here!
 c("<ESC>", "<C-c>")
 -- open floating term
-n("<C-t>", "<cmd>ToggleTerm<cr><insert>")
+n("<C-t>", "<cmd>ToggleTerm direction=float<cr>")
+t("<C-t>", "<cmd>ToggleTerm direction=float<cr>")
 
 ----- LSP -----
 n("ge", function()
