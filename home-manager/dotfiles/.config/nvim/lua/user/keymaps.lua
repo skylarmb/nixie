@@ -204,6 +204,7 @@ v("<D-v>", '"+P') -- Paste visual mode
 set("i", "<D-v>", '<ESC>l"+Pli') -- Paste insert modeend
 leader("tt", "<cmd>ToDoTxtTasksToggle<CR>") -- TODO list
 leader("tn", "<cmd>ToDoTxtCapture<CR>") -- TODO list
+leader("W", "<cmd>w !sudo tee %<CR>") -- sudo write
 leader("a", "cs\"'", opts.remap) -- change quotes
 leader("s", "cs'\"", opts.remap) -- change quotes
 leader("I", cmd("Inspect")) -- Inspect highlight group under cursor

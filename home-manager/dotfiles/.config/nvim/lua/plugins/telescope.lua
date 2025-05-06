@@ -9,7 +9,7 @@ return {
       },
       { "nvim-telescope/telescope-live-grep-args.nvim" },
       { "stevearc/dressing.nvim" },
-      { "project.nvim" },
+      -- { "project.nvim" },
     },
     config = function()
       local telescope = require("telescope")
@@ -38,9 +38,6 @@ return {
           },
           pickers = {
             find_files = {
-              theme = "dropdown",
-            },
-            projects = {
               theme = "dropdown",
             },
             colorscheme = {
@@ -81,7 +78,7 @@ return {
           },
         },
       })
-      require("telescope").load_extension("projects")
+      -- require("telescope").load_extension("projects")
       -- require("telescope").load_extension("fzf")
       require("telescope").load_extension("live_grep_args")
     end,
