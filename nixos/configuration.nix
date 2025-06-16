@@ -53,6 +53,14 @@
     kernelPackages = pkgs.linuxPackages_6_12;
     extraModulePackages = [ config.boot.kernelPackages.nvidia_x11 ];
   };
+
+  # NEW
+  services.udev.packages = with pkgs; [ oversteer ];
+  services.udev.extraRules = ''
+      ACTION=="add", SUBSYSTEM=="usb", ATTRS{idVendor}=="046d", ATTRS{idProduct}=="c261", RUN+="${pkgs.usb-modeswitch}/bin/usb_modeswitch -v 046d -p c261 -m 01 -r 01 -C 03 -M '0f00010142'"
+    '';
+  hardware.new-lg4ff.enable = true;
+
   networking.hostName = "nixos"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
   # Configure network proxy if necessary
@@ -240,6 +248,12 @@
       stdenv.cc.cc.lib
     ];
   };
+  programs.steam = {
+    enable = true;
+    # remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
+    # dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
+    # localNetworkGameTransfers.openFirewall = true; # Open ports in the firewall for Steam Local Network Game Transfers
+  };
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
@@ -263,10 +277,13 @@
     htop
     jq
     ripgrep
+    pkg-config
+    fontconfig
     tig
     tmux
     unzip
     wget
+    zip
     # desktop environment
     # nix-software-center
     gearlever
@@ -280,11 +297,13 @@
     nodejs_22
     python312Full
     python312Packages.pip
-    # gcc
-    # libgcc
-    # gnumake
-    # cmake
-    # extra-cmake-modules
+    gcc
+    libgcc
+    gnumake
+    cmake
+    extra-cmake-modules
+    vcpkg
+    vcpkg-tool
     nix-index
     # system
     switcheroo-control
@@ -317,14 +336,14 @@
   #   AllowHybridSleep=no
   #   AllowSuspendThenHibernate=no
   # '';
-  systemd.targets.sleep.enable = false;
+  systemd.targets.sleep.enable = true;
   systemd.targets.suspend.enable = true;
-  systemd.targets.hibernate.enable = false;
-  systemd.targets.hybrid-sleep.enable = false;
+  systemd.targets.hibernate.enable = true;
+  systemd.targets.hybrid-sleep.enable = true;
 
-  virtualisation.podman = {
+  hardware.nvidia-container-toolkit.enable = true;
+  virtualisation.docker = {
     enable = true;
-    dockerCompat = true;
   };
 
   # Some programs need SUID wrappers, can be configured further or are
