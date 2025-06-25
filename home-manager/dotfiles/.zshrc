@@ -163,6 +163,7 @@ alias zc='v ~/.zshrc && exec zsh'
 alias gitc='v ~/.gitconfig'
 alias zcp='v ~/.private/.zshrc && exec zsh'
 alias alc='v ~/.config/alacritty/alacritty.toml'
+alias wtc='v ~/.wezterm.lua'
 alias tc='v ~/.config/tmux/tmux.conf'
 alias tcc='v ~/.config/tmux/colorscheme.conf'
 alias zu='exec zsh'
@@ -450,11 +451,38 @@ randomsay() {
 
 alias why='grep_inuse_ports'
 grep_inuse_ports() {
-  if [[ -z "${1}" ]]; then
+  if [[ -n "${1}" ]]; then
     lsof -nP -i4TCP:"${1}" | grep LISTEN
     return
   fi
   lsof -nP -i4TCP | grep LISTEN
+}
+
+alias portkill='kill_port_process'
+kill_port_process() {
+  if [[ -z "${1}" ]]; then
+    echo "Usage: portkill <port>"
+    return 1
+  fi
+
+  local processes=$(lsof -nP -i4TCP:"${1}" | grep LISTEN)
+
+  if [[ -z "$processes" ]]; then
+    echo "No processes found listening on port ${1}"
+    return 1
+  fi
+
+  echo "Processes listening on port ${1}:"
+  echo "$processes"
+
+  local pids=$(echo "$processes" | awk '{print $2}')
+
+  if confirm "Kill these processes?"; then
+    echo "$pids" | xargs kill
+    echo "Killed processes: $pids"
+  else
+    echo "Cancelled"
+  fi
 }
 
 replace() {
