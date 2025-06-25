@@ -102,6 +102,7 @@ nvo("<C-d>", "yyp")
 nvo("0", '"0y')
 nvo(")", '"0p')
 -- join visual selection
+v("<leader>j", cmd("'<,'>join"))
 set("x", "<leader>j", cmd("'<,'>join"))
 -- browse source of current file
 set("n", "<leader>gs", [[:silent !/bin/zsh -i -c 'browsesource "$(basename `git rev-parse --show-toplevel`)" %'<CR>]])

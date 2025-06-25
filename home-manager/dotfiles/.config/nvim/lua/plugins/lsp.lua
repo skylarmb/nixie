@@ -88,7 +88,7 @@ local setup_cmp = function()
       end,
     },
     sources = cmp.config.sources({
-      { name = "luasnip" },
+      { name = "luasnip", option = { show_autosnippets = true }, priority = 1000 },
       { name = "nvim_lsp" },
       { name = "buffer" },
       { name = "copilot" },
@@ -246,6 +246,7 @@ return {
   -- standalone typescript LSP config, alternative to nvim-lspconfig with more features
   {
     "pmizio/typescript-tools.nvim",
+    priority = 10,
     dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
     config = function()
       require("typescript-tools").setup({
@@ -270,7 +271,10 @@ return {
           tsserver_max_memory = "auto",
           -- described below
           tsserver_format_options = {},
-          tsserver_file_preferences = {},
+          tsserver_file_preferences = {
+            importModuleSpecifierPreference = "non-relative",
+            importModuleSpecifierEnding = "minimal",
+          },
           -- locale of all tsserver messages, supported locales you can find here:
           -- https://github.com/microsoft/TypeScript/blob/3c221fc086be52b19801f6e8d82596d04607ede6/src/compiler/utilitiesPublic.ts#L620
           tsserver_locale = "en",
@@ -308,21 +312,21 @@ return {
   },
 
   -- floating previews for LSP definitions, references etc
+
   {
-    "williamboman/mason-lspconfig.nvim",
+    "mason-org/mason-lspconfig.nvim",
+    priority = 9,
     dependencies = {
-      "williamboman/mason.nvim",
+      { "mason-org/mason.nvim", opts = {} },
       "neovim/nvim-lspconfig",
     },
-
     config = function()
       require("mason").setup({})
       require("mason-lspconfig").setup({
         ensure_installed = { "lua_ls" },
-        automatic_installation = true,
       })
 
-      -- Override floating window appearance to add both border + shadow
+      -- -- Override floating window appearance to add both border + shadow
       -- local orig_util_open_floating_preview = vim.lsp.util.open_floating_preview
       -- function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
       --   opts = opts or {}
@@ -331,18 +335,23 @@ return {
       --   return orig_util_open_floating_preview(contents, syntax, opts, ...)
       -- end
 
-      require("mason-lspconfig").setup_handlers({
-        -- The first entry (without a key) will be the default handler
-        -- and will be called for each installed server that doesn't have
-        -- a dedicated handler.
-        function(server_name) -- default handler (optional)
-          require("lspconfig")[server_name].setup({
-            on_attach = on_attach,
-          })
-        end,
-      })
+      -- require("mason-lspconfig").setup_handlers({
+      --   -- The first entry (without a key) will be the default handler
+      --   -- and will be called for each installed server that doesn't have
+      --   -- a dedicated handler.
+      --   function(server_name) -- default handler (optional)
+      --     require("lspconfig")[server_name].setup({
+      --       on_attach = on_attach,
+      --     })
+      --   end,
+      -- })
 
-      require("lspconfig").gleam.setup({})
+      require("lspconfig").gleam.setup({
+        on_attach = on_attach,
+      })
+      require("lspconfig")["typescript-tools"].setup({
+        on_attach = on_attach,
+      })
 
       setup_cmp()
     end,
@@ -402,6 +411,7 @@ return {
         version = "v2.*",
         build = "make install_jsregexp",
       },
+      "saadparwaiz1/cmp_luasnip",
     },
   },
 }

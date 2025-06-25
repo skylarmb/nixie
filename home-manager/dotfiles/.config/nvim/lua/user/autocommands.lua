@@ -11,6 +11,14 @@ vim.api.nvim_create_autocmd("BufWritePost", {
   command = ":FormatWrite",
 })
 
+-- Format Gleam files on save
+vim.api.nvim_create_autocmd("BufWritePost", {
+  pattern = "*.gleam",
+  callback = function()
+    vim.cmd("silent !gleam format %")
+  end,
+})
+
 vim.api.nvim_create_autocmd({ "BufEnter" }, {
   pattern = { ".env", ".env.*" },
   callback = function()
