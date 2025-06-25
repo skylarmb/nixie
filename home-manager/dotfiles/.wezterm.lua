@@ -14,11 +14,13 @@ config.window_padding = {
 	bottom = 0,
 }
 
-config.font_size = 21.0
+config.font_size = 24.0
 config.font = wezterm.font("DankMono Nerd Font Mono", { weight = "Bold" })
+-- local fg = "#E3CA9A"
+local fg = "#e8d4ae"
 config.colors = {
 	-- Default colors
-	foreground = "#E3CA9A",
+	foreground = fg,
 	background = "#131312",
 
 	-- Normal colors
@@ -47,9 +49,9 @@ config.colors = {
 
 	-- Other settings from your config
 	cursor_fg = "#131312",
-	cursor_bg = "#E3CA9A",
+	cursor_bg = fg,
 	selection_fg = "#131312",
-	selection_bg = "#E3CA9A",
+	selection_bg = fg,
 }
 
 local function tmux_prefix(key)
