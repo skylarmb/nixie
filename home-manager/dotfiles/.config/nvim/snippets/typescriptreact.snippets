@@ -1,38 +1,20 @@
 extends typescript
-snippet sc "styled-components" b
-	import styled from 'styled-components';
-	const S = {
-
-	}
 snippet rc "react component" b
-	import styled from 'styled-components';
-
 	const ${1:Component} = () => {
-		return <S.${1:Component}>${1:Component}</S.${1:Component}>;
+		return <>${1:Component}</>;
 	};
-
-	const S = {
-		${1:Component}: styled.div\`
-			display: flex;
-			background-color: pink;
-		\`,
-	}
 
 	export default ${1:Component};
 snippet rcc "react component" b
 	import { ReactNode } from 'react';
-	import styled from 'styled-components';
 
-	const ${1:Component} = ({ children }: { children?: ReactNode }) => {
-		return <S.${1:Component}>{children}</S.${1:Component}>;
-	};
-
-	const S = {
-		${1:Component}: styled.div\`
-			display: flex;
-			background-color: pink;
-		\`,
+	interface Props {
+		children?: ReactNode
 	}
+
+	const ${1:Component} = ({ children }: Props) => {
+		return <>${1:Component}: {children}</>;
+	};
 
 	export default ${1:Component};
 snippet im "import mobile" b
@@ -45,8 +27,18 @@ snippet tab "tablet styles" b
 	@media \${tablet} {
 		${0}
 	}
+snippet ip "interface props" b
+	interface Props {
+		${0}
+	}
+snippet fw "full width"
+	w={"full"}
+snippet fh "full height"
+	h={"full"}
 snippet ic "import component" b
 	import ${0} from "@/components/${0}";
+snippet iui "import ui component" b
+	import ${0} from "@/components/ui/${0}";
 snippet is "import set" b
 	import * as set from "@bumblebee/core/gleam/set";
 snippet il "import list" b
@@ -55,3 +47,5 @@ snippet id "import dict" b
 	import * as set from "@bumblebee/core/gleam/dict";
 snippet ig "import gleam" b
 	import * as ${0} from "@bumblebee/core/gleam/${0}";
+snippet cl "console log" b
+	console.debug("DEBUG: ${0}", ${0});
