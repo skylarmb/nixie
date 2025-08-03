@@ -182,7 +182,7 @@
 	defaultbranch = main
 [user]
 	name = Skylar Brown
-	email = skylar.brown@kurtosistech.com
-	signingkey = FFF30D537B93303F
+	email = skylarmb@gmail.com
+	signingkey = BCF63913A9848B5C
 [tag]
 	gpgSign = true

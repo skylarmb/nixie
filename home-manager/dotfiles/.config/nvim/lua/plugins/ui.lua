@@ -52,7 +52,6 @@ return {
     dependencies = {
       { "trouble.nvim" },
       { "telescope.nvim" },
-      { "nvim-colorizer.lua" },
       {
         "CosmicNvim/cosmic-ui",
         dependencies = { "nui.nvim", "plenary.nvim" },

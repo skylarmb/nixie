@@ -3,6 +3,13 @@ if [[ -n "$DEBUG_ZPROF" ]]; then
   zmodload zsh/zprof
 fi
 zmodload zsh/parameter
+autoload -U add-zsh-hook
+
+# Path to your Oh My Zsh installation.
+export ZSH="$HOME/.oh-my-zsh"
+ZSH_THEME="robbyrussell"
+plugins=(git)
+source $ZSH/oh-my-zsh.sh
 
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
@@ -98,21 +105,14 @@ export PATH="$PATH:$HOME/.local/bin"
 export PATH="$PATH:$HOME/.cargo/bin"
 export PATH="$PATH:$HOME/dotfiles/bin"
 export PATH="$PATH:/Applications/Postgres.app/Contents/Versions/latest/bin"
-
-# pnpm
-export PNPM_HOME="$HOME/Library/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
-# pnpm end
+# export DOCKER_HOST="unix:///run/user/1000/podman/podman-machine-default-api.sock"
 
 # bun
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
 # brew
-eval "$(/opt/homebrew/bin/brew shellenv)"
+# eval "$(/opt/homebrew/bin/brew shellenv)"
 
 # pyenv
 export PATH="$HOME/.pyenv/bin:$PATH"
@@ -166,6 +166,8 @@ alias alc='v ~/.config/alacritty/alacritty.toml'
 alias wtc='v ~/.wezterm.lua'
 alias tc='v ~/.config/tmux/tmux.conf'
 alias tcc='v ~/.config/tmux/colorscheme.conf'
+alias hc='v ~/nixie/home-manager/home.nix'
+alias hs='home-manager switch'
 alias zu='exec zsh'
 alias dka='docker kill $(docker ps -q)'
 alias vimwipe='rm -rf $HOME/.vim/tmp/swap; mkdir -p $HOME/.vim/tmp/swap'
@@ -238,8 +240,8 @@ zstyle ':fzf-tab:*'                   accept-line enter
 # switch group using `<` and `>`
 zstyle ':fzf-tab:*' switch-group '<' '>'
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-enable-fzf-tab
+source <(fzf --zsh)
+# enable-fzf-tab
 
 vr() {
   nvim --server "$PWD/.nvimsocket" --remote-tab "$@" && nvim --server "$PWD/.nvimsocket" --remote-ui
@@ -641,27 +643,22 @@ if [[ -n "$DEBUG_ZPROF" ]]; then
   zprof
 fi
 
-# Kardinal CLI config
-export PATH=$PATH:/Users/skylar/.local/bin
-autoload -U +X compinit && compinit
-source <(/Users/skylar/.local/bin/kardinal completion zsh)
-
 # bun completions
 [ -s "/Users/skylar/.bun/_bun" ] && source "/Users/skylar/.bun/_bun"
 
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/opt/homebrew/Caskroom/miniconda/base/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "/opt/homebrew/Caskroom/miniconda/base/etc/profile.d/conda.sh" ]; then
-        . "/opt/homebrew/Caskroom/miniconda/base/etc/profile.d/conda.sh"
-    else
-        export PATH="/opt/homebrew/Caskroom/miniconda/base/bin:$PATH"
-    fi
-fi
-unset __conda_setup
-# <<< conda initialize <<<
+# # >>> conda initialize >>>
+# # !! Contents within this block are managed by 'conda init' !!
+# __conda_setup="$('/opt/homebrew/Caskroom/miniconda/base/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+# if [ $? -eq 0 ]; then
+#     eval "$__conda_setup"
+# else
+#     if [ -f "/opt/homebrew/Caskroom/miniconda/base/etc/profile.d/conda.sh" ]; then
+#         . "/opt/homebrew/Caskroom/miniconda/base/etc/profile.d/conda.sh"
+#     else
+#         export PATH="/opt/homebrew/Caskroom/miniconda/base/bin:$PATH"
+#     fi
+# fi
+# unset __conda_setup
+# # <<< conda initialize <<<
 
 eval "$(direnv hook zsh)"
