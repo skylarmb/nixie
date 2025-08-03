@@ -208,7 +208,7 @@ leader("tn", "<cmd>ToDoTxtCapture<CR>") -- TODO list
 leader("a", "cs\"'", opts.remap) -- change quotes
 leader("s", "cs'\"", opts.remap) -- change quotes
 leader("I", cmd("Inspect")) -- Inspect highlight group under cursor
-leader("c", cmd("cd ~/.config/nvim | tabe ./init.lua")) -- Inspect highlight group under cursor
+leader("c", cmd("ClaudeCode"))
 leader("db", function()
   require("dbee").toggle()
 end)

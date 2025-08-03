@@ -16,6 +16,7 @@ config.window_padding = {
 
 config.font_size = 24.0
 config.font = wezterm.font("DankMono Nerd Font Mono", { weight = "Bold" })
+-- config.font = wezterm.font("AtkinsonHyperlegibleMono Nerd Font")
 -- local fg = "#E3CA9A"
 local fg = "#e8d4ae"
 config.colors = {
