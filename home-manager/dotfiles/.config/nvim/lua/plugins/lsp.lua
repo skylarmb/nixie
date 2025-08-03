@@ -71,7 +71,7 @@ local setup_cmp = function()
   require("copilot").setup({
     suggestion = { enabled = false },
     panel = { enabled = false },
-    copilot_node_command = os.getenv("HOME") .. "/.nvm/versions/node/v20.11.1/bin/node",
+    copilot_node_command = os.getenv("HOME") .. "/.nix-profile/bin/node",
   })
   require("copilot_cmp").setup()
   local popup_style = {
@@ -239,7 +239,6 @@ local on_attach = function(client, bufnr)
   end)
 
   require("illuminate").on_attach(client)
-  require("colorizer").attach_to_buffer(bufnr)
 end
 
 return {

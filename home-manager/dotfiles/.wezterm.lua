@@ -3,7 +3,7 @@ local wezterm = require("wezterm")
 
 local config = wezterm.config_builder()
 
-config.default_prog = { "/bin/zsh", "--login", "-c", "tmux new-session -A -s main -t main" }
+config.default_prog = { "/home/x/.nix-profile/bin/zsh", "--login", "-c", "tmux new-session -A -s main -t main" }
 
 config.enable_tab_bar = false
 
@@ -63,19 +63,21 @@ local function tmux_prefix(key)
 	})
 end
 
+local mod_key = "ALT"
+
 config.keys = {
-	{ key = "1", mods = "SUPER", action = tmux_prefix("1") },
-	{ key = "2", mods = "SUPER", action = tmux_prefix("2") },
-	{ key = "3", mods = "SUPER", action = tmux_prefix("3") },
-	{ key = "4", mods = "SUPER", action = tmux_prefix("4") },
-	{ key = "5", mods = "SUPER", action = tmux_prefix("5") },
-	{ key = "6", mods = "SUPER", action = tmux_prefix("6") },
-	{ key = "7", mods = "SUPER", action = tmux_prefix("7") },
-	{ key = "8", mods = "SUPER", action = tmux_prefix("8") },
-	{ key = "9", mods = "SUPER", action = tmux_prefix("9") },
-	{ key = "Enter", mods = "SUPER", action = tmux_prefix("z") },
-	{ key = "b", mods = "SUPER", action = tmux_prefix("b") },
-	{ key = "g", mods = "SUPER", action = tmux_prefix("g") },
+	{ key = "1", mods = mod_key, action = tmux_prefix("1") },
+	{ key = "2", mods = mod_key, action = tmux_prefix("2") },
+	{ key = "3", mods = mod_key, action = tmux_prefix("3") },
+	{ key = "4", mods = mod_key, action = tmux_prefix("4") },
+	{ key = "5", mods = mod_key, action = tmux_prefix("5") },
+	{ key = "6", mods = mod_key, action = tmux_prefix("6") },
+	{ key = "7", mods = mod_key, action = tmux_prefix("7") },
+	{ key = "8", mods = mod_key, action = tmux_prefix("8") },
+	{ key = "9", mods = mod_key, action = tmux_prefix("9") },
+	{ key = "Enter", mods = mod_key, action = tmux_prefix("z") },
+	{ key = "b", mods = mod_key, action = tmux_prefix("b") },
+	{ key = "g", mods = mod_key, action = tmux_prefix("g") },
 }
 
 return config

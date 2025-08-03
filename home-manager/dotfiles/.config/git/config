@@ -183,6 +183,6 @@
 [user]
 	name = Skylar Brown
 	email = REDACTED
-	signingkey = FFF30D537B93303F
+	signingkey = BCF63913A9848B5C
 [tag]
 	gpgSign = true
