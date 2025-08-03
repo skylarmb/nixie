@@ -485,12 +485,16 @@ kill_port_process() {
   fi
 }
 
-replace() {
+# replace() {
+#     local search_pattern=$1
+#     local replacement=$2
+#     rg -F -l "$search_pattern" | xargs -I{} sed -i "s|$search_pattern|$replacement|g" {}
+# }
+replace () {
     local search_pattern=$1
     local replacement=$2
-    rg -l "$search_pattern" | xargs -I{} sed -i "s/$search_pattern/$replacement/g" {}
+    rg -F -l "$search_pattern" | xargs -I{} sd -F "$search_pattern" "$replacement" {}
 }
-
 # ag / the_silver_searcher
 
 
