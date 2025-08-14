@@ -39,7 +39,6 @@
     ];
     home.file = {
         # shell stuff
-        ".profile".source = dotfiles/.profile;
         ".zprofile".source = dotfiles/.zprofile;
         ".zshrc".source = dotfiles/.zshrc;
         ".antigenrc".source = dotfiles/.antigenrc;
@@ -55,16 +54,23 @@
         ".config/tmux".source = dotfiles/.config/tmux;
         ".config/containers/registries.conf".source = dotfiles/.config/containers/registries.conf;
         ".config/containers/policy.json".source = dotfiles/.config/containers/policy.json;
+
         ".config/nix/nix.conf".text = ''
         experimental-features = nix-command flakes
+        '';
+
+        ".config/npm/npmrc".text = ''
+          cache=~/.cache/npm
+          prefix=$~/.local/share/npm
         '';
 
         "bin".source = dotfiles/bin;
     };
 
     home.sessionVariables = {
-        EDITOR = "nvim";
-        # DOCKER_HOST = "unix:///run/user/1000/podman/podman-machine-default-api.sock";
+      EDITOR = "nvim";
+      NPM_CONFIG_USERCONFIG="$HOME/.config/npm/npmrc";
+      # DOCKER_HOST = "unix:///run/user/1000/podman/podman-machine-default-api.sock";
     };
 
     # Let Home Manager install and manage itself.
