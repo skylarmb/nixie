@@ -61,7 +61,7 @@
 
         ".config/npm/npmrc".text = ''
           cache=~/.cache/npm
-          prefix=$~/.local/share/npm
+          prefix=~/.local/share/npm
         '';
 
         "bin".source = dotfiles/bin;
@@ -70,6 +70,7 @@
     home.sessionVariables = {
       EDITOR = "nvim";
       NPM_CONFIG_USERCONFIG="$HOME/.config/npm/npmrc";
+      PATH="$PATH:$HOME/.local/share/npm/bin";
       # DOCKER_HOST = "unix:///run/user/1000/podman/podman-machine-default-api.sock";
     };
 
