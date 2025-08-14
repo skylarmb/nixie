@@ -1,5 +1,4 @@
-{
-  home-manager.users.x = { pkgs, ... }: {
+{ pkgs, ... }: {
     home.username = "x";
     home.homeDirectory = "/home/x";
     home.stateVersion = "25.05"; # Please read the comment before changing.
@@ -10,9 +9,11 @@
         pkgs.nodejs_22
 
         # programs
+	pkgs.zsh
         pkgs.tmux
         pkgs.wezterm
         pkgs.orca-slicer
+
 
         # shell
         pkgs.zsh
@@ -78,5 +79,4 @@
     programs = {
         home-manager.enable = true;
     };
-  };
 }
