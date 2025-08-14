@@ -9,8 +9,6 @@
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
       ./boot.nix
-      <home-manager/nixos>
-      ./home.nix
     ];
   networking.hostName = "nixos"; # Define your hostname.
 
