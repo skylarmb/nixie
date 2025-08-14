@@ -80,4 +80,6 @@ config.keys = {
 	{ key = "g", mods = mod_key, action = tmux_prefix("g") },
 }
 
+config.window_decorations = "TITLE"
+
 return config
