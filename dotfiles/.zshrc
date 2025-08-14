@@ -1,3 +1,5 @@
+. "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
+
 # profile shell startup time
 if [[ -n "$DEBUG_ZPROF" ]]; then
   zmodload zsh/zprof
