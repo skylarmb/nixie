@@ -14,13 +14,13 @@
     };
     plymouth = {
       enable = true;
-      theme = "motion";
-      themePackages = with pkgs; [
-        # By default we would install all themes
-        (adi1090x-plymouth-themes.override {
-          selected_themes = [ "motion" ];
-        })
-      ];
+      # # theme = "motion";
+      # themePackages = with pkgs; [
+      #   # By default we would install all themes
+      #   (adi1090x-plymouth-themes.override {
+      #     selected_themes = [ "motion" ];
+      #   })
+      # ];
     };
     # Hide the OS choice for bootloaders.
     # It's still possible to open the bootloader list by pressing any key
@@ -46,7 +46,7 @@
       "splash"
       "udev.log_priority=3"
     ];
-    #kernelPackages = pkgs.linuxPackages_6_12;
-    extraModulePackages = [ config.boot.kernelPackages.nvidia_x11 ];
+    kernelPackages = pkgs.linuxPackages_latest;
+    # extraModulePackages = [ config.boot.kernelPackages.nvidia_x11 ];
   };
 }

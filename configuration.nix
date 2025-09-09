@@ -45,6 +45,11 @@
   # Enable the GNOME Desktop Environment.
   services.xserver.displayManager.gdm.enable = true;
   services.xserver.desktopManager.gnome.enable = true;
+  services.udev.packages = with pkgs; [ gnome-settings-daemon ];
+  services.udev.extraRules = ''
+    # Espressif USB Serial/JTAG Controller
+    SUBSYSTEM=="tty", ATTRS{idVendor}=="303a", ATTRS{idProduct}=="1001", MODE="0666", TAG+="uaccess"
+  '';
 
   # Configure keymap in X11
   services.xserver.xkb = {
@@ -78,7 +83,7 @@
   users.users.x = {
     isNormalUser = true;
     description = "x";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [ "networkmanager" "wheel" "dialout" ];
   };
   users.defaultUserShell = pkgs.zsh;
 
@@ -114,7 +119,10 @@
   systemd.services."autovt@tty1".enable = false;
 
   # Programs
-  programs.firefox.enable = true;
+  programs.firefox = {
+    enable = true;
+  };
+
   programs.zsh.enable = true;
   programs.steam = {
     enable = true;
@@ -131,6 +139,8 @@
     neovim
     gnome-tweaks
     gnome-software
+    gnomeExtensions.appindicator
+    gruvbox-plus-icons
     git
   ];
 
@@ -176,7 +186,7 @@
     # accessible via `nvidia-settings`.
     nvidiaSettings = true;
     # Optionally, you may need to select the appropriate driver version for your specific GPU.
-    package = config.boot.kernelPackages.nvidiaPackages.stable;
+    package = config.boot.kernelPackages.nvidiaPackages.beta;
   };
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -185,6 +195,14 @@
   programs.gnupg.agent = {
     enable = true;
     enableSSHSupport = true;
+  };
+
+  stylix = {
+    image = ./wallpapers/gruvbox.jpg;
+    enable = true;
+    autoEnable = true;
+    base16Scheme = "${pkgs.base16-schemes}/share/themes/gruvbox-dark-soft.yaml";
+    polarity = "dark";
   };
 
   # List services that you want to enable:
