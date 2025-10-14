@@ -1,3 +1,8 @@
 {
-  "enableAllProjectMcpServers": false
+  "enableAllProjectMcpServers": false,
+  "permissions": {
+    "allow": [
+      "Read(//nix/store/6skka7z8lf1lrjz678341lfwj32r15p7-hm_lua/plugins/**)"
+    ]
+  }
 }
