@@ -345,12 +345,7 @@ return {
       --   end,
       -- })
 
-      require("lspconfig").gleam.setup({
-        on_attach = on_attach,
-      })
-      require("lspconfig")["typescript-tools"].setup({
-        on_attach = on_attach,
-      })
+      -- Note: typescript-tools is configured separately above and doesn't use lspconfig
 
       setup_cmp()
     end,

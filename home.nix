@@ -1,18 +1,21 @@
+{ config, pkgs, ... }:
+
 {
-  home-manager.users.x = { pkgs, ... }: {
-    home.username = "x";
-    home.homeDirectory = "/home/x";
+    home.username = "skylar";
+    home.homeDirectory = "/Users/skylar";
     home.stateVersion = "25.05"; # Please read the comment before changing.
     home.packages = [
         # dependencies
-        pkgs.gccgo
-        pkgs.gnumake
+        # pkgs.gccgo
+        # pkgs.gnumake
         pkgs.nodejs_22
 
         # programs
         pkgs.tmux
         pkgs.wezterm
-        pkgs.orca-slicer
+        pkgs.neovim
+        pkgs.stylua
+        # pkgs.orca-slicer
 
         # shell
         pkgs.zsh
@@ -61,7 +64,7 @@
 
         ".config/npm/npmrc".text = ''
           cache=~/.cache/npm
-          prefix=$~/.local/share/npm
+          prefix=~/.local/share/npm
         '';
 
         "bin".source = dotfiles/bin;
@@ -77,5 +80,4 @@
     programs = {
         home-manager.enable = true;
     };
-  };
 }

@@ -3,7 +3,7 @@ local wezterm = require("wezterm")
 
 local config = wezterm.config_builder()
 
-config.default_prog = { "/home/x/.nix-profile/bin/zsh", "--login", "-c", "tmux new-session -A -s main -t main" }
+-- config.default_prog = { "/Users/skylar/.nix-profile/bin/zsh", "--login", "-c", "tmux new-session -A -s main -t main" }
 
 config.enable_tab_bar = false
 
@@ -63,7 +63,7 @@ local function tmux_prefix(key)
 	})
 end
 
-local mod_key = "ALT"
+local mod_key = "CMD"
 
 config.keys = {
 	{ key = "1", mods = mod_key, action = tmux_prefix("1") },
@@ -80,6 +80,6 @@ config.keys = {
 	{ key = "g", mods = mod_key, action = tmux_prefix("g") },
 }
 
-config.window_decorations = "TITLE"
+-- config.window_decorations = "TITLE"
 
 return config
