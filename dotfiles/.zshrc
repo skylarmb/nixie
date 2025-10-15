@@ -137,8 +137,8 @@ export TMUX_FZF_WINDOW_FORMAT="[#{window_name}] #{pane_current_command}"
 export TMUX_PLUGIN_MANAGER_PATH="$HOME/.tmux/plugins"
 # export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc"
 export DEFAULT_USER=$USER
-export DOTFILES_DIR="~/nixie/dotfiles"
-export WORKSPACE="~/workspace"
+export DOTFILES_DIR="$HOME/nixie/dotfiles"
+export WORKSPACE="$HOME/workspace"
 # ---------------- ALIAS ----------------
 
 # alias v='nv'
@@ -161,15 +161,15 @@ alias tn="nvim +'execute \"ToDoTxtTasksToggle\" | wincmd o | execute \"ToDoTxtTa
 alias workspace="cd $WORKSPACE"
 alias dotfiles="cd $DOTFILES_DIR"
 alias vimc="cd $DOTFILES_DIR/.config/nvim && nvim . && cd -"
-alias vimcd="cd $DOTFILES_DIR/.config/nvim && v ."
-alias zc="v $DOTFILES_DIR/.zshrc && exec zsh"
-alias gitc="v $DOTFILES_DIR/.config/git/config"
-alias zcp='v ~/.private/.zshrc && exec zsh'
-alias alc="v $DOTFILES_DIR/.config/alacritty/alacritty.toml"
-alias wtc="v $DOTFILES_DIR/.wezterm.lua"
-alias tc="v $DOTFILES_DIR/.config/tmux/tmux.conf"
-alias tcc="v $DOTFILES_DIR/.config/tmux/colorscheme.conf"
-alias hc='cd ~/nixie && v ./home.nix'
+alias vimcd="cd $DOTFILES_DIR/.config/nvim && $EDITOR ."
+alias zc="$EDITOR $DOTFILES_DIR/.zshrc && exec zsh"
+alias gitc="$EDITOR $DOTFILES_DIR/.config/git/config"
+alias zcp="$EDITOR $HOME/.private/.zshrc && exec zsh"
+alias alc="$EDITOR $DOTFILES_DIR/.config/alacritty/alacritty.toml"
+alias wtc="$EDITOR $DOTFILES_DIR/.wezterm.lua"
+alias tc="$EDITOR $DOTFILES_DIR/.config/tmux/tmux.conf"
+alias tcc="$EDITOR $DOTFILES_DIR/.config/tmux/colorscheme.conf"
+alias hc="cd $HOME/nixie && nvim ./home.nix"
 alias hs='home-manager switch'
 alias nrs='sudo nixos-rebuild switch'
 alias zu='exec zsh'
@@ -342,7 +342,7 @@ alias ws='cd_workspace'
 cd_workspace() {
   if [[ ! -z "${@}" ]]
   then
-    cd "${WORKSPACE}/${@}"
+    cd "${WORKSPACE}/${@}*"
   else
     cd "${WORKSPACE}"
   fi
