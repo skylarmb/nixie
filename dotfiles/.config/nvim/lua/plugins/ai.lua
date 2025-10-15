@@ -43,16 +43,6 @@ return {
       },
       dual_boost = {
         enabled = false,
-        first_provider = "openai",
-        second_provider = "claude",
-        prompt = "Based on the two reference outputs below, generate a response that incorporates elements from both but reflects your own judgment and unique perspective. Do not provide any explanation, just give the response directly. Reference Output 1: [{{provider1_output}}], Reference Output 2: [{{provider2_output}}]",
-        timeout = 120000, -- Timeout in milliseconds
-      },
-      file_selector = {
-        --- @alias FileSelectorProvider "native" | "fzf" | "mini.pick" | "snacks" | "telescope" | string
-        provider = "telescope",
-        -- Options override for custom providers
-        provider_opts = {},
       },
     },
     -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
