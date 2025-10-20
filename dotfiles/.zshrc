@@ -342,7 +342,7 @@ alias ws='cd_workspace'
 cd_workspace() {
   if [[ ! -z "${@}" ]]
   then
-    cd "${WORKSPACE}/${@}*"
+    cd "${WORKSPACE}/${@}"*
   else
     cd "${WORKSPACE}"
   fi

@@ -15,6 +15,8 @@
         pkgs.wezterm
         pkgs.neovim
         pkgs.stylua
+        pkgs.prettierd
+        pkgs.eslint_d
         # pkgs.orca-slicer
 
         # shell
