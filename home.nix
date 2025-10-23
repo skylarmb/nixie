@@ -22,7 +22,7 @@
         # shell
         pkgs.zsh
         pkgs.ripgrep
-        pkgs.direnv
+        # pkgs.direnv
         pkgs.oh-my-zsh
         pkgs.fzf
         pkgs.bat
@@ -80,6 +80,10 @@
 
     # Let Home Manager install and manage itself.
     programs = {
-        home-manager.enable = true;
+      home-manager.enable = true;
+      direnv = {
+        enable = true;
+        nix-direnv.enable = true;
+      };
     };
 }
