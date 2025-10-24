@@ -3,7 +3,7 @@
   path = .private/.gitconfig
 [core]
   pager = delta
-  excludesfile = ~/.config/git/.gitignore_global
+  excludesfile = ~/.config/git/ignore
 
 ; ------------ DIFFSITTER ------------
 ; [pager]
