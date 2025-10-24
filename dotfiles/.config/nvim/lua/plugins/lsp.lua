@@ -36,9 +36,9 @@ local smart_goto_definition = function()
     local target_uri = target.uri or target.targetUri
     local target_bufnr = vim.uri_to_bufnr(target_uri)
 
-    -- If the target is in the same buffer, use regular definition jump
+    -- If the target is in the same buffer, jump directly to the location
     if target_bufnr == current_bufnr then
-      vim.lsp.buf.definition()
+      vim.lsp.util.jump_to_location(target, "utf-8")
     else
       -- If target is in a different buffer, use preview
       require("goto-preview").goto_preview_definition()
@@ -249,6 +249,7 @@ return {
     dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
     config = function()
       require("typescript-tools").setup({
+        on_attach = on_attach,
         settings = {
           -- spawn additional tsserver instance to calculate diagnostics on it
           separate_diagnostic_server = true,
