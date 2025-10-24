@@ -163,6 +163,7 @@ alias workspace="cd $WORKSPACE"
 alias dotfiles="cd $DOTFILES_DIR"
 alias vimc="cd $DOTFILES_DIR/.config/nvim && nvim . && cd -"
 alias vimcd="cd $DOTFILES_DIR/.config/nvim && $EDITOR ."
+alias cdd='cd_dirname'
 alias zc="$EDITOR $DOTFILES_DIR/.zshrc && exec zsh"
 alias gitc="$EDITOR $DOTFILES_DIR/.config/git/config"
 alias zcp="$EDITOR $HOME/.private/.zshrc && exec zsh"
@@ -248,6 +249,10 @@ zstyle ':fzf-tab:*' switch-group '<' '>'
 source <(fzf --zsh)
 # enable-fzf-tab
 
+cd_dirname() {
+  cd (dirname "${1}")
+}
+
 vr() {
   nvim --server "$PWD/.nvimsocket" --remote-tab "$@" && nvim --server "$PWD/.nvimsocket" --remote-ui
 }
@@ -312,12 +317,35 @@ wip() {
 }
 
 
-# auto tmux window naming
+# auto tmux window naming - hybrid approach
 tmux-window-name() {
-  if [[ -z "$TMUX" ]] || [[ -z "$TMUX_PLUGIN_MANAGER_PATH" ]]; then
+  if [[ -z "$TMUX" ]]; then
     return
   fi
-  ($TMUX_PLUGIN_MANAGER_PATH/tmux-window-name/scripts/rename_session_windows.py >/dev/null 2>&1 || true &)
+
+  # Get current pane's running command
+  local current_command=$(tmux display-message -p '#{pane_current_command}')
+
+  # List of shell programs where we want to show directory instead
+  local shell_programs=("zsh" "bash" "sh" "fish")
+
+  # Check if current command is a shell
+  local is_shell=false
+  for shell in $shell_programs; do
+    if [[ "$current_command" == "$shell" ]]; then
+      is_shell=true
+      break
+    fi
+  done
+
+  if $is_shell; then
+    # At shell prompt - show directory name
+    local dir_name=$(basename "$PWD")
+    tmux rename-window "$dir_name"
+  else
+    # Running a program - let automatic-rename show the program name
+    tmux set-window-option automatic-rename on
+  fi
 }
 
 # tmux light/dark mode env
