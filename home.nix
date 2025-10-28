@@ -47,9 +47,7 @@
         # shell stuff
         ".zprofile".source = dotfiles/.zprofile;
         ".zshrc".source = dotfiles/.zshrc;
-        ".antigenrc".source = dotfiles/.antigenrc;
         ".wezterm.lua".source = dotfiles/.wezterm.lua;
-        "antigen.zsh".source = dotfiles/antigen.zsh;
 
         # applications
         ".config/git".source = dotfiles/.config/git;

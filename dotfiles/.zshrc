@@ -9,20 +9,10 @@ autoload -U add-zsh-hook
 
 # Path to your Oh My Zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
-# ZSH_THEME="robbyrussell"
-ZSH_THEME="af-magic"
+export ZSH_THEME="robbyrussell"
+# ZSH_THEME="af-magic"
 plugins=(git)
 source $ZSH/oh-my-zsh.sh
-
-# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
-# Initialization code that may require console input (password prompts, [y/n]
-# confirmations, etc.) must go above this block; everything else may go below.
-# export POWERLEVEL9K_INSTANT_PROMPT=quiet
-# if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-#   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-# fi
-# # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-# [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 # ---------------- SHELL ----------------
 
@@ -45,13 +35,6 @@ COMPLETION_WAITING_DOTS="true"
 # Performance optimzations
 # DISABLE_UPDATE_PROMPT="true"
 
-# compinit, runs once a day
-autoload -Uz compinit
-if [[ -n ~/.zcompdump(#qN.mh+24) ]]; then
-	compinit;
-else
-	compinit -C;
-fi;
 # easily rename filenames to kebab-case
 autoload -Uz zmv
 autoload -Uz edit-command-line
@@ -186,7 +169,7 @@ alias todo='gg "todo before"'
 alias installglobals='npm install -g prettier diff-so-fancy neovim npm-why serve serverless nodemon markdown-toc ts-node lebab'
 alias scr='v $WORKSPACE/scratchpad/scratch.tsx'
 # alias ccat='cat'
-alias cat='bat --style=plain,header,grid'
+alias cat='bat --style=plain'
 alias ccat='command cat'
 # alias ag='ag --path-to-ignore ~/.ignore'
 alias notes='cd ~/notes'
@@ -213,22 +196,6 @@ alias dr='docker run -it --rm'
 alias dive="docker run -ti --rm  -v /var/run/docker.sock:/var/run/docker.sock ghcr.io/joschi/dive"
 
 # ---------------- PLUGINS ----------------
-#
-# if [[ -n "$DEBUG_ANTIGEN" ]]; then
-#   cat $ANTIGEN_LOG
-# fi
-# If there is cache available
-if [[ -f ${ADOTDIR:-$HOME/.antigen}/.cache/.zcache-payload ]]; then
-    # Load bundles statically
-    source ${ADOTDIR:-$HOME/.antigen}/.cache/.zcache-payload
-    # You will need to call compinit
-    autoload -Uz compinit
-    compinit -d ${HOME}/.zcompdump
-else
-    # If there is no cache available, load normally and create cache
-    source $HOME/antigen.zsh
-    antigen init $HOME/.antigenrc
-fi
 
 bindkey '^Xh' _complete_help
 # bindkey '\t' autosuggest-accept
@@ -237,17 +204,8 @@ zstyle ':completion:*:git-checkout:*' sort false
 zstyle ':completion:*:descriptions'   format '[%d]'
 zstyle ':completion:*'                list-colors ${(s.:.)LS_COLORS}
 zstyle ':completion:*'                menu no
-zstyle ':fzf-tab:complete:cd:*'       fzf-preview 'eza --all -1 --color=always $realpath'
-zstyle ':fzf-tab:complete:eza:*'      fzf-preview 'eza --all -1 --color=always $realpath'
-zstyle ':fzf-tab:*'                   fzf-flags --bind=enter:accept --min-height=20 --height=20 --border
-zstyle ':fzf-tab:*'                   continuous-trigger 'tab'
-zstyle ':fzf-tab:*'                   accept-line enter
-
-# switch group using `<` and `>`
-zstyle ':fzf-tab:*' switch-group '<' '>'
 
 source <(fzf --zsh)
-# enable-fzf-tab
 
 cd_dirname() {
   cd (dirname "${1}")
