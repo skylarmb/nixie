@@ -28,6 +28,7 @@
         pkgs.bat
         pkgs.eza
         pkgs.fd
+	pkgs.git
         pkgs.gh
         pkgs.delta
         pkgs.tig

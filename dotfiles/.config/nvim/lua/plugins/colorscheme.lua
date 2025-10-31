@@ -6,7 +6,7 @@ return {
     opts = {
       contrast = "hard",
     },
-    dir = "~/workspace/torchlight.nvim",
-    dev = true,
+    -- dir = "~/workspace/torchlight.nvim",
+    -- dev = true,
   },
 }
