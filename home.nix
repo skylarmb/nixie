@@ -32,6 +32,7 @@
         pkgs.delta
         pkgs.tig
         pkgs.tree
+        pkgs.sd
 
         # containers
         # pkgs.podman

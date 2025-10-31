@@ -1,6 +1,7 @@
 return {
   -- :Git commands
   { "tpope/vim-fugitive", cmd = { "Git" } },
+  { "sindrets/diffview.nvim", event = "VeryLazy" },
   -- Git gutter signs
   {
     "lewis6991/gitsigns.nvim",
