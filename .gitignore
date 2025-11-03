@@ -1,2 +1,8 @@
 result
 .claude
+
+# Private configuration (contains sensitive data)
+.private/
+
+# Nix build outputs and links
+result-*

@@ -1,0 +1,13 @@
+# Private git configuration
+# This file should be created at ~/.private/.gitconfig
+# It will be included by the main git config
+
+[user]
+    name = Skylar Brown
+    email = skylarmb@gmail.com
+    # Optional: GPG signing key (uncomment if using GPG signing)
+    signingkey = 41933B821B71E2FE
+
+# Optional: Additional git configuration
+# [core]
+#     sshCommand = ssh -i ~/.ssh/your_private_key

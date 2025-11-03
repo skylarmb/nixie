@@ -1,6 +1,6 @@
 # .private/.gitconfig file must define at minimum [user] and [core]
 [include]
-  path = .private/.gitconfig
+  path = ~/.private/.gitconfig
 [core]
   pager = delta
   excludesfile = ~/.config/git/ignore
@@ -180,9 +180,5 @@
 	insteadOf = https://github.com/
 [init]
 	defaultbranch = main
-[user]
-	name = Skylar Brown
-	email = skylarmb@gmail.com
-	signingkey = 41933B821B71E2FE
 [tag]
 	gpgSign = true

@@ -31,10 +31,6 @@ require("lazy").setup({
     lazy = false,
     version = false, -- always use the latest git commit
   },
-  dev = {
-    path = "~/workspace/nvim_dev",
-    patterns = { "local" },
-  },
   install = { colorscheme = { "torchlight" } },
   checker = {
     enabled = true,
