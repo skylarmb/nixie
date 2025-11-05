@@ -43,8 +43,8 @@
   services.xserver.enable = true;
 
   # Enable the GNOME Desktop Environment.
-  services.xserver.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.gnome.enable = true;
+  services.displayManager.gdm.enable = true;
+  services.desktopManager.gnome.enable = true;
   services.udev.packages = with pkgs; [ gnome-settings-daemon ];
   services.udev.extraRules = ''
     # Espressif USB Serial/JTAG Controller
@@ -203,6 +203,7 @@
     autoEnable = true;
     base16Scheme = "${pkgs.base16-schemes}/share/themes/gruvbox-dark-soft.yaml";
     polarity = "dark";
+    targets.qt.enable = false;  # Disable Qt theming - qgnomeplatform is broken
   };
 
   # List services that you want to enable:

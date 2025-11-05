@@ -209,6 +209,7 @@ alias nd="nix develop -c $SHELL"
 alias pr='poetry run'
 alias dr='docker run -it --rm'
 alias dive="docker run -ti --rm  -v /var/run/docker.sock:/var/run/docker.sock ghcr.io/joschi/dive"
+alias claude='$HOME/.claude/local/claude'
 
 # ---------------- PLUGINS ----------------
 #
