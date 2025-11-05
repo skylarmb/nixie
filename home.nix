@@ -5,36 +5,36 @@
     home.homeDirectory = "/Users/skylar";
     home.stateVersion = "25.05"; # Please read the comment before changing.
     home.packages = [
-        # dependencies
-        # pkgs.gccgo
-        # pkgs.gnumake
-        pkgs.nodejs_22
+      # dependencies
+      # pkgs.gccgo
+      # pkgs.gnumake
+      pkgs.nodejs_22
 
-        # programs
-        pkgs.tmux
-        pkgs.wezterm
-        pkgs.neovim
-        pkgs.stylua
-        pkgs.prettierd
-        pkgs.eslint_d
-        # pkgs.orca-slicer
+      # programs
+      pkgs.tmux
+      pkgs.wezterm
+      pkgs.neovim
+      pkgs.stylua
+      pkgs.prettierd
+      pkgs.eslint_d
+      # pkgs.orca-slicer
 
-        # shell
-        pkgs.zsh
-        pkgs.ripgrep
-        # pkgs.direnv
-        pkgs.oh-my-zsh
-        pkgs.fzf
-        pkgs.bat
-        pkgs.eza
-        pkgs.fd
-        pkgs.git
-        pkgs.gh
-        pkgs.delta
-        pkgs.tig
-        pkgs.tree
-        pkgs.sd
-        pkgs.wl-clipboard
+      # shell
+      pkgs.zsh
+      pkgs.ripgrep
+      # pkgs.direnv
+      pkgs.oh-my-zsh
+      pkgs.fzf
+      pkgs.bat
+      pkgs.eza
+      pkgs.fd
+      pkgs.git
+      pkgs.gh
+      pkgs.delta
+      pkgs.tig
+      pkgs.tree
+      pkgs.sd
+      pkgs.wl-clipboard
 
     # containers
     # pkgs.podman
