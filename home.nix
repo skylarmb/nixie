@@ -1,8 +1,8 @@
 { config, pkgs, ... }:
 
 {
-    home.username = "skylar";
-    home.homeDirectory = "/Users/skylar";
+    home.username = "x";
+    home.homeDirectory = "/home/x";
     home.stateVersion = "25.05"; # Please read the comment before changing.
     home.packages = [
       # dependencies
@@ -36,14 +36,14 @@
       pkgs.sd
       pkgs.wl-clipboard
 
-    # containers
-    # pkgs.podman
-    # pkgs.qemu
-    # pkgs.virtiofsd
-    # pkgs.docker
-    # pkgs.docker-buildx
-    # pkgs.docker-compose
-    # pkgs.nvidia-container-toolkit
+      # containers
+      # pkgs.podman
+      # pkgs.qemu
+      # pkgs.virtiofsd
+      # pkgs.docker
+      # pkgs.docker-buildx
+      # pkgs.docker-compose
+      # pkgs.nvidia-container-toolkit
   ];
   home.file = {
     # shell stuff
@@ -82,12 +82,12 @@
     # DOCKER_HOST = "unix:///run/user/1000/podman/podman-machine-default-api.sock";
   };
 
-    # Let Home Manager install and manage itself.
-    programs = {
-      home-manager.enable = true;
-      direnv = {
-        enable = true;
-        nix-direnv.enable = true;
-      };
+  # Let Home Manager install and manage itself.
+  programs = {
+    home-manager.enable = true;
+    direnv = {
+      enable = true;
+      nix-direnv.enable = true;
     };
+  };
 }
