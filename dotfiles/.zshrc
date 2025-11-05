@@ -173,7 +173,7 @@ alias tc="$EDITOR $DOTFILES_DIR/.config/tmux/tmux.conf"
 alias tcc="$EDITOR $DOTFILES_DIR/.config/tmux/colorscheme.conf"
 alias hc="cd $HOME/nixie && nvim ./home.nix"
 alias hs='home-manager switch'
-alias nrs='sudo nixos-rebuild switch'
+alias nrs='sudo nixos-rebuild switch --flake $HOME/nixie/#nixos'
 alias zu='exec zsh'
 alias dka='docker kill $(docker ps -q)'
 alias vimwipe='rm -rf $HOME/.vim/tmp/swap; mkdir -p $HOME/.vim/tmp/swap'
@@ -211,6 +211,7 @@ alias nd="nix develop -c $SHELL"
 alias pr='poetry run'
 alias dr='docker run -it --rm'
 alias dive="docker run -ti --rm  -v /var/run/docker.sock:/var/run/docker.sock ghcr.io/joschi/dive"
+alias claude='$HOME/.claude/local/claude'
 
 # ---------------- PLUGINS ----------------
 #
