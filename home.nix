@@ -91,6 +91,9 @@
     ".claude/agents".source = dotfiles/.claude/agents;
     ".claude/commands".source = dotfiles/.claude/commands;
     ".claude/output-styles".source = dotfiles/.claude/output-styles;
+
+    # Gemini configuration - same as Claude.md
+    ".gemini/GEMINI.md".source = dotfiles/.claude/CLAUDE.md;
   };
 
   home.sessionVariables = {

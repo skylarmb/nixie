@@ -19,4 +19,4 @@ Bad: Read(components/Message/ReasoningMessage.tsx)
 - Never investigate, hypothesize, and then jump straight into implementation or fixing without any input from me. Once you know what you are going to change, please let me know what it is and wait for the green light, otherwise I cant follow what changes you are making!
 - Always clean up unused code that was added during iteration on a problem. For example if we went through approach A, then B, then finally landed on C as the final implementation, always make sure all the code from A and B are properly cleaned up.
 - Leverage the Explore agent to efficiently research or locate specific code, e.g. Explore(Find where messages are persisted to the DB)
-- Signoff your commit messages with "✨ Created with Claude Code"
+- Signoff your commit messages with "✨ Created with [Claude/Gemini] Code"
