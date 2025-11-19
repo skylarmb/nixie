@@ -1,0 +1,33 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__serena__*",
+      "mcp__context7__*",
+      "Edit",
+      "Write",
+      "Read",
+      "Bash(ls :*)",
+      "Bash(tree :*)",
+      "Bash(pwd)",
+      "Bash(whoami)",
+      "Bash(git :*)",
+      "Bash(npm test)",
+      "Bash(npm run :*)",
+      "Bash(npm install :*)",
+      "Bash(pytest :*)",
+      "Bash(docker ps :*)",
+      "Bash(echo :*)",
+      "Bash(mkdir :*)",
+      "Bash(mv :*)",
+      "Bash(cd :*)",
+      "Bash(cp :*)",
+      "Bash(cat :*)",
+      "Bash(awk :*)",
+      "Bash(sed :*)",
+      "Bash(head :*)",
+      "Bash(find :*)"
+    ]
+  },
+  "model": "haiku",
+  "alwaysThinkingEnabled": true
+}
