@@ -78,6 +78,7 @@ config.keys = {
 	{ key = "Enter", mods = mod_key, action = tmux_prefix("z") },
 	{ key = "b", mods = mod_key, action = tmux_prefix("b") },
 	{ key = "g", mods = mod_key, action = tmux_prefix("g") },
+	{ key = "Enter", mods = "SHIFT", action = wezterm.action({ SendString = "\x1b\r" }) },
 }
 
 -- config.window_decorations = "TITLE"
