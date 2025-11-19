@@ -1,5 +1,6 @@
 result
 .claude
+.direnv/
 
 # Private configuration (contains sensitive data)
 .private/

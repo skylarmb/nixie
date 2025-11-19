@@ -5,10 +5,10 @@
     home.homeDirectory = if isDarwin then "/Users/${userConfig.username}" else "/home/${userConfig.username}";
     home.stateVersion = "25.05"; # Please read the comment before changing.
     home.packages = [
-        # dependencies
-        # pkgs.gccgo
-        # pkgs.gnumake
-        pkgs.nodejs_22
+      # dependencies
+      # pkgs.gccgo
+      # pkgs.gnumake
+      pkgs.nodejs_22
 
         # programs
         pkgs.tmux
@@ -30,7 +30,7 @@
         pkgs.bat
         pkgs.eza
         pkgs.fd
-	pkgs.git
+        pkgs.git
         pkgs.gh
         pkgs.delta
         pkgs.tig
@@ -38,22 +38,22 @@
         pkgs.sd
         pkgs.htmlq
 
-        # containers
-        # pkgs.podman
-        # pkgs.qemu
-        # pkgs.virtiofsd
-        # pkgs.docker
-        # pkgs.docker-buildx
-        # pkgs.docker-compose
-        # pkgs.nvidia-container-toolkit
-    ];
-    home.file = {
-        # shell stuff
-        ".zprofile".source = dotfiles/.zprofile;
-        ".zshrc".source = dotfiles/.zshrc;
-        ".antigenrc".source = dotfiles/.antigenrc;
-        ".wezterm.lua".source = dotfiles/.wezterm.lua;
-        "antigen.zsh".source = dotfiles/antigen.zsh;
+      # containers
+      # pkgs.podman
+      # pkgs.qemu
+      # pkgs.virtiofsd
+      # pkgs.docker
+      # pkgs.docker-buildx
+      # pkgs.docker-compose
+      # pkgs.nvidia-container-toolkit
+  ];
+  home.file = {
+    # shell stuff
+    ".zprofile".source = dotfiles/.zprofile;
+    ".zshrc".source = dotfiles/.zshrc;
+    ".antigenrc".source = dotfiles/.antigenrc;
+    ".wezterm.lua".source = dotfiles/.wezterm.lua;
+    "antigen.zsh".source = dotfiles/antigen.zsh;
 
         # applications
         ".config/git".source = dotfiles/.config/git;
@@ -76,10 +76,10 @@
         experimental-features = nix-command flakes
         '';
 
-        ".config/npm/npmrc".text = ''
-          cache=~/.cache/npm
-          prefix=~/.local/share/npm
-        '';
+    ".config/npm/npmrc".text = ''
+      cache=~/.cache/npm
+      prefix=~/.local/share/npm
+    '';
 
         "bin".source = dotfiles/bin;
     };
@@ -108,4 +108,5 @@
         nix-direnv.enable = true;
       };
     };
+  };
 }
