@@ -46,7 +46,7 @@
       "splash"
       "udev.log_priority=3"
     ];
-    #kernelPackages = pkgs.linuxPackages_6_12;
-    extraModulePackages = [ config.boot.kernelPackages.nvidia_x11 ];
+    kernelPackages = pkgs.linuxPackages_latest;
+    # extraModulePackages = [ config.boot.kernelPackages.nvidia_x11 ];
   };
 }
