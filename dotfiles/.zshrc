@@ -185,8 +185,16 @@ alias vm='cd $(git rev-parse --show-toplevel) && nvim `git --no-pager diff --nam
 alias todo='gg "todo before"'
 alias installglobals='npm install -g prettier diff-so-fancy neovim npm-why serve serverless nodemon markdown-toc ts-node lebab'
 alias scr='v $WORKSPACE/scratchpad/scratch.tsx'
-# alias ccat='cat'
-alias cat='bat --style=plain,header,grid'
+# Use function instead of alias to detect if output is a TTY
+cat() {
+  if [[ -t 1 ]]; then
+    # stdout is a terminal - use fancy styles
+    bat --style=plain,header,grid "$@"
+  else
+    # stdout is redirected/piped - use plain output
+    bat --style=plain "$@"
+  fi
+}
 alias ccat='command cat'
 # alias ag='ag --path-to-ignore ~/.ignore'
 alias notes='cd ~/notes'
@@ -211,6 +219,9 @@ alias nd="nix develop -c $SHELL"
 alias pr='poetry run'
 alias dr='docker run -it --rm'
 alias dive="docker run -ti --rm  -v /var/run/docker.sock:/var/run/docker.sock ghcr.io/joschi/dive"
+alias ch='claude --model haiku'
+alias cs='claude --model sonnet'
+alias gs='git switch -'
 
 # ---------------- PLUGINS ----------------
 #
@@ -250,7 +261,7 @@ source <(fzf --zsh)
 # enable-fzf-tab
 
 cd_dirname() {
-  cd (dirname "${1}")
+  cd "$(dirname ${1})"
 }
 
 vr() {
@@ -299,7 +310,7 @@ t() {
   local d="${1}"
   [[ "${d}" =~ ^[0-9]+$ ]] && shift || d=1
   local t="${1:-.}"
-  _eza -T -L$d $t
+  _eza --git-ignore -T -L$d $t
 }
 
 git_nvim(){
@@ -652,15 +663,6 @@ awkp(){
 
 startswith(){
   grep -F "^${*}"
-}
-
-gs(){
-  if [[ -n "${1}" ]]; then
-    git -c pager.diff=false diff --name-only --diff-filter="$1"
-    git -c pager.diff=false diff --name-only --cached --diff-filter="$1"
-  else
-    git -c color.ui=always status --short | sort -bf
-  fi
 }
 
 # re-instal nix after a system update

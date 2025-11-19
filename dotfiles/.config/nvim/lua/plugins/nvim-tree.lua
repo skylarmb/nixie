@@ -84,12 +84,12 @@ return {
         vim.keymap.set("n", "o", api.node.run.system, opts("Run System"))
         vim.keymap.set("n", "?", api.tree.toggle_help, opts("Help"))
 
-        -- set root to git root if it exists
-        local git_root = vim.fn.system("git rev-parse --show-toplevel"):gsub("%s+", "")
-        local exists = vim.fn.isdirectory
-        if exists(git_root) ~= 0 then
-          vim.cmd("cd " .. git_root)
-        end
+        -- -- set root to git root if it exists
+        -- local git_root = vim.fn.system("git rev-parse --show-toplevel"):gsub("%s+", "")
+        -- local exists = vim.fn.isdirectory
+        -- if exists(git_root) ~= 0 then
+        --   vim.cmd("cd " .. git_root)
+        -- end
       end,
     },
   },

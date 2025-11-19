@@ -17,6 +17,8 @@
         pkgs.stylua
         pkgs.prettierd
         pkgs.eslint_d
+        pkgs.inlyne # GUI markdown viewer
+        pkgs.glow # terminal markdown viewer
         # pkgs.orca-slicer
 
         # shell
@@ -34,6 +36,7 @@
         pkgs.tig
         pkgs.tree
         pkgs.sd
+        pkgs.htmlq
 
         # containers
         # pkgs.podman

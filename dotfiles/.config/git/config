@@ -86,6 +86,8 @@
   cc = !"echo $(git rev-parse HEAD) | tee /dev/tty | pbcopy"
   ca = commit -a
   d = diff --ignore-all-space
+  dn = diff --name-only --ignore-all-space
+  dnr = diff --name-only --relative --ignore-all-space
   dd = "!f() { \
     merge_base=$(git merge-base origin/main HEAD); \
     git diff --relative $merge_base $@; \
@@ -96,9 +98,9 @@
   ds = diff --ignore-all-space --compact-summary
   rb = rebase -i $(git merge-base --fork-point main)
   rbc = rebase --continue
-  p = push -u origin head
-  pn = push -u origin head --no-verify
-  pf = push -f origin head
+  p = push -u origin HEAD
+  pn = push -u origin HEAD --no-verify
+  pf = push -f origin HEAD
   f = fetch --no-tags --prune
   a = add
   b = git rev-parse --abbrev-ref HEAD
@@ -134,13 +136,6 @@
                 | parallel git ls-tree -r --long \"{}\" \
                 | sort -uk3 \
                 | sort -nk4"#  nuke = reset --hard origin/main
-  yolo = "!f() { \
-    curr_branch=$(git rev-parse --abbrev-ref HEAD); \
-    if [ \"$curr_branch\" = \"main\" ]; then \
-      lolexec yolo echo "👀 cant yolo on main..."; return; \
-    fi; \
-    lolexec yolo git push -f --no-verify origin head; \
-  }; f"
   fire= "!f() { \
     newbranch=\"sb-FIRE-$(date +%s)\"; \
     git checkout -b \"$newbranch\"; \
