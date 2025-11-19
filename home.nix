@@ -83,6 +83,14 @@
     '';
 
     "bin".source = dotfiles/bin;
+
+    # Claude Code configuration - synced across machines
+    ".claude/CLAUDE.md".source = dotfiles/.claude/CLAUDE.md;
+    ".claude/settings.json".source = dotfiles/.claude/settings.json;
+    ".claude/explore.md".source = dotfiles/.claude/explore.md;
+    ".claude/agents".source = dotfiles/.claude/agents;
+    ".claude/commands".source = dotfiles/.claude/commands;
+    ".claude/output-styles".source = dotfiles/.claude/output-styles;
   };
 
   home.sessionVariables = {
