@@ -10,7 +10,7 @@ autoload -U add-zsh-hook
 # Path to your Oh My Zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
 # ZSH_THEME="robbyrussell"
-ZSH_THEME="af-magic"
+ZSH_THEME="af-magic-ansi"
 plugins=(git)
 source $ZSH/oh-my-zsh.sh
 
