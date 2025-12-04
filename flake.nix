@@ -21,9 +21,9 @@
       # User configuration - customize these for your setup
       userConfig = {
         username = "skylar";
-        email = "skylarmb@gmail.com";
+        email = "skylar@honeyhive.ai";
         fullName = "Skylar Brown";
-        gpgKey = "41933B821B71E2FE";  # Optional, set to null if not using GPG signing
+        gpgKey = "E51A3E86541F5FCF";  # Optional, set to null if not using GPG signing
         timezone = "America/Los_Angeles";
       };
 
