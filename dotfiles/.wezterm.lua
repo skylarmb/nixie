@@ -6,7 +6,7 @@ local config = wezterm.config_builder()
 -- config.default_prog = { "/Users/skylar/.nix-profile/bin/zsh", "--login", "-c", "tmux new-session -A -s main -t main" }
 
 config.enable_tab_bar = false
-
+config.automatically_reload_config = true
 config.window_padding = {
 	left = 0,
 	right = 0,
@@ -14,7 +14,7 @@ config.window_padding = {
 	bottom = 0,
 }
 
-config.font_size = 24.0
+config.font_size = 21.0
 config.font = wezterm.font("DankMono Nerd Font Mono", { weight = "Bold" })
 -- config.font = wezterm.font("AtkinsonHyperlegibleMono Nerd Font")
 -- local fg = "#E3CA9A"
@@ -75,10 +75,18 @@ config.keys = {
 	{ key = "7", mods = mod_key, action = tmux_prefix("7") },
 	{ key = "8", mods = mod_key, action = tmux_prefix("8") },
 	{ key = "9", mods = mod_key, action = tmux_prefix("9") },
-	{ key = "Enter", mods = mod_key, action = tmux_prefix("z") },
-	{ key = "b", mods = mod_key, action = tmux_prefix("b") },
-	{ key = "g", mods = mod_key, action = tmux_prefix("g") },
 	{ key = "Enter", mods = "SHIFT", action = wezterm.action({ SendString = "\x1b\r" }) },
+	{ key = "Enter", mods = mod_key, action = tmux_prefix("z") },
+	{ key = "b", mods = mod_key, action = tmux_prefix("p") },
+	{ key = "g", mods = mod_key, action = tmux_prefix("g") },
+	-- Word movement: Alt+Left/Right and Ctrl+b/f send ESC+b/f for zsh vi-mode
+	{ key = "LeftArrow", mods = "ALT", action = wezterm.action({ SendString = "\27b" }) },
+	{ key = "RightArrow", mods = "ALT", action = wezterm.action({ SendString = "\27f" }) },
+	{ key = "b", mods = "CTRL", action = wezterm.action({ SendString = "\27b" }) },
+	{ key = "f", mods = "CTRL", action = wezterm.action({ SendString = "\27f" }) },
+	-- Word deletion: Alt+Backspace and Alt+d
+	{ key = "Backspace", mods = "ALT", action = wezterm.action({ SendString = "\27\127" }) },
+	{ key = "d", mods = "ALT", action = wezterm.action({ SendString = "\27d" }) },
 }
 
 -- config.window_decorations = "TITLE"

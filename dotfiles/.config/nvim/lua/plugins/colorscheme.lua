@@ -4,7 +4,7 @@ return {
     lazy = false,
     priority = 1000,
     opts = {
-      contrast = "stark",
+      contrast = "hard",
     },
     dir = "~/workspace/torchlight.nvim",
     dev = true,

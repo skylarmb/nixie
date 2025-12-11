@@ -47,7 +47,7 @@ vim.api.nvim_create_user_command("FindFiles", function()
 end, {})
 
 vim.api.nvim_create_autocmd({ "BufEnter" }, {
-  pattern = { "qf", "help", "man", "lspinfo", "spectre_panel", "veil", "NvimTree" },
+  pattern = { "qf", "help", "man", "lspinfo", "spectre_panel", "veil", "NvimTree", "avanteinput", "avanteselectedfiles", "avanteselectedcode", "avante" },
   callback = function()
     vim.cmd([[
       setlocal nonumber colorcolumn=""

@@ -37,6 +37,7 @@
       pkgs.tree
       pkgs.sd
       pkgs.htmlq
+      pkgs.bat-extras.core
 
       # containers
       # pkgs.podman
@@ -106,8 +107,9 @@
   # Activation scripts
   home.activation = {
     # Install TPM plugins automatically
-    installTmuxPlugins = config.lib.dag.entryAfter ["writeBoundary"] ''
+    installTmuxPlugins = config.lib.dag.entryAfter ["installPackages"] ''
       if [ -x "$HOME/.config/tmux/plugins/tpm/bin/install_plugins" ]; then
+        export PATH="${pkgs.tmux}/bin:${pkgs.gawk}/bin:${pkgs.gnused}/bin:${pkgs.gnugrep}/bin:${pkgs.coreutils}/bin:${pkgs.git}/bin:$PATH"
         $DRY_RUN_CMD "$HOME/.config/tmux/plugins/tpm/bin/install_plugins" || true
       fi
     '';
@@ -116,9 +118,9 @@
   # Let Home Manager install and manage itself.
   programs = {
     home-manager.enable = true;
-    direnv = {
-      enable = true;
-      nix-direnv.enable = true;
-    };
+    # direnv = {
+    #   enable = true;
+    #   nix-direnv.enable = true;
+    # };
   };
 }
