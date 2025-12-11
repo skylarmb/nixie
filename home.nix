@@ -96,6 +96,9 @@
 
     # Gemini configuration - same as Claude.md
     ".gemini/GEMINI.md".source = dotfiles/.claude/CLAUDE.md;
+
+    # OpenCode configuration - same as Claude.md
+    ".config/opencode/AGENTS.md".source = dotfiles/.claude/CLAUDE.md;
   };
 
   home.sessionVariables = {
