@@ -68,37 +68,37 @@ return {
       })
     end,
   },
-  {
-    "Isrothy/neominimap.nvim",
-    lazy = false, -- plugin does its own lazy/deferred loading internally
-    version = "v3.x.x",
-    -- Optional. You can alse set your own keybindings
-    keys = {
-      { "<leader>nm", "<cmd>Neominimap Toggle<cr>", desc = "Toggle global minimap" },
-    },
-    init = function()
-      --- Put your configuration here
-      ---@type Neominimap.UserConfig
-      vim.g.neominimap = {
-        auto_enable = true,
-        delay = 1000,
-        diagnostic = {
-          enabled = true,
-          severity = { vim.diagnostic.severity.WARN, vim.diagnostic.severity.ERROR },
-        },
-        git = {
-          enabled = true,
-        },
-        search = {
-          enabled = true,
-        },
-        layout = "split",
-        split = {
-          minimap_width = 15,
-        },
-      }
-    end,
-  },
+  -- {
+  --   "Isrothy/neominimap.nvim",
+  --   lazy = false, -- plugin does its own lazy/deferred loading internally
+  --   version = "v3.x.x",
+  --   -- Optional. You can alse set your own keybindings
+  --   keys = {
+  --     { "<leader>nm", "<cmd>Neominimap Toggle<cr>", desc = "Toggle global minimap" },
+  --   },
+  --   init = function()
+  --     --- Put your configuration here
+  --     ---@type Neominimap.UserConfig
+  --     vim.g.neominimap = {
+  --       auto_enable = true,
+  --       delay = 1000,
+  --       diagnostic = {
+  --         enabled = true,
+  --         severity = { vim.diagnostic.severity.WARN, vim.diagnostic.severity.ERROR },
+  --       },
+  --       git = {
+  --         enabled = true,
+  --       },
+  --       search = {
+  --         enabled = true,
+  --       },
+  --       layout = "split",
+  --       split = {
+  --         minimap_width = 15,
+  --       },
+  --     }
+  --   end,
+  -- },
   -- {
   --   "rachartier/tiny-glimmer.nvim",
   --   event = "VeryLazy",
