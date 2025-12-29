@@ -1,3 +1,9 @@
 result
-.claude
+/.claude
 .direnv/
+
+# Private configuration (contains sensitive data)
+.private/
+
+# Nix build outputs and links
+result-*
