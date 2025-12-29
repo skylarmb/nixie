@@ -98,11 +98,10 @@ else
     echo
 fi
 
-# Step 5: Customize flake.nix (optional)
+# Step 5: Verify flake.nix
 info "Checking flake configuration..."
 if [ -f "flake.nix" ]; then
     success "flake.nix found"
-    warn "Review flake.nix and update userConfig if needed (username, email, GPG key, etc.)"
     echo
 else
     error "flake.nix not found! This file is required for installation."
