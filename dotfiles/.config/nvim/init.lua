@@ -1,4 +1,4 @@
-vim.fn.setenv("TERM", "screen-256color")
+vim.fn.setenv("TERM", "tmux-256color")
 
 -- dont run expensive plugins in child nvims
 if os.getenv("NVIM") ~= nil then
@@ -30,10 +30,6 @@ require("lazy").setup({
   defaults = {
     lazy = false,
     version = false, -- always use the latest git commit
-  },
-  dev = {
-    path = "~/workspace/nvim_dev",
-    patterns = { "local" },
   },
   install = { colorscheme = { "torchlight" } },
   checker = {

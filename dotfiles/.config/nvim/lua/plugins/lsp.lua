@@ -377,6 +377,22 @@ return {
     end,
   },
   {
+    "nvimtools/none-ls.nvim",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "nvimtools/none-ls-extras.nvim",
+    },
+    config = function()
+      local null_ls = require("null-ls")
+      null_ls.setup({
+        sources = {
+          require("none-ls.diagnostics.eslint_d"),
+        },
+        on_attach = on_attach,
+      })
+    end,
+  },
+  {
     "folke/trouble.nvim",
     opts = {
       severity = vim.diagnostic.severity.ERROR,
@@ -408,5 +424,12 @@ return {
       },
       "saadparwaiz1/cmp_luasnip",
     },
+  },
+  {
+    "laytan/tailwind-sorter.nvim",
+    event = "VeryLazy",
+    dependencies = { "nvim-treesitter/nvim-treesitter", "nvim-lua/plenary.nvim" },
+    build = "cd formatter && npm ci && npm run build",
+    config = true,
   },
 }

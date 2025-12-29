@@ -132,7 +132,7 @@ n("<C-p>", "<cmd>Telescope find_files<cr>")
 n("<C-g>", "<cmd>Telescope git_files<cr>")
 n("<C-b>", "<cmd>Telescope buffers<CR>")
 n("<c-f>", "<cmd>Telescope live_grep<CR>")
-leader("s", "/\\%V", { silent = false })
+leader("s", ":%s//g<left><left>", { silent = false })
 leader("th", "<cmd>Telescope highlights<CR>")
 leader("o", "<cmd>Telescope jumplist<CR>")
 leader("m", "<cmd>Telescope marks<CR>")
@@ -153,7 +153,6 @@ n(",", ".n")
 -- Ack / ripgrep
 n("F", cmd(":Rg", cword), { silent = false })
 leader("f", ":Ack ", { silent = false, remap = true })
-leader("s", ":Acks /" .. expand("%s") .. "//<left><left>", { silent = false })
 -- ack lines in listed buffers
 -- leader("l", ":Back ", { silent = false })
 -- help
@@ -206,7 +205,6 @@ set("i", "<D-v>", '<ESC>l"+Pli') -- Paste insert modeend
 leader("tt", "<cmd>ToDoTxtTasksToggle<CR>") -- TODO list
 leader("tn", "<cmd>ToDoTxtCapture<CR>") -- TODO list
 leader("a", "cs\"'", opts.remap) -- change quotes
-leader("s", "cs'\"", opts.remap) -- change quotes
 leader("I", cmd("Inspect")) -- Inspect highlight group under cursor
 leader("c", cmd("ClaudeCode"))
 leader("db", function()
