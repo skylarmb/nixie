@@ -17,7 +17,10 @@
       pkgs.stylua
       pkgs.prettierd
       pkgs.eslint_d
-      # pkgs.orca-slicer
+      pkgs.calibre
+      pkgs.calibre-web
+      pkgs.orca-slicer
+      pkgs.plasticity
 
       # shell
       pkgs.zsh
@@ -29,6 +32,7 @@
       pkgs.eza
       pkgs.fd
       pkgs.git
+      pkgs.unzip
       pkgs.gh
       pkgs.delta
       pkgs.tig
