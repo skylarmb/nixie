@@ -18,14 +18,9 @@
 
   outputs = { self, nixpkgs, home-manager, tpm }:
     let
-      # User configuration - customize these for your setup
-      userConfig = {
-        username = "skylar";
-        email = "skylar@honeyhive.ai";
-        fullName = "Skylar Brown";
-        gpgKey = "E51A3E86541F5FCF";  # Optional, set to null if not using GPG signing
-        timezone = "America/Los_Angeles";
-      };
+      # Machine-specific configuration
+      # To add a new machine: create machines/<name>.nix and update the line below
+      userConfig = import ./machines/rog.nix;
 
       # Helper function to create home-manager configuration
       mkHomeConfiguration = system: {
