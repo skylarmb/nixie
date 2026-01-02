@@ -9,6 +9,7 @@
       # pkgs.gccgo
       # pkgs.gnumake
       pkgs.nodejs_22
+      pkgs.python3
 
       # programs
       pkgs.tmux
@@ -55,6 +56,7 @@
       pkgs.orca-slicer
       pkgs.plasticity
       pkgs.wezterm
+      pkgs.wl-clipboard
     ];
 
   home.file = {
@@ -110,6 +112,11 @@
     EDITOR = "nvim";
     NPM_CONFIG_USERCONFIG="$HOME/.config/npm/npmrc";
     SYSTEM_NODEJS = "${pkgs.nodejs_22}/bin/node";
+    SYSTEM_PYTHON = "${pkgs.python3}/bin/python3";
+    NIX_PROFILE_ETC = if isDarwin then "$HOME/.nix-profile/etc" else "/etc/profiles/per-user/${userConfig.username}/etc";
+    NIX_PROFILE_BIN = if isDarwin then "$HOME/.nix-profile/bin" else "/etc/profiles/per-user/${userConfig.username}/bin";
+    NIX_PROFILE_SHARE = if isDarwin then "$HOME/.nix-profile/share" else "/etc/profiles/per-user/${userConfig.username}/share";
+    COPY_CMD = if isDarwin then "pbcopy" else "wl-copy";
     # DOCKER_HOST = "unix:///run/user/1000/podman/podman-machine-default-api.sock";
   };
 
