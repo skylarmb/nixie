@@ -1,4 +1,9 @@
-. "$NIX_PROFILE_ETC/profile.d/hm-session-vars.sh"
+# Source home-manager session variables (handle Darwin vs Linux paths)
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  . "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
+else
+  . "/etc/profiles/per-user/$USER/etc/profile.d/hm-session-vars.sh"
+fi
 
 # profile shell startup time
 if [[ -n "$DEBUG_ZPROF" ]]; then
@@ -185,6 +190,7 @@ alias tcc="$EDITOR $DOTFILES_DIR/.config/tmux/colorscheme.conf"
 alias hc="cd $HOME/nixie && nvim ./home.nix"
 alias hs='home-manager switch --flake "$HOME/nixie#$USER@$(uname -s | tr A-Z a-z)"'
 alias nrs='sudo nixos-rebuild switch --flake "$HOME/nixie#nixos"'
+alias nrb='sudo nixos-rebuild boot --flake "$HOME/nixie#nixos"'
 alias zu='exec zsh'
 alias dka='docker kill $(docker ps -q)'
 alias vimwipe='rm -rf $HOME/.vim/tmp/swap; mkdir -p $HOME/.vim/tmp/swap'
