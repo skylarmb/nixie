@@ -1,4 +1,4 @@
-{ config, pkgs, userConfig, tpm, isDarwin ? true, ... }:
+{ config, pkgs, lib, userConfig, tpm, isDarwin ? true, ... }:
 
 {
   home.username = userConfig.username;
@@ -12,8 +12,6 @@
 
       # programs
       pkgs.tmux
-
-      # pkgs.wezterm
       pkgs.neovim
       pkgs.stylua
       pkgs.prettierd
@@ -40,6 +38,7 @@
       pkgs.sd
       pkgs.htmlq
       pkgs.bat-extras.core
+      pkgs.claude-code
 
       # containers
       # pkgs.podman
@@ -49,12 +48,13 @@
       # pkgs.docker-buildx
       # pkgs.docker-compose
       # pkgs.nvidia-container-toolkit
-
+    ] ++ lib.optionals (!isDarwin) [
       # linux only packages
       pkgs.calibre
       pkgs.calibre-web
       pkgs.orca-slicer
       pkgs.plasticity
+      pkgs.wezterm
     ];
 
   home.file = {
@@ -109,6 +109,7 @@
   home.sessionVariables = {
     EDITOR = "nvim";
     NPM_CONFIG_USERCONFIG="$HOME/.config/npm/npmrc";
+    SYSTEM_NODEJS = "${pkgs.nodejs_22}/bin/node";
     # DOCKER_HOST = "unix:///run/user/1000/podman/podman-machine-default-api.sock";
   };
 
@@ -126,9 +127,9 @@
   # Let Home Manager install and manage itself.
   programs = {
     home-manager.enable = true;
-    # direnv = {
-    #   enable = true;
-    #   nix-direnv.enable = true;
-    # };
+    direnv = {
+      enable = true;
+      nix-direnv.enable = true;
+    };
   };
 }

@@ -14,9 +14,16 @@
       url = "github:tmux-plugins/tpm";
       flake = false;
     };
+
+    # Stylix - system-wide theming
+    stylix = {
+      url = "github:danth/stylix";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
+    };
   };
 
-  outputs = { self, nixpkgs, home-manager, tpm }:
+  outputs = { self, nixpkgs, home-manager, tpm, stylix }:
     let
       # Machine-specific configuration
       # To add a new machine: create machines/<name>.nix and update the line below
@@ -71,6 +78,7 @@
         specialArgs = { inherit userConfig tpm; };
         modules = [
           ./configuration.nix
+          stylix.nixosModules.stylix
           home-manager.nixosModules.home-manager
           {
             home-manager.useGlobalPkgs = true;
