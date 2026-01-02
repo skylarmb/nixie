@@ -71,7 +71,7 @@ local setup_cmp = function()
   require("copilot").setup({
     suggestion = { enabled = false },
     panel = { enabled = false },
-    copilot_node_command = os.getenv("HOME") .. "/.nix-profile/bin/node",
+    copilot_node_command = os.getenv("SYSTEM_NODEJS") or "node",
   })
   require("copilot_cmp").setup()
   local popup_style = {
