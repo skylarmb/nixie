@@ -3,7 +3,7 @@ local wezterm = require("wezterm")
 
 local config = wezterm.config_builder()
 
--- config.default_prog = { "/Users/skylar/.nix-profile/bin/zsh", "--login", "-c", "tmux new-session -A -s main -t main" }
+-- config.default_prog = { os.getenv("NIX_PROFILE_BIN") .. "/zsh", "--login", "-c", "tmux new-session -A -s main -t main" }
 
 config.enable_tab_bar = false
 config.automatically_reload_config = true

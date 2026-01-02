@@ -1,4 +1,4 @@
-. "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
+. "$NIX_PROFILE_ETC/profile.d/hm-session-vars.sh"
 
 # profile shell startup time
 if [[ -n "$DEBUG_ZPROF" ]]; then
@@ -128,7 +128,7 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 # eval "$(/opt/homebrew/bin/brew shellenv)"
 
 # pyenv
-export SYSTEM_PYTHON="/usr/bin/python3"
+# SYSTEM_PYTHON is set via home-manager environment variables
 export PATH="$HOME/.pyenv/bin:$PATH"
 if command -v pyenv 1>/dev/null 2>&1; then
   eval "$(pyenv init -)"
