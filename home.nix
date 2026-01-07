@@ -13,11 +13,12 @@
       # programs
       pkgs.tmux
       # pkgs.wezterm
+      pkgs.helix
       pkgs.neovim
       pkgs.stylua
       pkgs.prettierd
       pkgs.eslint_d
-      pkgs.inlyne # GUI markdown viewer
+      pkgs.expect
       pkgs.glow # terminal markdown viewer
       # pkgs.orca-slicer
 

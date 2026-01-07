@@ -10,6 +10,7 @@ autoload -U add-zsh-hook
 # Path to your Oh My Zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
 # ZSH_THEME="robbyrussell"
+# ZSH_THEME="powerlevel10k/powerlevel10k"
 ZSH_THEME="af-magic-ansi"
 plugins=(git)
 source $ZSH/oh-my-zsh.sh
@@ -118,6 +119,7 @@ export PATH="$PATH:$HOME/.local/bin"
 export PATH="$PATH:$HOME/.cargo/bin"
 export PATH="$PATH:$HOME/dotfiles/bin"
 export PATH="$PATH:/Applications/Postgres.app/Contents/Versions/latest/bin"
+export PATH="$PATH:$HOME/.opencode/bin"
 # export DOCKER_HOST="unix:///run/user/1000/podman/podman-machine-default-api.sock"
 
 # bun
@@ -197,6 +199,7 @@ alias todo='gg "todo before"'
 alias installglobals='npm install -g prettier diff-so-fancy neovim npm-why serve serverless nodemon markdown-toc ts-node lebab'
 alias scr='v $WORKSPACE/scratchpad/scratch.tsx'
 alias tm='tmux a -t main || tmux new -s main'
+alias md='glow' # markdown viewer
 
 # Use function instead of alias to detect if output is a TTY
 cat() {
@@ -236,6 +239,14 @@ alias ch='claude --model haiku'
 alias cs='claude --model sonnet'
 alias gs='git switch -'
 alias cursor='cursor-agent'
+
+cursor-oneshot() {
+ cursor -p "${@}" --stream-partial-output --output-format stream-json | \
+   jq --unbuffered -r -j '.message.content[0].text? // empty | select(. != "")' | \
+   bat -P -l markdown
+}
+
+alias co='cursor-oneshot'
 
 # ---------------- PLUGINS ----------------
 #

@@ -14,7 +14,7 @@ config.window_padding = {
 	bottom = 0,
 }
 
-config.font_size = 21.0
+config.font_size = 24.0
 config.font = wezterm.font("DankMono Nerd Font Mono", { weight = "Bold" })
 -- config.font = wezterm.font("AtkinsonHyperlegibleMono Nerd Font")
 -- local fg = "#E3CA9A"
@@ -83,7 +83,7 @@ config.keys = {
 	{ key = "LeftArrow", mods = "ALT", action = wezterm.action({ SendString = "\27b" }) },
 	{ key = "RightArrow", mods = "ALT", action = wezterm.action({ SendString = "\27f" }) },
 	{ key = "b", mods = "CTRL", action = wezterm.action({ SendString = "\27b" }) },
-	{ key = "f", mods = "CTRL", action = wezterm.action({ SendString = "\27f" }) },
+	{ key = "e", mods = "CTRL", action = wezterm.action({ SendString = "\27f" }) },
 	-- Word deletion: Alt+Backspace and Alt+d
 	{ key = "Backspace", mods = "ALT", action = wezterm.action({ SendString = "\27\127" }) },
 	{ key = "d", mods = "ALT", action = wezterm.action({ SendString = "\27d" }) },
