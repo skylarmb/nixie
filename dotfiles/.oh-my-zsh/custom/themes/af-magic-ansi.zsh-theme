@@ -22,7 +22,7 @@ function afmagic_dashes {
 }
 
 # primary prompt: dashed separator, directory and vcs info
-PS1="%{$fg[blue]%}\${(l.\$(afmagic_dashes)..─.)}%{$reset_color%}
+PS1="%{$FG[239]%}\${(l.\$(afmagic_dashes)..─.)}%{$reset_color%}
 %{$fg[cyan]%}%~\$(git_prompt_info)\$(hg_prompt_info) %{$fg[magenta]%}%(!.#.»)%{$reset_color%} "
 PS2="%{$fg[red]%}\ %{$reset_color%}"
 
