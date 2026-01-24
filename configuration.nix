@@ -20,6 +20,7 @@
 
   # Enable networking
   networking.networkmanager.enable = true;
+  networking.firewall.allowedTCPPorts = [ 22 ];
 
   # Set your time zone.
   time.timeZone = userConfig.timezone;
@@ -37,6 +38,17 @@
     LC_PAPER = "en_US.UTF-8";
     LC_TELEPHONE = "en_US.UTF-8";
     LC_TIME = "en_US.UTF-8";
+  };
+
+  services.openssh = {
+    enable = true;
+    settings = {
+      PermitTTY = "yes";
+      AllowTcpForwarding = "yes";
+      AllowAgentForwarding = "yes";
+      MaxSessions = 10;
+      MaxStartups = "10:30:60";
+    };
   };
 
   # Enable the X11 windowing system.
@@ -83,7 +95,7 @@
   users.users.${userConfig.username} = {
     isNormalUser = true;
     description = userConfig.fullName;
-    extraGroups = [ "networkmanager" "wheel" "dialout" ];
+    extraGroups = [ "networkmanager" "wheel" "dialout" "docker" ];
   };
   users.defaultUserShell = pkgs.zsh;
 
@@ -208,6 +220,13 @@
     polarity = "dark";
     targets.qt.enable = false;  # Disable Qt theming - qgnomeplatform is broken
   };
+
+  virtualisation.docker.enable = true;
+  virtualisation.docker.rootless = {
+    enable = true;
+    setSocketVariable = true;
+  };
+
 
   # List services that you want to enable:
 

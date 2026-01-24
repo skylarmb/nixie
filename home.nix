@@ -4,6 +4,7 @@
   home.username = userConfig.username;
   home.homeDirectory = if isDarwin then "/Users/${userConfig.username}" else "/home/${userConfig.username}";
   home.stateVersion = "25.05"; # Please read the comment before changing.
+  home.file.".icons/default".source = "${pkgs.vanilla-dmz}/share/icons/Vanilla-DMZ";
   home.packages = [
       # dependencies
       # pkgs.gccgo
@@ -17,7 +18,7 @@
       pkgs.stylua
       pkgs.prettierd
       pkgs.eslint_d
-      pkgs.inlyne # GUI markdown viewer
+      # pkgs.inlyne # GUI markdown viewer
       pkgs.glow # terminal markdown viewer
 
       # shell
@@ -57,6 +58,7 @@
       pkgs.plasticity
       pkgs.wezterm
       pkgs.wl-clipboard
+      pkgs.vanilla-dmz
     ];
 
   home.file = {
