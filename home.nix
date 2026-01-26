@@ -20,6 +20,7 @@
       pkgs.eslint_d
       pkgs.expect
       pkgs.glow # terminal markdown viewer
+      pkgs.act
       # pkgs.orca-slicer
 
       # shell
@@ -39,6 +40,9 @@
       pkgs.sd
       pkgs.htmlq
       pkgs.bat-extras.core
+      pkgs.awscli2
+      pkgs.kubectl
+      pkgs.gemini-cli
 
       # containers
       # pkgs.podman
@@ -91,7 +95,12 @@
     ".claude/CLAUDE.md".source = dotfiles/.claude/CLAUDE.md;
     ".claude/settings.json".source = dotfiles/.claude/settings.json;
     ".claude/explore.md".source = dotfiles/.claude/explore.md;
-    ".claude/agents".source = dotfiles/.claude/agents;
+
+    # Symlink agent files individually to allow directory to remain writable
+    ".claude/agents/code-edit-executor.md".source = dotfiles/.claude/agents/code-edit-executor.md;
+    ".claude/agents/console-log-analyzer.md".source = dotfiles/.claude/agents/console-log-analyzer.md;
+    ".claude/agents/eslint-fixer.md".source = dotfiles/.claude/agents/eslint-fixer.md;
+
     ".claude/commands".source = dotfiles/.claude/commands;
     ".claude/output-styles".source = dotfiles/.claude/output-styles;
 

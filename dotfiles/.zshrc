@@ -173,7 +173,7 @@ alias :man='f(){ nvim "+:Man $* | only" };f'
 alias tt="nvim +'execute \"ToDoTxtTasksToggle\" | wincmd o'"
 alias tn="nvim +'execute \"ToDoTxtTasksToggle\" | wincmd o | execute \"ToDoTxtTasksCapture\"'"
 alias workspace="cd $WORKSPACE"
-alias dotfiles="cd $DOTFILES_DIR"
+alias dots="cd $DOTFILES_DIR"
 alias vimc="cd $DOTFILES_DIR/.config/nvim && nvim . && cd -"
 alias vimcd="cd $DOTFILES_DIR/.config/nvim && $EDITOR ."
 alias cdd='cd_dirname'
@@ -453,10 +453,10 @@ confirm() {
 }
 
 # eval history
-alias h='fzf_history'
-fzf_history() {
-  eval $( ([ -n "$ZSH_NAME" ] && fc -l 1 || history) | fzf +s --tac | gsed -r 's/ *[0-9]*\*? *//' | gsed -r 's/\\/\\\\/g')
-}
+# alias h='fzf_history'
+# fzf_history() {
+#   eval $( ([ -n "$ZSH_NAME" ] && fc -l 1 || history) | fzf +s --tac | gsed -r 's/ *[0-9]*\*? *//' | gsed -r 's/\\/\\\\/g')
+# }
 
 randomsay() {
   cow=(`cowsay -l | tail -n +2 | tr  " "  "\n" | sort -R | head -n 1`)
