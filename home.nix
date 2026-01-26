@@ -1,15 +1,17 @@
-{ config, pkgs, userConfig, tpm, isDarwin ? true, ... }:
+{ config, pkgs, lib, userConfig, tpm, isDarwin ? true, ... }:
 
 {
   home.username = userConfig.username;
   home.homeDirectory = if isDarwin then "/Users/${userConfig.username}" else "/home/${userConfig.username}";
   home.stateVersion = "25.05"; # Please read the comment before changing.
+  home.file.".icons/default".source = "${pkgs.vanilla-dmz}/share/icons/Vanilla-DMZ";
   home.packages = [
       # dependencies
       # pkgs.gccgo
       # pkgs.gnumake
       pkgs.nodejs_22
-
+      (pkgs.python313.withPackages (ps: [ps.libtmux]))
+      pkgs.python313Packages.libtmux
       # programs
       pkgs.tmux
       # pkgs.wezterm
@@ -26,6 +28,7 @@
       # shell
       pkgs.zsh
       pkgs.ripgrep
+
       # pkgs.direnv
       pkgs.oh-my-zsh
       pkgs.fzf
@@ -33,6 +36,7 @@
       pkgs.eza
       pkgs.fd
       pkgs.git
+      pkgs.unzip
       pkgs.gh
       pkgs.delta
       pkgs.tig
@@ -52,6 +56,17 @@
       # pkgs.docker-buildx
       # pkgs.docker-compose
       # pkgs.nvidia-container-toolkit
+    ] ++ lib.optionals (!isDarwin) [
+      # linux only packages
+      pkgs.calibre
+      pkgs.calibre-web
+      pkgs.orca-slicer
+      pkgs.plasticity
+      pkgs.wezterm
+      pkgs.wl-clipboard
+      pkgs.vanilla-dmz
+      pkgs.libgcc
+      pkgs.deluge
     ];
 
   home.file = {
@@ -65,10 +80,10 @@
 
     # applications
     ".config/git".source = dotfiles/.config/git;
-    ".config/nvim/init.lua".source = dotfiles/.config/nvim/init.lua;
-    ".config/nvim/lua".source = dotfiles/.config/nvim/lua;
-    ".config/nvim/snippets".source = dotfiles/.config/nvim/snippets;
-    ".config/nvim/syntax".source = dotfiles/.config/nvim/syntax;
+    # ".config/nvim/init.lua".source = dotfiles/.config/nvim/init.lua;
+    # ".config/nvim/lua".source = dotfiles/.config/nvim/lua;
+    # ".config/nvim/snippets".source = dotfiles/.config/nvim/snippets;
+    # ".config/nvim/syntax".source = dotfiles/.config/nvim/syntax;
 
     # Tmux - symlink config files individually to allow TPM management
     ".config/tmux/tmux.conf".source = dotfiles/.config/tmux/tmux.conf;
@@ -114,6 +129,12 @@
   home.sessionVariables = {
     EDITOR = "nvim";
     NPM_CONFIG_USERCONFIG="$HOME/.config/npm/npmrc";
+    SYSTEM_NODEJS = "${pkgs.nodejs_22}/bin/node";
+    SYSTEM_PYTHON = "${pkgs.python3}/bin/python3";
+    NIX_PROFILE_ETC = if isDarwin then "$HOME/.nix-profile/etc" else "/etc/profiles/per-user/${userConfig.username}/etc";
+    NIX_PROFILE_BIN = if isDarwin then "$HOME/.nix-profile/bin" else "/etc/profiles/per-user/${userConfig.username}/bin";
+    NIX_PROFILE_SHARE = if isDarwin then "$HOME/.nix-profile/share" else "/etc/profiles/per-user/${userConfig.username}/share";
+    COPY_CMD = if isDarwin then "pbcopy" else "wl-copy";
     # DOCKER_HOST = "unix:///run/user/1000/podman/podman-machine-default-api.sock";
   };
 
@@ -126,14 +147,25 @@
         $DRY_RUN_CMD "$HOME/.config/tmux/plugins/tpm/bin/install_plugins" || true
       fi
     '';
+
+    # Patch tmux-window-name plugin to use wrapped Python with libtmux
+    patchTmuxWindowNameShebang = config.lib.dag.entryAfter ["installTmuxPlugins"] ''
+      SCRIPT="$HOME/.local/share/tmux/plugins/tmux-window-name/scripts/rename_session_windows.py"
+      if [ -f "$SCRIPT" ]; then
+        ${pkgs.gnused}/bin/sed -i '1s|.*|#!${(pkgs.python313.withPackages (ps: [ps.libtmux]))}/bin/python3|' "$SCRIPT"
+      fi
+    '';
   };
 
   # Let Home Manager install and manage itself.
   programs = {
     home-manager.enable = true;
-    # direnv = {
-    #   enable = true;
-    #   nix-direnv.enable = true;
-    # };
+    direnv = {
+      enable = true;
+      nix-direnv.enable = true;
+    };
+    fzf = {
+      enable = true;
+    };
   };
 }

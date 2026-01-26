@@ -1,4 +1,9 @@
-. "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
+# Source home-manager session variables (handle Darwin vs Linux paths)
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  . "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
+else
+  . "/etc/profiles/per-user/$USER/etc/profile.d/hm-session-vars.sh"
+fi
 
 # profile shell startup time
 if [[ -n "$DEBUG_ZPROF" ]]; then
@@ -13,7 +18,7 @@ export ZSH="$HOME/.oh-my-zsh"
 # ZSH_THEME="powerlevel10k/powerlevel10k"
 ZSH_THEME="af-magic-ansi"
 plugins=(git)
-source $ZSH/oh-my-zsh.sh
+[[ -f $ZSH/oh-my-zsh.sh ]] && source $ZSH/oh-my-zsh.sh
 
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
@@ -130,7 +135,7 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 # eval "$(/opt/homebrew/bin/brew shellenv)"
 
 # pyenv
-export SYSTEM_PYTHON="/usr/bin/python3"
+# SYSTEM_PYTHON is set via home-manager environment variables
 export PATH="$HOME/.pyenv/bin:$PATH"
 if command -v pyenv 1>/dev/null 2>&1; then
   eval "$(pyenv init -)"
@@ -187,6 +192,7 @@ alias tcc="$EDITOR $DOTFILES_DIR/.config/tmux/colorscheme.conf"
 alias hc="cd $HOME/nixie && nvim ./home.nix"
 alias hs='home-manager switch --flake "$HOME/nixie#$USER@$(uname -s | tr A-Z a-z)"'
 alias nrs='sudo nixos-rebuild switch --flake "$HOME/nixie#nixos"'
+alias nrb='sudo nixos-rebuild boot --flake "$HOME/nixie#nixos"'
 alias zu='exec zsh'
 alias dka='docker kill $(docker ps -q)'
 alias vimwipe='rm -rf $HOME/.vim/tmp/swap; mkdir -p $HOME/.vim/tmp/swap'
@@ -376,7 +382,7 @@ fzf_query() {
 
 alias vl="edit_last_file"
 edit_last_file(){
- nvim "+normal! g'0" ""
+ nvim "+normal! g'0"
 }
 
 # vim fuzzy open by filename with preview
@@ -665,19 +671,3 @@ fi
 # # <<< conda initialize <<<
 
 eval "$(direnv hook zsh)"
-
-# Auto tmux window naming using tmux-window-name plugin
-tmux-window-name() {
-  if [[ -z "$TMUX" ]]; then
-    return
-  fi
-
-  # Trigger the tmux-window-name plugin
-  PYTHONPATH="$($SYSTEM_PYTHON -m site --user-site)" $SYSTEM_PYTHON ~/.local/share/tmux/plugins/tmux-window-name/scripts/rename_session_windows.py
-}
-
-# Auto tmux window naming - run on directory change and periodically
-if [ ! -z "$TMUX" ]; then
-  add-zsh-hook chpwd tmux-window-name
-  add-zsh-hook periodic tmux-window-name
-fi
