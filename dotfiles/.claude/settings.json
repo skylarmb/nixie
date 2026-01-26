@@ -28,6 +28,6 @@
       "Bash(find :*)"
     ]
   },
-  "model": "haiku",
+  "model": "sonnet",
   "alwaysThinkingEnabled": true
 }
