@@ -10,8 +10,8 @@
       # pkgs.gccgo
       # pkgs.gnumake
       pkgs.nodejs_22
-      pkgs.python3
-
+      (pkgs.python313.withPackages (ps: [ps.libtmux]))
+      pkgs.python313Packages.libtmux
       # programs
       pkgs.tmux
       pkgs.neovim
@@ -59,6 +59,8 @@
       pkgs.wezterm
       pkgs.wl-clipboard
       pkgs.vanilla-dmz
+      pkgs.libgcc
+      pkgs.deluge
     ];
 
   home.file = {
@@ -72,10 +74,10 @@
 
     # applications
     ".config/git".source = dotfiles/.config/git;
-    ".config/nvim/init.lua".source = dotfiles/.config/nvim/init.lua;
-    ".config/nvim/lua".source = dotfiles/.config/nvim/lua;
-    ".config/nvim/snippets".source = dotfiles/.config/nvim/snippets;
-    ".config/nvim/syntax".source = dotfiles/.config/nvim/syntax;
+    # ".config/nvim/init.lua".source = dotfiles/.config/nvim/init.lua;
+    # ".config/nvim/lua".source = dotfiles/.config/nvim/lua;
+    # ".config/nvim/snippets".source = dotfiles/.config/nvim/snippets;
+    # ".config/nvim/syntax".source = dotfiles/.config/nvim/syntax;
 
     # Tmux - symlink config files individually to allow TPM management
     ".config/tmux/tmux.conf".source = dotfiles/.config/tmux/tmux.conf;
@@ -129,6 +131,14 @@
       if [ -x "$HOME/.config/tmux/plugins/tpm/bin/install_plugins" ]; then
         export PATH="${pkgs.tmux}/bin:${pkgs.gawk}/bin:${pkgs.gnused}/bin:${pkgs.gnugrep}/bin:${pkgs.coreutils}/bin:${pkgs.git}/bin:$PATH"
         $DRY_RUN_CMD "$HOME/.config/tmux/plugins/tpm/bin/install_plugins" || true
+      fi
+    '';
+
+    # Patch tmux-window-name plugin to use wrapped Python with libtmux
+    patchTmuxWindowNameShebang = config.lib.dag.entryAfter ["installTmuxPlugins"] ''
+      SCRIPT="$HOME/.local/share/tmux/plugins/tmux-window-name/scripts/rename_session_windows.py"
+      if [ -f "$SCRIPT" ]; then
+        ${pkgs.gnused}/bin/sed -i '1s|.*|#!${(pkgs.python313.withPackages (ps: [ps.libtmux]))}/bin/python3|' "$SCRIPT"
       fi
     '';
   };

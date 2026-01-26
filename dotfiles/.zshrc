@@ -371,7 +371,7 @@ fzf_query() {
 
 alias vl="edit_last_file"
 edit_last_file(){
- nvim "+normal! g'0" ""
+ nvim "+normal! g'0"
 }
 
 # vim fuzzy open by filename with preview
@@ -660,19 +660,3 @@ fi
 # # <<< conda initialize <<<
 
 eval "$(direnv hook zsh)"
-
-# Auto tmux window naming using tmux-window-name plugin
-tmux-window-name() {
-  if [[ -z "$TMUX" ]]; then
-    return
-  fi
-
-  # Trigger the tmux-window-name plugin
-  PYTHONPATH="$($SYSTEM_PYTHON -m site --user-site)" $SYSTEM_PYTHON ~/.local/share/tmux/plugins/tmux-window-name/scripts/rename_session_windows.py
-}
-
-# Auto tmux window naming - run on directory change and periodically
-if [ ! -z "$TMUX" ]; then
-  add-zsh-hook chpwd tmux-window-name
-  add-zsh-hook periodic tmux-window-name
-fi
