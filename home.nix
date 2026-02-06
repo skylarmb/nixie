@@ -23,6 +23,8 @@
       pkgs.expect
       pkgs.glow # terminal markdown viewer
       pkgs.act
+      pkgs.devcontainer
+      # pkgs.codex
       # pkgs.orca-slicer
 
       # shell
@@ -47,6 +49,9 @@
       pkgs.awscli2
       pkgs.kubectl
       pkgs.gemini-cli
+
+      pkgs.cargo
+      pkgs.portaudio
 
       # containers
       # pkgs.podman
@@ -80,10 +85,18 @@
 
     # applications
     ".config/git".source = dotfiles/.config/git;
+    ".cargo/config.toml".source = dotfiles/.config/cargo/config.toml;
+    # old vim config
     # ".config/nvim/init.lua".source = dotfiles/.config/nvim/init.lua;
     # ".config/nvim/lua".source = dotfiles/.config/nvim/lua;
     # ".config/nvim/snippets".source = dotfiles/.config/nvim/snippets;
     # ".config/nvim/syntax".source = dotfiles/.config/nvim/syntax;
+
+    # lazy vim config
+    ".config/nvim/lua".source = dotfiles/.config/nvim-lazyvim/lua;
+    ".config/nvim/init.lua".source = dotfiles/.config/nvim-lazyvim/init.lua;
+    ".config/nvim/.neoconf.json".source = dotfiles/.config/nvim-lazyvim/.neoconf.json;
+
 
     # Tmux - symlink config files individually to allow TPM management
     ".config/tmux/tmux.conf".source = dotfiles/.config/tmux/tmux.conf;

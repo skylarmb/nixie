@@ -83,6 +83,7 @@
   cop = !"f() { git checkout "$(git merge-base --fork-point origin/main HEAD)" -- $@; }; f $@"
   com = checkout origin/main --
   dom = diff origin/main
+  dm = !"git diff "$(git merge-base origin/main HEAD)""
   cc = !"echo $(git rev-parse HEAD) | tee /dev/tty | pbcopy"
   ca = commit -a
   d = diff --ignore-all-space
@@ -124,7 +125,7 @@
   ll = diff HEAD^^ HEAD^
   lf = diff HEAD^  HEAD --name-only
   llf = diff HEAD^^  HEAD^ --name-only
-  mc = merge --continue
+  mc = merge --continue --no-edit
   reup = !"git fetch; git rebase origin/main"
   big-files    = !"git rev-list --objects --all \
                  | git cat-file --batch-check='%(objecttype) %(objectname) %(objectsize) %(rest)' \
@@ -175,9 +176,5 @@
 	insteadOf = https://github.com/
 [init]
 	defaultbranch = main
-[user]
-	name = Skylar Brown
-	email = skylarmb@gmail.com
-	signingkey = 40ADB15073A421E6
 [tag]
 	gpgSign = true
