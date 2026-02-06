@@ -48,7 +48,8 @@ map("t", "<ESC>", "<C-\\><C-n>", opts_noremap)
 map({ "n", "v", "o" }, "<bs>", "i<bs>", opts_noremap)
 
 ------------ Editing & File Operations ------------
--- Clear highlights
+-- Clear highlights (override LazyVim default)
+vim.keymap.del("n", "<leader><leader>")
 map("n", "<leader><leader>", "<cmd>nohlsearch<CR>", opts_noremap)
 -- Better paste in visual mode
 map("v", "p", '"_dP', opts_noremap)
@@ -113,6 +114,21 @@ map("n", "`", "<cmd>Neotree toggle<CR>", opts_noremap)
 -- New file
 map("n", "<leader>n", "<cmd>n<CR>", opts_noremap)
 
+------------ Telescope ------------
+-- Telescope file picker
+map("n", "<C-p>", "<cmd>Telescope find_files<CR>", opts_noremap)
+-- Telescope live grep (search in files)
+map("n", "<C-f>", "<cmd>Telescope live_grep<CR>", opts_noremap)
+-- Search word under cursor in all files
+map("n", "F", "<cmd>Telescope grep_string<CR>", opts_noremap)
+
+------------ Git Mergetool ------------
+-- Toggle mergetool
+map("n", "mt", "<cmd>MergetoolToggle<CR>", opts_noremap)
+-- Exchange left/right during merge
+map("n", "mgr", "<cmd>MergetoolDiffExchangeLeft<CR>", opts_noremap)
+map("n", "mgl", "<cmd>MergetoolDiffExchangeRight<CR>", opts_noremap)
+
 ------------ Command & Terminal Mode ------------
 -- Expand %% to current directory in command mode
 map("c", "%%", "<C-R>=expand('%:h').'/'<CR>", opts_noremap)
@@ -133,4 +149,51 @@ map("i", "<D-v>", '<ESC>l"+Pli', opts_noremap) -- Paste insert
 ------------ LSP Diagnostics ------------
 map("n", "ge", function()
   vim.diagnostic.goto_next({ buffer = 0 })
+end, opts_noremap)
+
+------------ LSP Code Actions ------------
+-- Auto-fix all fixable problems (ESLint, etc.)
+map("n", "gf", function()
+  vim.lsp.buf.code_action({
+    filter = function(action)
+      -- Filter for actions that fix all auto-fixable problems
+      return action.kind and (action.kind:match("^source%.fixAll") or action.title:match("[Ff]ix all"))
+    end,
+    apply = true, -- Apply the action immediately without showing menu
+  })
+end, opts_noremap)
+
+-- Smart go to definition: jump directly in same file, preview for other files
+map("n", "gd", function()
+  local current_bufnr = vim.api.nvim_get_current_buf()
+  local params = vim.lsp.util.make_position_params()
+
+  vim.lsp.buf_request(0, "textDocument/definition", params, function(err, result, ctx)
+    if err then
+      vim.notify("Error getting definition: " .. err.message, vim.log.levels.ERROR)
+      return
+    end
+
+    if not result or vim.tbl_isempty(result) then
+      vim.notify("No definition found", vim.log.levels.INFO)
+      return
+    end
+
+    -- Handle both single response and response array
+    local target = vim.tbl_islist(result) and result[1] or result
+    local target_uri = target.uri or target.targetUri
+    local target_bufnr = vim.uri_to_bufnr(target_uri)
+
+    -- If target is in same buffer, jump directly; otherwise use preview
+    if target_bufnr == current_bufnr then
+      vim.lsp.util.jump_to_location(target, "utf-8")
+    else
+      require("goto-preview").goto_preview_definition()
+    end
+  end)
+end, opts_noremap)
+
+-- Go to type definition (preview)
+map("n", "gD", function()
+  require("goto-preview").goto_preview_type_definition()
 end, opts_noremap)
