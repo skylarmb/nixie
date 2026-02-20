@@ -24,6 +24,7 @@
       pkgs.glow # terminal markdown viewer
       pkgs.act
       pkgs.devcontainer
+      pkgs.htop
       # pkgs.codex
       # pkgs.orca-slicer
 

@@ -6,6 +6,8 @@ local config = wezterm.config_builder()
 -- config.default_prog = { os.getenv("NIX_PROFILE_BIN") .. "/zsh", "--login", "-c", "tmux new-session -A -s main -t main" }
 
 -- config.enable_tab_bar = false
+config.use_fancy_tab_bar = false
+config.tab_max_width = 48
 config.tab_bar_at_bottom = true
 config.automatically_reload_config = true
 config.window_padding = {
@@ -15,7 +17,7 @@ config.window_padding = {
 	bottom = 0,
 }
 
-config.font_size = 24.0
+config.font_size = 22.0
 config.font = wezterm.font("DankMono Nerd Font Mono", { weight = "Bold" })
 -- config.font = wezterm.font("AtkinsonHyperlegibleMono Nerd Font")
 -- local fg = "#E3CA9A"
