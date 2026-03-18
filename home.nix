@@ -162,6 +162,16 @@
       fi
     '';
 
+    # Symlink WezTerm CLI into ~/.local/bin on macOS (installed as .app, not in PATH)
+    symlinkWeztermCli = lib.mkIf isDarwin (config.lib.dag.entryAfter ["installPackages"] ''
+      WEZTERM_BIN="/Applications/WezTerm.app/Contents/MacOS/wezterm"
+      LINK_DIR="$HOME/.local/bin"
+      if [ -x "$WEZTERM_BIN" ]; then
+        mkdir -p "$LINK_DIR"
+        ln -sf "$WEZTERM_BIN" "$LINK_DIR/wezterm"
+      fi
+    '');
+
     # Patch tmux-window-name plugin to use wrapped Python with libtmux
     patchTmuxWindowNameShebang = config.lib.dag.entryAfter ["installTmuxPlugins"] ''
       SCRIPT="$HOME/.local/share/tmux/plugins/tmux-window-name/scripts/rename_session_windows.py"

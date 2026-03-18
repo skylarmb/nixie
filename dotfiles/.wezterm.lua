@@ -68,8 +68,9 @@ end
 
 -- Smart-splits.nvim integration for seamless navigation
 local function is_vim(pane)
-	-- Check if the current pane is running vim/nvim
-	return pane:get_user_vars().IS_NVIM == "true"
+	-- Check if the foreground process is vim/nvim
+	local process_name = string.gsub(pane:get_foreground_process_name(), "(.*[/\\])(.*)", "%2")
+	return process_name == "nvim" or process_name == "vim"
 end
 
 local direction_keys = {
@@ -123,12 +124,11 @@ config.keys = {
 	-- Word movement: Alt+Left/Right and Ctrl+b/f send ESC+b/f for zsh vi-mode
 	{ key = "LeftArrow", mods = "ALT", action = wezterm.action({ SendString = "\27b" }) },
 	{ key = "RightArrow", mods = "ALT", action = wezterm.action({ SendString = "\27f" }) },
-	{ key = "b", mods = "CTRL", action = wezterm.action({ SendString = "\27b" }) },
 	{ key = "e", mods = "CTRL", action = wezterm.action({ SendString = "\27f" }) },
 	-- Word deletion: Alt+Backspace and Alt+d
 	{ key = "Backspace", mods = "ALT", action = wezterm.action({ SendString = "\27\127" }) },
 	{ key = "d", mods = "ALT", action = wezterm.action({ SendString = "\27d" }) },
-	-- Pane navigation: Ctrl+H/J/K/L for vim-style movement with smart-splits integration
+	-- Pane navigation: Ctrl+H/J/K/L with smart-splits integration
 	split_nav("move", "h"),
 	split_nav("move", "j"),
 	split_nav("move", "k"),
@@ -145,6 +145,8 @@ config.keys = {
 	{ key = "q", mods = "LEADER", action = wezterm.action.CloseCurrentPane({ confirm = true }) },
 	{ key = "d", mods = "LEADER", action = wezterm.action.ClearScrollback("ScrollbackAndViewport") },
 	{ key = "c", mods = "LEADER", action = wezterm.action.SpawnTab("CurrentPaneDomain") },
+	-- Send literal Ctrl+A to the terminal (press Ctrl+A twice)
+	{ key = "a", mods = "LEADER|CTRL", action = wezterm.action.SendKey({ key = "a", mods = "CTRL" }) },
 }
 
 -- config.window_decorations = "TITLE"
