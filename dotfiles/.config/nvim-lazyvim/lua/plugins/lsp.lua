@@ -18,6 +18,7 @@ return {
   -- Preview definition in floating window
   {
     "rmagatti/goto-preview",
+    enabled = false, -- temporarily disabled for debugging
     event = "LspAttach",
     opts = {
       width = 120,

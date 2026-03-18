@@ -390,7 +390,7 @@ fzf_edit_file() {
   fzf \
   --preview-window 'up,60%,border-bottom,+{2}+3/3' \
   --preview 'bat --color=always -r 0:100 {1} ' \
-  --bind 'enter:become(nvim {1} +{2})'
+  --bind 'enter:become($EDITOR {1} +{2})'
 }
 
 # vim fuzzy open by file contents with preview and highlighted line
