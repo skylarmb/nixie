@@ -15,15 +15,27 @@ return {
       },
     },
   },
-  -- Preview definition in floating window
+  -- Preview definition in floating window (disabled: floating window crash)
+  -- {
+  --   "rmagatti/goto-preview",
+  --   event = "LspAttach",
+  --   opts = {
+  --     width = 120,
+  --     height = 68, -- 16:10 ratio
+  --     stack_floating_preview_windows = false, -- re-use float
+  --   },
+  -- },
+  -- VSCode-style peek preview for LSP definitions/references
   {
-    "rmagatti/goto-preview",
-    enabled = false, -- temporarily disabled for debugging
-    event = "LspAttach",
+    "dnlhc/glance.nvim",
+    cmd = "Glance",
     opts = {
-      width = 120,
-      height = 68, -- 16:10 ratio
-      stack_floating_preview_windows = false, -- re-use float
+      border = {
+        enable = true,
+      },
+      theme = {
+        mode = "darken",
+      },
     },
   },
 }

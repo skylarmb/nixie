@@ -163,10 +163,9 @@ map("n", "gf", function()
   })
 end, opts_noremap)
 
--- Smart go to definition: use built-in LSP for now
--- TODO: re-enable goto-preview keymaps once floating window crash is fixed
-map("n", "gd", vim.lsp.buf.definition, opts_noremap)
-map("n", "gD", vim.lsp.buf.type_definition, opts_noremap)
+-- Peek definition/type definition with glance (VSCode-style inline preview)
+map("n", "gd", "<CMD>Glance definitions<CR>", opts_noremap)
+map("n", "gD", "<CMD>Glance type_definitions<CR>", opts_noremap)
 
 -- -- Smart go to definition: jump directly in same file, preview for other files
 -- map("n", "gd", function()
