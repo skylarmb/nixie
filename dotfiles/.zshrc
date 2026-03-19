@@ -197,7 +197,7 @@ alias zu='exec zsh'
 alias dka='docker kill $(docker ps -q)'
 alias vimwipe='rm -rf $HOME/.vim/tmp/swap; mkdir -p $HOME/.vim/tmp/swap'
 alias g='git'
-alias cc='git rev-parse HEAD | pbcopy'
+alias cc='claude --continue'
 alias ccwd='pwd | pbcopy'
 alias unwip='git reset --soft HEAD~'
 alias vm='cd $(git rev-parse --show-toplevel) && nvim `git --no-pager diff --name-only --diff-filter=U`'
@@ -243,6 +243,13 @@ alias dr='docker run -it --rm'
 alias dive="docker run -ti --rm  -v /var/run/docker.sock:/var/run/docker.sock ghcr.io/joschi/dive"
 alias ch='claude --model haiku'
 alias cs='claude --model sonnet'
+# quick cd
+alias nixie='cd ~/nixie'
+# open all unstaged changed files in nvim
+alias vf='nvim $(git diff --name-only)'
+# direnv shortcuts
+alias dal='direnv allow'
+alias drl='direnv reload'
 alias gs='git switch -'
 alias cursor='cursor-agent'
 
@@ -645,6 +652,11 @@ renix() {
   sudo mv /etc/bash.bashrc.backup-before-nix /etc/bash.bashrc
   sudo mv /etc/bashrc.backup-before-nix /etc/bashrc
   sh <(curl -L https://nixos.org/nix/install)
+}
+
+nixfree() {
+  nix-collect-garbage -d
+  nix-store --optimise
 }
 
 # Profiler

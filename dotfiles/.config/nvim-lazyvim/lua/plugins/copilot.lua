@@ -1,6 +1,2 @@
--- Temporarily disable Copilot to debug freezing issues
-return {
-  { "zbirenbaum/copilot.lua", enabled = false },
-  { "zbirenbaum/copilot-cmp", enabled = false },
-  { "giuxtaposition/blink-cmp-copilot", enabled = false },
-}
+-- Use LazyVim copilot extra defaults (lazyvim.plugins.extras.ai.copilot)
+return {}

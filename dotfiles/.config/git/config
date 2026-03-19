@@ -84,7 +84,7 @@
   com = checkout origin/main --
   dom = diff origin/main
   dm = !"git diff "$(git merge-base origin/main HEAD)""
-  cc = !"echo $(git rev-parse HEAD) | tee /dev/tty | pbcopy"
+  # cc removed — now a shell alias for `claude --continue`
   ca = commit -a
   d = diff --ignore-all-space
   dn = diff --name-only --ignore-all-space
