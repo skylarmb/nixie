@@ -17,16 +17,22 @@
       # pkgs.wezterm
       pkgs.helix
       pkgs.neovim
-      pkgs.stylua
-      pkgs.prettierd
-      pkgs.eslint_d
       pkgs.expect
       pkgs.glow # terminal markdown viewer
       pkgs.act
       pkgs.devcontainer
       pkgs.htop
+      pkgs.hgrep
       # pkgs.codex
       # pkgs.orca-slicer
+
+      # LSP / languages
+      pkgs.stylua
+      pkgs.prettierd
+      pkgs.eslint_d
+      pkgs.nil
+      pkgs.typescript-language-server
+      pkgs.gopls
 
       # shell
       pkgs.zsh

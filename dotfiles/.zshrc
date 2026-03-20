@@ -608,7 +608,6 @@ fbr() {
   git checkout $(echo "$branch" | sed "s/.* //" | sed "s#remotes/[^/]*/##")
 }
 
-
 es6() {
   lebab $1 -o $1 --transform commonjs
   lebab $1 -o $1 --transform no-strict

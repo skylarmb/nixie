@@ -5,11 +5,11 @@ return {
       -- Configure formatters by filetype
       formatters_by_ft = {
         lua = { "stylua" },
-        javascript = { "eslint_d", "prettier" },
-        javascriptreact = { "eslint_d", "prettier" },
-        typescript = { "eslint_d", "prettier" },
-        typescriptreact = { "eslint_d", "prettier" },
-        json = { "eslint_d", "prettier" },
+        javascript = { "eslint_d", "prettierd" },
+        javascriptreact = { "eslint_d", "prettierd" },
+        typescript = { "eslint_d", "prettierd" },
+        typescriptreact = { "eslint_d", "prettierd" },
+        json = { "prettierd" },
         -- Fallback: remove trailing whitespace for all files
         ["*"] = { "trim_whitespace" },
       },
