@@ -46,6 +46,10 @@
       "splash"
       "udev.log_priority=3"
     ];
+    binfmt = {
+      emulatedSystems = [ "aarch64-linux" ];
+      preferStaticEmulators = true;  # Make it work with Docker
+    };
     kernelPackages = pkgs.linuxPackages_latest;
     # extraModulePackages = [ config.boot.kernelPackages.nvidia_x11 ];
   };

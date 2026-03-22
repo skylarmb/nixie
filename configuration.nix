@@ -46,8 +46,10 @@
       PermitTTY = "yes";
       AllowTcpForwarding = "yes";
       AllowAgentForwarding = "yes";
-      MaxSessions = 10;
-      MaxStartups = "10:30:60";
+      MaxSessions = 20;  # Increased from 10 for Docker
+      MaxStartups = "20:30:100";  # Increased limits for Docker
+      ClientAliveInterval = 60;  # Keep connections alive (send keepalive every 60s)
+      ClientAliveCountMax = 10;  # Allow 10 missed keepalives (10min timeout)
     };
   };
 
@@ -157,6 +159,7 @@
     gnomeExtensions.appindicator
     gruvbox-plus-icons
     git
+    qemu
   ];
 
   # debloat gnome
