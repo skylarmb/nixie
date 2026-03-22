@@ -56,7 +56,6 @@
 
       # containers
       # pkgs.podman
-      # pkgs.qemu
       # pkgs.virtiofsd
       # pkgs.docker
       # pkgs.docker-buildx
