@@ -15,17 +15,17 @@ map("n", "{", "<cmd>bprevious<CR>", opts_noremap)
 
 ------------ Movement & Navigation ------------
 -- Move by display lines when wrapping
-map({ "n", "v", "o" }, "k", "gk", opts_remap)
-map({ "n", "v", "o" }, "j", "gj", opts_remap)
+map({ "n", "v", "o" }, "k", "gk", opts_noremap)
+map({ "n", "v", "o" }, "j", "gj", opts_noremap)
 -- Faster scroll
-map({ "n", "v", "o" }, "K", "10gk", opts_remap)
-map({ "n", "v", "o" }, "J", "10gj", opts_remap)
+map({ "n", "v", "o" }, "K", "10gk", opts_noremap)
+map({ "n", "v", "o" }, "J", "10gj", opts_noremap)
 -- Beginning/end of line
-map({ "n", "v", "o" }, "H", "^", opts_remap)
-map({ "n", "v", "o" }, "L", "$l", opts_remap)
+map({ "n", "v", "o" }, "H", "^", opts_noremap)
+map({ "n", "v", "o" }, "L", "$l", opts_noremap)
 -- Move by beginning of word instead of end of word
-map({ "n", "v", "o" }, "E", "b", opts_remap)
-map({ "n", "v", "o" }, "e", "w", opts_remap)
+map({ "n", "v", "o" }, "E", "b", opts_noremap)
+map({ "n", "v", "o" }, "e", "w", opts_noremap)
 -- Bounce between brackets
 map("n", "t", "%", opts_noremap)
 map("v", "t", "%", opts_noremap)
