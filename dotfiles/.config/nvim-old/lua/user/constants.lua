@@ -1,7 +1,6 @@
 local M = {
   ignored_dirs = {
     ".git",
-    ".github",
     "build",
     "dist",
     ".cache",

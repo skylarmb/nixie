@@ -33,6 +33,7 @@
       pkgs.nil
       pkgs.typescript-language-server
       pkgs.gopls
+      pkgs.unison-ucm
 
       # shell
       pkgs.zsh
@@ -92,22 +93,17 @@
     # applications
     ".config/git".source = dotfiles/.config/git;
     ".cargo/config.toml".source = dotfiles/.config/cargo/config.toml;
-    # old vim config
-    # ".config/nvim/init.lua".source = dotfiles/.config/nvim/init.lua;
-    # ".config/nvim/lua".source = dotfiles/.config/nvim/lua;
-    # ".config/nvim/snippets".source = dotfiles/.config/nvim/snippets;
-    # ".config/nvim/syntax".source = dotfiles/.config/nvim/syntax;
-
-    # lazy vim config
-    ".config/nvim/lua".source = dotfiles/.config/nvim-lazyvim/lua;
-    ".config/nvim/init.lua".source = dotfiles/.config/nvim-lazyvim/init.lua;
-    ".config/nvim/.neoconf.json".source = dotfiles/.config/nvim-lazyvim/.neoconf.json;
+    # nvim config (LazyVim)
+    ".config/nvim/lua".source = dotfiles/.config/nvim/lua;
+    ".config/nvim/init.lua".source = dotfiles/.config/nvim/init.lua;
+    ".config/nvim/.neoconf.json".source = dotfiles/.config/nvim/.neoconf.json;
 
 
     # Tmux - symlink config files individually to allow TPM management
     ".config/tmux/tmux.conf".source = dotfiles/.config/tmux/tmux.conf;
     ".config/tmux/colorscheme.conf".source = dotfiles/.config/tmux/colorscheme.conf;
 
+    ".config/ripgrep/config".source = dotfiles/.config/ripgrep/config;
     ".config/containers/registries.conf".source = dotfiles/.config/containers/registries.conf;
     ".config/containers/policy.json".source = dotfiles/.config/containers/policy.json;
 
@@ -147,6 +143,7 @@
 
   home.sessionVariables = {
     EDITOR = "nvim";
+    RIPGREP_CONFIG_PATH = "$HOME/.config/ripgrep/config";
     NPM_CONFIG_USERCONFIG="$HOME/.config/npm/npmrc";
     SYSTEM_NODEJS = "${pkgs.nodejs_22}/bin/node";
     SYSTEM_PYTHON = "${pkgs.python3}/bin/python3";
