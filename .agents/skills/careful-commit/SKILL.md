@@ -5,11 +5,12 @@ description: Creates a commit on a github repository that may contain secrets or
 
 After staging changes but before commit:
 
-1. **Scan for secrets**: Ensure staged changes contain no API keys, any unique
-   identifiers, shell history, etc.
+1. **Scan for secrets**: Ensure staged changes contain no sensitive environment
+   variables, API keys, tokens, unique identifiers, shell history, etc.
 2. **No machine info**: Ensure changes have no references to file paths with a
-   user, repository names, etc.
-3. **No user info**: Ensure changes have no references to any user's real name, email, account names, etc.
+   user's name, repository name, company name, etc in the path.
+3. **No user info**: Ensure changes have no references to any user's real name,
+   username, email, account names, company names, etc.
 
 Some exceptions apply to the above. If ANY of the above checks flag any
 possibly sensitive value, STOP. Do NOT commit. Flag the changes to the user and
