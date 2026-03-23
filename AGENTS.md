@@ -26,10 +26,10 @@ dotfiles/              # User dotfiles, symlinked into $HOME by home-manager
   .claude/             # Claude Code settings
   bin/                 # User scripts on $PATH
   .config/
-    nvim/              # Standalone neovim config (legacy)
-    nvim-lazyvim/      # LazyVim-based neovim config (active)
+    nvim/              # LazyVim-based neovim config (active)
       lua/config/      # Neovim options, keymaps, autocmds
       lua/plugins/     # Plugin specs (LSP, copilot, smart-splits, glance, etc.)
+    nvim-old/          # Legacy neovim config (not in use)
     tmux/              # Tmux config
     git/               # Git config and global ignore
     cargo/             # Rust/Cargo config
@@ -49,8 +49,9 @@ trim-generations.sh    # Nix garbage collection helper
 - **`flake.nix`** defines two home-manager configurations: `<user>@darwin` and `<user>@linux`. Both use `home.nix` with an `isDarwin` flag for platform-specific behavior.
 - **`home.nix`** is the main config: installs packages, symlinks dotfiles, sets env vars, and runs activation scripts (e.g. TPM install, wezterm CLI symlink on macOS).
 - **`machines/*.nix`** contain per-machine values (username, git email, timezone). To switch machines, update the import in `flake.nix`.
-- **Dotfiles** are stored in `dotfiles/` and symlinked to `$HOME` by home-manager. Edit them in-place; changes take effect after `home-manager switch`.
-- **Neovim** uses LazyVim (`dotfiles/.config/nvim-lazyvim/`). Plugin specs are in `lua/plugins/`, keymaps in `lua/config/keymaps.lua`.
+- **Dotfiles** are stored in `dotfiles/` and symlinked to `$HOME` by home-manager. The directory structure mirrors `$HOME` — e.g. `dotfiles/.config/ripgrep/config` → `~/.config/ripgrep/config`. Don't break this convention. Edit them in-place; changes take effect after `home-manager switch`.
+- **Neovim** uses LazyVim (`dotfiles/.config/nvim/`). Plugin specs are in `lua/plugins/`, keymaps in `lua/config/keymaps.lua`. `dotfiles/.config/nvim-old/` is a legacy config, not in use.
+- **CLAUDE.md files**: `dotfiles/.claude/CLAUDE.md` is the **global** agent instructions file, symlinked to `~/.claude/CLAUDE.md` via home-manager — it applies to all projects. This file (`CLAUDE.md` at repo root) is the **project-specific** instructions for this repo only.
 
 ## Applying changes
 

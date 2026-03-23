@@ -1,0 +1,5 @@
+# Search hidden files/dirs (e.g. .github, .devcontainer)
+--hidden
+
+# Still skip .git internals
+--glob=!.git
