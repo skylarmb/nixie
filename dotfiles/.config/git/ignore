@@ -1,2 +1,4 @@
-**/.claude/settings.local.json
-.serena/
+.serena
+.claude
+.gemini
+.cursor

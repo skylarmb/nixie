@@ -1,24 +1,11 @@
 return {
-  -- :Git commands
-  { "tpope/vim-fugitive", cmd = { "Git" } },
-  -- Git gutter signs
-  {
-    "lewis6991/gitsigns.nvim",
-    event = "VeryLazy",
-    opts = {
-      signs = {
-        add = { text = "▎" },
-        change = { text = "▎" },
-        delete = { text = "▎" },
-        topdelete = { text = "▎" },
-        changedelete = { text = "▎" },
-      },
-      signcolumn = true, -- Toggle with `:Gitsigns toggle_signs`
-    },
-  },
-  -- Nice 3 way merging
+  -- Nice 3-way merging
   {
     "samoshkin/vim-mergetool",
-    cmd = { "MergeToolStart", "MergetoolToggle" },
+    cmd = { "MergetoolStart", "MergetoolToggle" },
+    init = function()
+      -- Use 3-way split layout: base, merged, remote
+      vim.g.mergetool_layout = "bmr"
+    end,
   },
 }

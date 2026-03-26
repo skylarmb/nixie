@@ -1,0 +1,4 @@
+# Configure cargo to use git CLI for authentication
+# This allows cargo to use your system's SSH keys when fetching dependencies from GitHub
+[net]
+git-fetch-with-cli = true

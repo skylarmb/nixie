@@ -1,6 +1,6 @@
 # .private/.gitconfig file must define at minimum [user] and [core]
 [include]
-  path = .private/.gitconfig
+  path = ~/.private/.gitconfig
 [core]
   pager = delta
   excludesfile = ~/.config/git/ignore
@@ -79,13 +79,16 @@
   diffs = difftool --no-symlinks --tool=diffsitter
   undo = !"git reset --soft HEAD~1; git reset HEAD ."
   o = !"gh repo view --web --branch "$(git rev-parse --abbrev-ref HEAD)""
-  c = commit
+  c = commit --no-verify
   cop = !"f() { git checkout "$(git merge-base --fork-point origin/main HEAD)" -- $@; }; f $@"
   com = checkout origin/main --
   dom = diff origin/main
-  cc = !"echo $(git rev-parse HEAD) | tee /dev/tty | pbcopy"
+  dm = !"git diff "$(git merge-base origin/main HEAD)""
+  # cc removed — now a shell alias for `claude --continue`
   ca = commit -a
   d = diff --ignore-all-space
+  dn = diff --name-only --ignore-all-space
+  dnr = diff --name-only --relative --ignore-all-space
   dd = "!f() { \
     merge_base=$(git merge-base origin/main HEAD); \
     git diff --relative $merge_base $@; \
@@ -96,9 +99,9 @@
   ds = diff --ignore-all-space --compact-summary
   rb = rebase -i $(git merge-base --fork-point main)
   rbc = rebase --continue
-  p = push -u origin head
-  pn = push -u origin head --no-verify
-  pf = push -f origin head
+  p = push -u origin HEAD
+  pn = push -u origin HEAD --no-verify
+  pf = push -f origin HEAD
   f = fetch --no-tags --prune
   a = add
   b = git rev-parse --abbrev-ref HEAD
@@ -122,7 +125,7 @@
   ll = diff HEAD^^ HEAD^
   lf = diff HEAD^  HEAD --name-only
   llf = diff HEAD^^  HEAD^ --name-only
-  mc = merge --continue
+  mc = merge --continue --no-edit
   reup = !"git fetch; git rebase origin/main"
   big-files    = !"git rev-list --objects --all \
                  | git cat-file --batch-check='%(objecttype) %(objectname) %(objectsize) %(rest)' \
@@ -134,13 +137,6 @@
                 | parallel git ls-tree -r --long \"{}\" \
                 | sort -uk3 \
                 | sort -nk4"#  nuke = reset --hard origin/main
-  yolo = "!f() { \
-    curr_branch=$(git rev-parse --abbrev-ref HEAD); \
-    if [ \"$curr_branch\" = \"main\" ]; then \
-      lolexec yolo echo "👀 cant yolo on main..."; return; \
-    fi; \
-    lolexec yolo git push -f --no-verify origin head; \
-  }; f"
   fire= "!f() { \
     newbranch=\"sb-FIRE-$(date +%s)\"; \
     git checkout -b \"$newbranch\"; \
