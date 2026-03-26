@@ -1,4 +1,9 @@
-. "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
+# Source home-manager session variables (handle Darwin vs Linux paths)
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  . "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
+else
+  . "/etc/profiles/per-user/$USER/etc/profile.d/hm-session-vars.sh"
+fi
 
 # profile shell startup time
 if [[ -n "$DEBUG_ZPROF" ]]; then
@@ -12,7 +17,7 @@ export ZSH="$HOME/.oh-my-zsh"
 export ZSH_THEME="robbyrussell"
 # ZSH_THEME="af-magic"
 plugins=(git)
-source $ZSH/oh-my-zsh.sh
+[[ -f $ZSH/oh-my-zsh.sh ]] && source $ZSH/oh-my-zsh.sh
 
 # ---------------- SHELL ----------------
 
@@ -39,6 +44,16 @@ COMPLETION_WAITING_DOTS="true"
 autoload -Uz zmv
 autoload -Uz edit-command-line
 bindkey "^X^E" edit-command-line
+
+# Word movement bindings for Alt+Left/Right and Ctrl+b/f
+# These match the wezterm key bindings which send ESC+b and ESC+f
+bindkey '\eb' backward-word
+bindkey '\ef' forward-word
+
+# Word deletion bindings for Alt+Backspace and Alt+d
+# These match the wezterm key bindings which send ESC+DEL and ESC+d
+bindkey '\e\x7f' backward-delete-word
+bindkey '\ed' delete-word
 zstyle ':completion:*' completer _expand_alias _complete _ignored
 export ZSH_EXPAND_ALL_DISABLE="word,alias"
 bindkey "^X^X" expand-all
@@ -91,6 +106,7 @@ export PATH="$PATH:$HOME/.local/bin"
 export PATH="$PATH:$HOME/.cargo/bin"
 export PATH="$PATH:$HOME/dotfiles/bin"
 export PATH="$PATH:/Applications/Postgres.app/Contents/Versions/latest/bin"
+export PATH="$PATH:$HOME/.opencode/bin"
 # export DOCKER_HOST="unix:///run/user/1000/podman/podman-machine-default-api.sock"
 
 # bun
@@ -101,6 +117,7 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 # eval "$(/opt/homebrew/bin/brew shellenv)"
 
 # pyenv
+# SYSTEM_PYTHON is set via home-manager environment variables
 export PATH="$HOME/.pyenv/bin:$PATH"
 if command -v pyenv 1>/dev/null 2>&1; then
   eval "$(pyenv init -)"
@@ -143,7 +160,7 @@ alias :man='f(){ nvim "+:Man $* | only" };f'
 alias tt="nvim +'execute \"ToDoTxtTasksToggle\" | wincmd o'"
 alias tn="nvim +'execute \"ToDoTxtTasksToggle\" | wincmd o | execute \"ToDoTxtTasksCapture\"'"
 alias workspace="cd $WORKSPACE"
-alias dotfiles="cd $DOTFILES_DIR"
+alias dots="cd $DOTFILES_DIR"
 alias vimc="cd $DOTFILES_DIR/.config/nvim && nvim . && cd -"
 alias vimcd="cd $DOTFILES_DIR/.config/nvim && $EDITOR ."
 alias cdd='cd_dirname'
@@ -155,21 +172,34 @@ alias wtc="$EDITOR $DOTFILES_DIR/.wezterm.lua"
 alias tc="$EDITOR $DOTFILES_DIR/.config/tmux/tmux.conf"
 alias tcc="$EDITOR $DOTFILES_DIR/.config/tmux/colorscheme.conf"
 alias hc="cd $HOME/nixie && nvim ./home.nix"
-alias hs='home-manager switch'
-alias nrs='sudo nixos-rebuild switch'
+alias hs='nix run home-manager/master -- switch --flake "$HOME/nixie#$USER@$(uname -s | tr A-Z a-z)" -b backup'
+alias nrs='sudo nixos-rebuild switch --flake "$HOME/nixie#nixos"'
+alias nrb='sudo nixos-rebuild boot --flake "$HOME/nixie#nixos"'
 alias zu='exec zsh'
 alias dka='docker kill $(docker ps -q)'
 alias vimwipe='rm -rf $HOME/.vim/tmp/swap; mkdir -p $HOME/.vim/tmp/swap'
 alias g='git'
-alias cc='git rev-parse HEAD | pbcopy'
+alias cc='claude --continue'
 alias ccwd='pwd | pbcopy'
 alias unwip='git reset --soft HEAD~'
-alias vm='v `git --no-pager diff --name-only --diff-filter=U`'
+alias vm='cd $(git rev-parse --show-toplevel) && nvim `git --no-pager diff --name-only --diff-filter=U`'
 alias todo='gg "todo before"'
 alias installglobals='npm install -g prettier diff-so-fancy neovim npm-why serve serverless nodemon markdown-toc ts-node lebab'
 alias scr='v $WORKSPACE/scratchpad/scratch.tsx'
-# alias ccat='cat'
-alias cat='bat --style=plain'
+alias tm='tmux a -t main || tmux new -s main'
+alias md='glow' # markdown viewer
+
+# Use function instead of alias to detect if output is a TTY
+cat() {
+  if [[ -t 1 ]]; then
+    # stdout is a terminal - use fancy styles
+    bat --style=plain,header,grid "$@"
+  else
+    # stdout is redirected/piped - use plain output
+    bat --style=plain "$@"
+  fi
+}
+
 alias ccat='command cat'
 # alias ag='ag --path-to-ignore ~/.ignore'
 alias notes='cd ~/notes'
@@ -184,16 +214,35 @@ alias w='~/.tmux/plugins/tmux-fzf/scripts/window.sh switch'
 alias ta='tmux new-session -A -s main -t main'
 alias psg='ps aux | grep'
 # switch between light and dark themes
-alias tl="export THEME=light; tmux set-environment THEME 'light'; tmux source-file ~/.tmux.conf; alacritty-themes Atelierdune.light;"
-alias td="export THEME=dark; tmux set-environment THEME 'dark'; tmux source-file ~/.tmux.conf; alacritty-themes Atelierdune.dark;"
-alias tm="tmux select-layout main-horizontal; tmux resize-pane -y80% -t 1;"
+# alias tl="export THEME=light; tmux set-environment THEME 'light'; tmux source-file ~/.tmux.conf; alacritty-themes Atelierdune.light;"
+# alias td="export THEME=dark; tmux set-environment THEME 'dark'; tmux source-file ~/.tmux.conf; alacritty-themes Atelierdune.dark;"
+# alias tm="tmux select-layout main-horizontal; tmux resize-pane -y80% -t 1;"
 # alias python="$(pyenv which python3)"
 # alias pip="$(pyenv which pip3)"
-alias brewfast='HOMEBREW_NO_AUTO_UPDATE=1 HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK=1 brew'
+# alias brewfast='HOMEBREW_NO_AUTO_UPDATE=1 HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK=1 brew'
 alias nd="nix develop -c $SHELL"
 alias pr='poetry run'
 alias dr='docker run -it --rm'
 alias dive="docker run -ti --rm  -v /var/run/docker.sock:/var/run/docker.sock ghcr.io/joschi/dive"
+alias ch='claude --model haiku'
+alias cs='claude --model sonnet'
+# quick cd
+alias nixie='cd ~/nixie'
+# open all unstaged changed files in nvim
+alias vf='nvim $(git diff --name-only)'
+# direnv shortcuts
+alias dal='direnv allow'
+alias drl='direnv reload'
+alias gs='git switch -'
+alias cursor='cursor-agent'
+
+cursor-oneshot() {
+ cursor -p "${@}" --stream-partial-output --output-format stream-json | \
+   jq --unbuffered -r -j '.message.content[0].text? // empty | select(. != "")' | \
+   bat -P -l markdown
+}
+
+alias co='cursor-oneshot'
 
 # ---------------- PLUGINS ----------------
 
@@ -208,7 +257,7 @@ zstyle ':completion:*'                menu no
 source <(fzf --zsh)
 
 cd_dirname() {
-  cd (dirname "${1}")
+  cd "$(dirname ${1})"
 }
 
 vr() {
@@ -257,7 +306,7 @@ t() {
   local d="${1}"
   [[ "${d}" =~ ^[0-9]+$ ]] && shift || d=1
   local t="${1:-.}"
-  _eza -T -L$d $t
+  _eza --git-ignore -T -L$d $t
 }
 
 git_nvim(){
@@ -274,56 +323,6 @@ wip() {
   git commit --no-verify -m "squash! ... WIP: ${*}"
 }
 
-
-# auto tmux window naming - hybrid approach
-tmux-window-name() {
-  if [[ -z "$TMUX" ]]; then
-    return
-  fi
-
-  # Get current pane's running command
-  local current_command=$(tmux display-message -p '#{pane_current_command}')
-
-  # List of shell programs where we want to show directory instead
-  local shell_programs=("zsh" "bash" "sh" "fish")
-
-  # Check if current command is a shell
-  local is_shell=false
-  for shell in $shell_programs; do
-    if [[ "$current_command" == "$shell" ]]; then
-      is_shell=true
-      break
-    fi
-  done
-
-  if $is_shell; then
-    # At shell prompt - show directory name
-    local dir_name=$(basename "$PWD")
-    tmux rename-window "$dir_name"
-  else
-    # Running a program - let automatic-rename show the program name
-    tmux set-window-option automatic-rename on
-  fi
-}
-
-# tmux light/dark mode env
-tmux-theme-env() {
-  if [[ -z "$TMUX" ]]; then
-    return
-  fi
-  local tmux_theme="$(tmux show-environment -g THEME 2>/dev/null | sed 's/THEME=//g')"
-  if [[ -z "$tmux_theme" ]] || [[ "$tmux_theme" = "$THEME" ]]; then
-    return
-  fi
-  export THEME="$tmux_theme"
-}
-
-# auto tmux window naming
-if [ ! -z "$TMUX" ]; then
-  add-zsh-hook chpwd tmux-window-name
-  add-zsh-hook periodic tmux-window-name
-  add-zsh-hook periodic tmux-theme-env
-fi
 
 alias ws='cd_workspace'
 cd_workspace() {
@@ -348,7 +347,7 @@ fzf_query() {
 
 alias vl="edit_last_file"
 edit_last_file(){
- nvim "+normal! g'0" ""
+ nvim "+normal! g'0"
 }
 
 # vim fuzzy open by filename with preview
@@ -356,7 +355,7 @@ fzf_edit_file() {
   fzf \
   --preview-window 'up,60%,border-bottom,+{2}+3/3' \
   --preview 'bat --color=always -r 0:100 {1} ' \
-  --bind 'enter:become(nvim {1} +{2})'
+  --bind 'enter:become($EDITOR {1} +{2})'
 }
 
 # vim fuzzy open by file contents with preview and highlighted line
@@ -425,17 +424,10 @@ confirm() {
 }
 
 # eval history
-alias h='fzf_history'
-fzf_history() {
-  eval $( ([ -n "$ZSH_NAME" ] && fc -l 1 || history) | fzf +s --tac | gsed -r 's/ *[0-9]*\*? *//' | gsed -r 's/\\/\\\\/g')
-}
-
-# print (edit) history before running
-
-alias hh='fzf_history_edit'
-fzf_history_edit() {
-  print -z $( ([ -n "$ZSH_NAME" ] && fc -l 1 || history) | fzf +s --tac | gsed -r 's/ *[0-9]*\*? *//' | gsed -r 's/\\/\\\\/g')
-}
+# alias h='fzf_history'
+# fzf_history() {
+#   eval $( ([ -n "$ZSH_NAME" ] && fc -l 1 || history) | fzf +s --tac | gsed -r 's/ *[0-9]*\*? *//' | gsed -r 's/\\/\\\\/g')
+# }
 
 randomsay() {
   cow=(`cowsay -l | tail -n +2 | tr  " "  "\n" | sort -R | head -n 1`)
@@ -508,7 +500,7 @@ ag_default_cmd(){
     rg --passthru --no-line-number "${@}"
 }
 
-# alias gg='ag_default_cmd'
+alias bg='batgrep'
 alias gg='ag_default_cmd'
 alias ggf='ag_default_cmd --files-with-matches'
 alias gga='ag_with_context'
@@ -574,7 +566,6 @@ fbr() {
   git checkout $(echo "$branch" | sed "s/.* //" | sed "s#remotes/[^/]*/##")
 }
 
-
 es6() {
   lebab $1 -o $1 --transform commonjs
   lebab $1 -o $1 --transform no-strict
@@ -612,21 +603,17 @@ startswith(){
   grep -F "^${*}"
 }
 
-gs(){
-  if [[ -n "${1}" ]]; then
-    git -c pager.diff=false diff --name-only --diff-filter="$1"
-    git -c pager.diff=false diff --name-only --cached --diff-filter="$1"
-  else
-    git -c color.ui=always status --short | sort -bf
-  fi
-}
-
 # re-instal nix after a system update
 renix() {
   sudo mv /etc/zshrc.backup-before-nix /etc/zshrc
   sudo mv /etc/bash.bashrc.backup-before-nix /etc/bash.bashrc
   sudo mv /etc/bashrc.backup-before-nix /etc/bashrc
   sh <(curl -L https://nixos.org/nix/install)
+}
+
+nixfree() {
+  nix-collect-garbage -d
+  nix-store --optimise
 }
 
 # Profiler

@@ -1,16 +1,14 @@
 # Edit this configuration file to define what should be installed on
 # your system.  Help is available in the configuration.nix(5) man page
-# and in the NixOS manual (accessible by running ‘nixos-help’).
+# and in the NixOS manual (accessible by running 'nixos-help').
 
-{ config, pkgs, ... }:
+{ config, pkgs, userConfig, ... }:
 
 {
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
       ./boot.nix
-      <home-manager/nixos>
-      ./home.nix
     ];
   networking.hostName = "nixos"; # Define your hostname.
 
@@ -22,9 +20,10 @@
 
   # Enable networking
   networking.networkmanager.enable = true;
+  networking.firewall.allowedTCPPorts = [ 22 ];
 
   # Set your time zone.
-  time.timeZone = "America/Los_Angeles";
+  time.timeZone = userConfig.timezone;
 
   # Select internationalisation properties.
   i18n.defaultLocale = "en_US.UTF-8";
@@ -41,12 +40,30 @@
     LC_TIME = "en_US.UTF-8";
   };
 
+  services.openssh = {
+    enable = true;
+    settings = {
+      PermitTTY = "yes";
+      AllowTcpForwarding = "yes";
+      AllowAgentForwarding = "yes";
+      MaxSessions = 20;  # Increased from 10 for Docker
+      MaxStartups = "20:30:100";  # Increased limits for Docker
+      ClientAliveInterval = 60;  # Keep connections alive (send keepalive every 60s)
+      ClientAliveCountMax = 10;  # Allow 10 missed keepalives (10min timeout)
+    };
+  };
+
   # Enable the X11 windowing system.
   services.xserver.enable = true;
 
   # Enable the GNOME Desktop Environment.
-  services.xserver.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.gnome.enable = true;
+  services.displayManager.gdm.enable = true;
+  services.desktopManager.gnome.enable = true;
+  services.udev.packages = with pkgs; [ gnome-settings-daemon ];
+  services.udev.extraRules = ''
+    # Espressif USB Serial/JTAG Controller
+    SUBSYSTEM=="tty", ATTRS{idVendor}=="303a", ATTRS{idProduct}=="1001", MODE="0666", TAG+="uaccess"
+  '';
 
   # Configure keymap in X11
   services.xserver.xkb = {
@@ -76,17 +93,20 @@
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
 
-  # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.x = {
+  # Define a user account. Don't forget to set a password with 'passwd'.
+  users.users.${userConfig.username} = {
     isNormalUser = true;
-    description = "x";
-    extraGroups = [ "networkmanager" "wheel" ];
+    description = userConfig.fullName;
+    extraGroups = [ "networkmanager" "wheel" "dialout" "docker" ];
   };
   users.defaultUserShell = pkgs.zsh;
 
   # Enable automatic login for the user.
   services.displayManager.autoLogin.enable = true;
-  services.displayManager.autoLogin.user = "x";
+  services.displayManager.autoLogin.user = userConfig.username;
+
+  # Configure home-manager for this user
+  home-manager.users.${userConfig.username} = import ./home.nix;
 
   # Asus laptop stuff
   services.supergfxd.enable = true;
@@ -116,7 +136,10 @@
   systemd.services."autovt@tty1".enable = false;
 
   # Programs
-  programs.firefox.enable = true;
+  programs.firefox = {
+    enable = true;
+  };
+
   programs.zsh.enable = true;
   programs.steam = {
     enable = true;
@@ -133,7 +156,10 @@
     neovim
     gnome-tweaks
     gnome-software
+    gnomeExtensions.appindicator
+    gruvbox-plus-icons
     git
+    qemu
   ];
 
   # debloat gnome
@@ -178,7 +204,7 @@
     # accessible via `nvidia-settings`.
     nvidiaSettings = true;
     # Optionally, you may need to select the appropriate driver version for your specific GPU.
-    package = config.boot.kernelPackages.nvidiaPackages.stable;
+    package = config.boot.kernelPackages.nvidiaPackages.beta;
   };
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -188,6 +214,22 @@
     enable = true;
     enableSSHSupport = true;
   };
+
+  stylix = {
+    image = ./wallpapers/gruvbox.jpg;
+    enable = true;
+    autoEnable = true;
+    base16Scheme = "${pkgs.base16-schemes}/share/themes/gruvbox-dark-soft.yaml";
+    polarity = "dark";
+    targets.qt.enable = false;  # Disable Qt theming - qgnomeplatform is broken
+  };
+
+  virtualisation.docker.enable = true;
+  virtualisation.docker.rootless = {
+    enable = true;
+    setSocketVariable = true;
+  };
+
 
   # List services that you want to enable:
 
