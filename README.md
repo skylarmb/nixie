@@ -45,7 +45,7 @@ That's it! Your development environment is ready.
 ## What's Included
 
 ### Home Manager Configuration
-- **Shell**: zsh with oh-my-zsh, antigen, fzf integration
+- **Shell**: zsh with oh-my-zsh, fzf integration
 - **Editor**: Neovim with Lazy.nvim plugin manager, LSP, Copilot
 - **Terminal**: tmux with TPM (auto-installed), wezterm
 - **Git**: Delta diff viewer, extensive aliases, GPG signing support

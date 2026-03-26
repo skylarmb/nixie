@@ -85,9 +85,7 @@
     # shell stuff
     ".zprofile".source = dotfiles/.zprofile;
     ".zshrc".source = dotfiles/.zshrc;
-    ".antigenrc".source = dotfiles/.antigenrc;
     ".wezterm.lua".source = dotfiles/.wezterm.lua;
-    "antigen.zsh".source = dotfiles/antigen.zsh;
     ".oh-my-zsh/custom/themes/af-magic-ansi.zsh-theme".source = dotfiles/.oh-my-zsh/custom/themes/af-magic-ansi.zsh-theme;
 
     # applications

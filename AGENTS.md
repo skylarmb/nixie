@@ -20,7 +20,6 @@ dotfiles/              # User dotfiles, symlinked into $HOME by home-manager
   .wezterm.lua         # WezTerm terminal config (leader key, splits, smart-splits integration)
   .zshrc               # Zsh config
   .zprofile            # Zsh profile
-  .antigenrc           # Zsh plugin manager config
   .fzf.zsh             # FZF config
   .p10k.zsh            # Powerlevel10k prompt theme
   .claude/             # Claude Code settings
