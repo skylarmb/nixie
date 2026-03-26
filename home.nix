@@ -6,85 +6,80 @@
   home.stateVersion = "25.05"; # Please read the comment before changing.
   home.file.".icons/default".source = "${pkgs.vanilla-dmz}/share/icons/Vanilla-DMZ";
   home.packages = [
-      # dependencies
-      # pkgs.gccgo
-      # pkgs.gnumake
-      pkgs.nodejs_22
-      (pkgs.python313.withPackages (ps: [ps.libtmux]))
-      pkgs.python313Packages.libtmux
-      # programs
-      pkgs.tmux
-      # pkgs.wezterm
-      pkgs.helix
-      pkgs.neovim
-      pkgs.expect
-      pkgs.glow # terminal markdown viewer
-      pkgs.act
-      pkgs.devcontainer
-      pkgs.htop
-      pkgs.hgrep
-      # pkgs.codex
-      # pkgs.orca-slicer
+    # dependencies
+    # pkgs.gccgo
+    # pkgs.gnumake
+    pkgs.nodejs_22
+    (pkgs.python313.withPackages (ps: [ps.libtmux]))
+    pkgs.python313Packages.libtmux
+    # programs
+    pkgs.tmux
+    # pkgs.wezterm
+    pkgs.helix
+    pkgs.neovim
+    pkgs.expect
+    pkgs.glow # terminal markdown viewer
+    pkgs.act
+    pkgs.devcontainer
+    pkgs.htop
+    pkgs.hgrep
+    # pkgs.codex
+    # pkgs.orca-slicer
 
-      # LSP / languages
-      pkgs.stylua
-      pkgs.prettierd
-      pkgs.eslint_d
-      pkgs.nil
-      pkgs.typescript-language-server
-      pkgs.gopls
-      pkgs.unison-ucm
+    # LSP / languages
+    pkgs.stylua
+    pkgs.prettierd
+    pkgs.eslint_d
+    pkgs.nil
+    pkgs.typescript-language-server
+    pkgs.gopls
+    pkgs.unison-ucm
 
-      # shell
-      pkgs.zsh
-      pkgs.ripgrep
+    # shell
+    pkgs.zsh
+    pkgs.ripgrep
 
-      # pkgs.direnv
-      pkgs.oh-my-zsh
-      pkgs.fzf
-      pkgs.bat
-      pkgs.eza
-      pkgs.fd
-      pkgs.git
-      pkgs.unzip
-      pkgs.gh
-      pkgs.delta
-      pkgs.tig
-      pkgs.tree
-      pkgs.sd
-      pkgs.htmlq
-      pkgs.bat-extras.core
-      pkgs.awscli2
-      pkgs.kubectl
-      pkgs.gemini-cli
+    # pkgs.direnv
+    pkgs.oh-my-zsh
+    pkgs.fzf
+    pkgs.bat
+    pkgs.eza
+    pkgs.fd
+    pkgs.git
+    pkgs.unzip
+    pkgs.gh
+    pkgs.delta
+    pkgs.tig
+    pkgs.tree
+    pkgs.sd
+    pkgs.htmlq
+    pkgs.bat-extras.core
+    pkgs.awscli2
+    pkgs.kubectl
+    pkgs.gemini-cli
 
-      pkgs.cargo
-      pkgs.portaudio
+    pkgs.cargo
+    pkgs.portaudio
 
-      # containers
-      # pkgs.podman
-      # pkgs.virtiofsd
-      # pkgs.docker
-      # pkgs.docker-buildx
-      # pkgs.docker-compose
-      # pkgs.nvidia-container-toolkit
-    ] ++ lib.optionals (!isDarwin) [
-      # linux only packages
-      pkgs.calibre
-      pkgs.calibre-web
-      pkgs.orca-slicer
-      pkgs.plasticity
-      pkgs.wezterm
-      pkgs.wl-clipboard
-      pkgs.vanilla-dmz
-      pkgs.libgcc
-      pkgs.deluge
-    ];
-    home.file = {
-        # shell stuff
-        ".zprofile".source = dotfiles/.zprofile;
-        ".zshrc".source = dotfiles/.zshrc;
-        ".wezterm.lua".source = dotfiles/.wezterm.lua;
+    # containers
+    # pkgs.podman
+    # pkgs.virtiofsd
+    # pkgs.docker
+    # pkgs.docker-buildx
+    # pkgs.docker-compose
+    # pkgs.nvidia-container-toolkit
+  ] ++ lib.optionals (!isDarwin) [
+    # linux only packages
+    pkgs.calibre
+    pkgs.calibre-web
+    pkgs.orca-slicer
+    pkgs.plasticity
+    pkgs.wezterm
+    pkgs.wl-clipboard
+    pkgs.vanilla-dmz
+    pkgs.libgcc
+    pkgs.deluge
+  ];
 
   home.file = {
     # shell stuff

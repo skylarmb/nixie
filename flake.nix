@@ -27,49 +27,28 @@
     let
       # Machine-specific configuration
       # To add a new machine: create machines/<name>.nix and update the line below
-      userConfig = import ./machines/hh.nix;
+      userConfig = import ./machines/mini.nix;
 
-      # Helper function to create home-manager configuration
-      mkHomeConfiguration = system: {
-        inherit system;
-        modules = [
-          ./home.nix
-          {
-            # Pass user config to home.nix
-            _module.args = {
-              inherit userConfig tpm;
-            };
-          }
-        ];
-      };
     in
     {
       # macOS (darwin) configuration
       homeConfigurations."${userConfig.username}@darwin" = home-manager.lib.homeManagerConfiguration {
         pkgs = nixpkgs.legacyPackages.aarch64-darwin;
-        modules = [
-          ./home.nix
-          {
-            _module.args = {
-              inherit userConfig tpm;
-              isDarwin = true;
-            };
-          }
-        ];
+        extraSpecialArgs = {
+          inherit userConfig tpm;
+          isDarwin = true;
+        };
+        modules = [ ./home.nix ];
       };
 
       # Linux configuration
       homeConfigurations."${userConfig.username}@linux" = home-manager.lib.homeManagerConfiguration {
         pkgs = nixpkgs.legacyPackages.x86_64-linux;
-        modules = [
-          ./home.nix
-          {
-            _module.args = {
-              inherit userConfig tpm;
-              isDarwin = false;
-            };
-          }
-        ];
+        extraSpecialArgs = {
+          inherit userConfig tpm;
+          isDarwin = false;
+        };
+        modules = [ ./home.nix ];
       };
 
       # NixOS system configuration
