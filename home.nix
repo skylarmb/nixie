@@ -6,25 +6,26 @@
   home.stateVersion = "25.05"; # Please read the comment before changing.
   home.file.".icons/default".source = "${pkgs.vanilla-dmz}/share/icons/Vanilla-DMZ";
   home.packages = [
-    # dependencies
-    # pkgs.gccgo
-    # pkgs.gnumake
-    pkgs.nodejs_22
-    (pkgs.python313.withPackages (ps: [ps.libtmux]))
-    pkgs.python313Packages.libtmux
-    # programs
-    pkgs.tmux
-    # pkgs.wezterm
-    pkgs.helix
-    pkgs.neovim
-    pkgs.expect
-    pkgs.glow # terminal markdown viewer
-    pkgs.act
-    pkgs.devcontainer
-    pkgs.htop
-    pkgs.hgrep
-    # pkgs.codex
-    # pkgs.orca-slicer
+      # dependencies
+      # pkgs.gccgo
+      # pkgs.gnumake
+      pkgs.nodejs_22
+      (pkgs.python313.withPackages (ps: [ps.libtmux]))
+      pkgs.python313Packages.libtmux
+      # programs
+      pkgs.tmux
+      # pkgs.wezterm
+      pkgs.helix
+      pkgs.neovim
+      pkgs.expect
+      pkgs.glow # terminal markdown viewer
+      pkgs.act
+      pkgs.devcontainer
+      pkgs.htop
+      pkgs.hgrep
+      pkgs.wget
+      # pkgs.codex
+      # pkgs.orca-slicer
 
     # LSP / languages
     pkgs.stylua
