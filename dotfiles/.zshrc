@@ -164,6 +164,10 @@ alias dots="cd $DOTFILES_DIR"
 alias vimc="cd $DOTFILES_DIR/.config/nvim && nvim . && cd -"
 alias vimcd="cd $DOTFILES_DIR/.config/nvim && $EDITOR ."
 alias cdd='cd_dirname'
+# Fuzzy-find any child directory and cd into it
+alias cdf='cd $(fd --type d --hidden --exclude .git | fzf)'
+# Fuzzy-find a file or directory; cat files, ls directories
+alias peek='fzf_peek'
 alias zc="$EDITOR $DOTFILES_DIR/.zshrc && exec zsh"
 alias gitc="$EDITOR $DOTFILES_DIR/.config/git/config"
 alias zcp="$EDITOR $HOME/.private/.zshrc && exec zsh"
@@ -258,6 +262,17 @@ source <(fzf --zsh)
 
 cd_dirname() {
   cd "$(dirname ${1})"
+}
+
+# Fuzzy-find a file or directory; bat files, eza directories
+fzf_peek() {
+  local target
+  target=$(fd --hidden --exclude .git | fzf --preview '[[ -d {} ]] && eza --all --tree --level=2 --group-directories-first --git {} || bat --color=always --style=numbers {}') || return
+  if [[ -d "$target" ]]; then
+    eza --all --tree --level=2 --group-directories-first --git "$target"
+  else
+    bat "$target"
+  fi
 }
 
 vr() {

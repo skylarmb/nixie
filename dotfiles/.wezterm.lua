@@ -61,7 +61,7 @@ config.colors = {
 local function tmux_prefix(key)
 	local act = wezterm.action
 	return act.Multiple({
-		act.SendKey({ key = "a", mods = "CTRL" }),
+		act.SendKey({ key = "b", mods = "CTRL" }),
 		act.SendKey({ key = key }),
 	})
 end
