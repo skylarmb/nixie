@@ -3,9 +3,9 @@ local wezterm = require("wezterm")
 
 local config = wezterm.config_builder()
 
--- config.default_prog = { os.getenv("NIX_PROFILE_BIN") .. "/zsh", "--login", "-c", "tmux new-session -A -s main -t main" }
+-- Launch the default shell; start tmux manually when desired.
 
--- config.enable_tab_bar = false
+config.enable_tab_bar = false
 config.use_fancy_tab_bar = false
 config.tab_max_width = 48
 config.tab_bar_at_bottom = true
@@ -61,7 +61,9 @@ config.colors = {
 local function tmux_prefix(key)
 	local act = wezterm.action
 	return act.Multiple({
-		act.SendKey({ key = "b", mods = "CTRL" }),
+		act.SendKey({ key = "a", mods = "CTRL" }),
+		-- wezterm-native/current mode:
+		-- act.SendKey({ key = "b", mods = "CTRL" }),
 		act.SendKey({ key = key }),
 	})
 end
@@ -104,21 +106,26 @@ end
 
 local mod_key = "CMD"
 
--- Set leader key to Ctrl+A (like tmux)
-config.leader = { key = "a", mods = "CTRL", timeout_milliseconds = 1000 }
+-- tmux mode: let tmux own Ctrl+A instead of wezterm leader handling.
+-- wezterm-native mode:
+-- config.leader = { key = "a", mods = "CTRL", timeout_milliseconds = 1000 }
 
 config.keys = {
-	-- { key = "1", mods = mod_key, action = tmux_prefix("1") },
-	-- { key = "2", mods = mod_key, action = tmux_prefix("2") },
-	-- { key = "3", mods = mod_key, action = tmux_prefix("3") },
-	-- { key = "4", mods = mod_key, action = tmux_prefix("4") },
-	-- { key = "5", mods = mod_key, action = tmux_prefix("5") },
-	-- { key = "6", mods = mod_key, action = tmux_prefix("6") },
-	-- { key = "7", mods = mod_key, action = tmux_prefix("7") },
-	-- { key = "8", mods = mod_key, action = tmux_prefix("8") },
-	-- { key = "9", mods = mod_key, action = tmux_prefix("9") },
+	{ key = "1", mods = mod_key, action = tmux_prefix("1") },
+	{ key = "2", mods = mod_key, action = tmux_prefix("2") },
+	{ key = "3", mods = mod_key, action = tmux_prefix("3") },
+	{ key = "4", mods = mod_key, action = tmux_prefix("4") },
+	{ key = "5", mods = mod_key, action = tmux_prefix("5") },
+	{ key = "6", mods = mod_key, action = tmux_prefix("6") },
+	{ key = "7", mods = mod_key, action = tmux_prefix("7") },
+	{ key = "8", mods = mod_key, action = tmux_prefix("8") },
+	{ key = "9", mods = mod_key, action = tmux_prefix("9") },
 	{ key = "Enter", mods = "SHIFT", action = wezterm.action({ SendString = "\x1b\r" }) },
-	{ key = "Enter", mods = mod_key, action = wezterm.action.TogglePaneZoomState },
+	{ key = "Enter", mods = mod_key, action = tmux_prefix("z") },
+	{ key = "t", mods = mod_key, action = tmux_prefix("c") },
+	{ key = "w", mods = mod_key, action = tmux_prefix("q") },
+	-- wezterm-native mode:
+	-- { key = "Enter", mods = mod_key, action = wezterm.action.TogglePaneZoomState },
 	{ key = "b", mods = mod_key, action = tmux_prefix("p") },
 	{ key = "g", mods = mod_key, action = tmux_prefix("g") },
 	-- Word movement: Alt+Left/Right and Ctrl+b/f send ESC+b/f for zsh vi-mode
@@ -128,25 +135,23 @@ config.keys = {
 	-- Word deletion: Alt+Backspace and Alt+d
 	{ key = "Backspace", mods = "ALT", action = wezterm.action({ SendString = "\27\127" }) },
 	{ key = "d", mods = "ALT", action = wezterm.action({ SendString = "\27d" }) },
-	-- Pane navigation: Ctrl+H/J/K/L with smart-splits integration
-	split_nav("move", "h"),
-	split_nav("move", "j"),
-	split_nav("move", "k"),
-	split_nav("move", "l"),
-	-- Pane resizing: Ctrl+Alt+H/J/K/L with smart-splits integration
-	split_nav("resize", "h"),
-	split_nav("resize", "j"),
-	split_nav("resize", "k"),
-	split_nav("resize", "l"),
-	-- Pane operations with leader key (Ctrl+A): splits, zoom, close, clear, and new tab
-	{ key = "s", mods = "LEADER", action = wezterm.action.SplitHorizontal({ domain = "CurrentPaneDomain" }) },
-	{ key = "v", mods = "LEADER", action = wezterm.action.SplitVertical({ domain = "CurrentPaneDomain" }) },
-	{ key = "z", mods = "LEADER", action = wezterm.action.TogglePaneZoomState },
-	{ key = "q", mods = "LEADER", action = wezterm.action.CloseCurrentPane({ confirm = true }) },
-	{ key = "d", mods = "LEADER", action = wezterm.action.ClearScrollback("ScrollbackAndViewport") },
-	{ key = "c", mods = "LEADER", action = wezterm.action.SpawnTab("CurrentPaneDomain") },
-	-- Send literal Ctrl+A to the terminal (press Ctrl+A twice)
-	{ key = "a", mods = "LEADER|CTRL", action = wezterm.action.SendKey({ key = "a", mods = "CTRL" }) },
+	-- tmux mode: leave Ctrl+h/j/k/l unbound in wezterm so tmux handles pane movement.
+	-- wezterm-native mode:
+	-- split_nav("move", "h"),
+	-- split_nav("move", "j"),
+	-- split_nav("move", "k"),
+	-- split_nav("move", "l"),
+	-- split_nav("resize", "h"),
+	-- split_nav("resize", "j"),
+	-- split_nav("resize", "k"),
+	-- split_nav("resize", "l"),
+	-- { key = "s", mods = "LEADER", action = wezterm.action.SplitHorizontal({ domain = "CurrentPaneDomain" }) },
+	-- { key = "v", mods = "LEADER", action = wezterm.action.SplitVertical({ domain = "CurrentPaneDomain" }) },
+	-- { key = "z", mods = "LEADER", action = wezterm.action.TogglePaneZoomState },
+	-- { key = "q", mods = "LEADER", action = wezterm.action.CloseCurrentPane({ confirm = true }) },
+	-- { key = "d", mods = "LEADER", action = wezterm.action.ClearScrollback("ScrollbackAndViewport") },
+	-- { key = "c", mods = "LEADER", action = wezterm.action.SpawnTab("CurrentPaneDomain") },
+	-- { key = "a", mods = "LEADER|CTRL", action = wezterm.action.SendKey({ key = "a", mods = "CTRL" }) },
 }
 
 -- config.window_decorations = "TITLE"
