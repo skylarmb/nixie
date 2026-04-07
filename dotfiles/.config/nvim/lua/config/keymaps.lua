@@ -48,8 +48,8 @@ map("t", "<ESC>", "<C-\\><C-n>", opts_noremap)
 map({ "n", "v", "o" }, "<bs>", "i<bs>", opts_noremap)
 
 ------------ Editing & File Operations ------------
--- Clear highlights (override LazyVim default)
-vim.keymap.del("n", "<leader><leader>")
+-- Clear highlights. The plugin spec disables LazyVim's picker binding on the
+-- same physical chord, so this stays bound to your old <leader><leader>.
 map("n", "<leader><leader>", "<cmd>nohlsearch<CR>", opts_noremap)
 -- Better paste in visual mode
 map("v", "p", '"_dP', opts_noremap)
