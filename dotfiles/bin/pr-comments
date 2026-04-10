@@ -1,0 +1,87 @@
+#!/usr/bin/env bash
+set -euo pipefail
+_self="$(basename "$0")"
+# uncomment to enable debug logs for script
+# export DEBUG="$_self"
+
+log() { debug_log "$_self" "$*"; }
+
+main() {
+  local pr="${1:?Usage: pr-comments <PR number or URL>}"
+
+  # Fetch PR review threads with comments and diff context via GraphQL
+  gh api graphql -f query='
+    query($owner: String!, $repo: String!, $pr: Int!) {
+      repository(owner: $owner, name: $repo) {
+        pullRequest(number: $pr) {
+          title
+          url
+          reviewThreads(first: 100) {
+            nodes {
+              isResolved
+              path
+              diffSide
+              line
+              originalLine
+              startLine
+              originalStartLine
+              comments(first: 50) {
+                nodes {
+                  author { login }
+                  createdAt
+                  body
+                  diffHunk
+                  position
+                  originalPosition
+                  outdated
+                  replyTo { id }
+                  id
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ' \
+    -F owner=":owner" \
+    -F repo=":repo" \
+    -F pr="$pr" \
+    --jq '
+      .data.repository.pullRequest |
+      "PR: \(.title)\n\(.url)\n" + (
+        [
+          .reviewThreads.nodes[] |
+          . as $thread |
+          "\n" + ("─" * 80) + "\n" +
+          "File: \(.path)" +
+          (if .line then " (line \(.line))" elif .originalLine then " (line ~\(.originalLine))" else "" end) +
+          (if .isResolved then " [RESOLVED]" else "" end) +
+          "\n" +
+          (
+            .comments.nodes[0].diffHunk |
+            split("\n") |
+            map("  " + .) |
+            join("\n")
+          ) +
+          "\n" +
+          (
+            [
+              $thread.comments.nodes[] |
+              "\n  @\(.author.login) at \(.createdAt[:16] | gsub("T"; " "))" +
+              (if .outdated then " [OUTDATED]" else "" end) +
+              ":\n" +
+              (
+                .body |
+                split("\n") |
+                map("    " + .) |
+                join("\n")
+              )
+            ] | join("\n")
+          )
+        ] | join("\n")
+      )
+    '
+}
+
+main "$@"

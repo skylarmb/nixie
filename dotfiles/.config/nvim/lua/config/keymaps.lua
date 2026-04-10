@@ -114,13 +114,13 @@ map("n", "`", "<cmd>Neotree toggle<CR>", opts_noremap)
 -- New file
 map("n", "<leader>n", "<cmd>n<CR>", opts_noremap)
 
------------- Telescope ------------
--- Telescope file picker
-map("n", "<C-p>", "<cmd>Telescope find_files<CR>", opts_noremap)
--- Telescope live grep (search in files)
-map("n", "<C-f>", "<cmd>Telescope live_grep<CR>", opts_noremap)
+------------ Picker (Snacks) ------------
+-- File picker
+map("n", "<C-p>", function() Snacks.picker.files() end, opts_noremap)
+-- Live grep (search in files)
+map("n", "<C-f>", function() Snacks.picker.grep() end, opts_noremap)
 -- Search word under cursor in all files
-map("n", "F", "<cmd>Telescope grep_string<CR>", opts_noremap)
+map("n", "F", function() Snacks.picker.grep_word() end, opts_noremap)
 
 ------------ Git Mergetool ------------
 -- Toggle mergetool

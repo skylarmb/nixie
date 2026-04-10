@@ -59,6 +59,16 @@
     pkgs.kubectl
     pkgs.gemini-cli
 
+      # seagoat semantic code search — rename `gt` to `sgt` to avoid conflict with Graphite CLI
+      (pkgs.symlinkJoin {
+        name = "seagoat-no-gt";
+        paths = [ pkgs.seagoat ];
+        postBuild = ''
+          rm $out/bin/gt
+          ln -s ${pkgs.seagoat}/bin/gt $out/bin/sgt
+        '';
+      })
+
     pkgs.cargo
     pkgs.portaudio
 
@@ -138,6 +148,9 @@
 
     # OpenCode configuration - same as Claude.md
     ".config/opencode/AGENTS.md".source = dotfiles/.claude/CLAUDE.md;
+
+    # Codex configurations - also same as Claude.md for now
+    ".codex/AGENTS.md".source = dotfiles/.claude/CLAUDE.md;
   };
 
   home.sessionVariables = {
