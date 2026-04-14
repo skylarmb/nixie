@@ -140,6 +140,7 @@ export TMUX_PLUGIN_MANAGER_PATH="$HOME/.tmux/plugins"
 export DEFAULT_USER=$USER
 export DOTFILES_DIR="$HOME/nixie/dotfiles"
 export WORKSPACE="$HOME/workspace"
+export NIXPKGS_ALLOW_UNFREE=1
 # ---------------- ALIAS ----------------
 
 # alias v='nv'

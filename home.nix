@@ -58,6 +58,7 @@
     pkgs.awscli2
     pkgs.kubectl
     pkgs.gemini-cli
+    pkgs.claude-code
 
       # seagoat semantic code search — rename `gt` to `sgt` to avoid conflict with Graphite CLI
       (pkgs.symlinkJoin {
