@@ -1,8 +1,8 @@
 # ROG Asus Laptop configuration
 {
-  username = "x";
+  username = "skylar";
   email = "skylarmb@gmail.com";
   fullName = "Skylar Brown";
-  gpgKey = "40ADB15073A421E6";
+  gpgKey = "B79ECF3797364818";
   timezone = "America/Los_Angeles";
 }

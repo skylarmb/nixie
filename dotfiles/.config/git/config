@@ -176,9 +176,5 @@
 	insteadOf = https://github.com/
 [init]
 	defaultbranch = main
-[user]
-	name = Skylar Brown
-	email = skylarmb@gmail.com
-	signingkey = E6739C803EFEF360
 [tag]
 	gpgSign = true

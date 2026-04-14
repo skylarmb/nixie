@@ -50,7 +50,7 @@
       emulatedSystems = [ "aarch64-linux" ];
       preferStaticEmulators = true;  # Make it work with Docker
     };
-    kernelPackages = pkgs.linuxPackages_latest;
+    kernelPackages = pkgs.linuxPackages_6_18;
     # extraModulePackages = [ config.boot.kernelPackages.nvidia_x11 ];
   };
 }
