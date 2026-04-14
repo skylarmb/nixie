@@ -57,6 +57,7 @@
     pkgs.awscli2
     pkgs.kubectl
     pkgs.gemini-cli
+    pkgs.claude-code
 
     pkgs.cargo
     pkgs.portaudio
