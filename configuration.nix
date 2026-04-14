@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running 'nixos-help').
 
-{ config, pkgs, userConfig, ... }:
+{ config, pkgs, lib, userConfig, ... }:
 
 {
   imports =
@@ -112,10 +112,7 @@
   services.supergfxd.enable = true;
   services.switcherooControl.enable = true;
   services.power-profiles-daemon.enable = true;
-  services.asusd = {
-    enable = true;
-    enableUserService = true;
-  };
+  services.asusd.enable = true;
 
   # Mullvad
   services.mullvad-vpn.enable = true;
@@ -141,6 +138,10 @@
   };
 
   programs.zsh.enable = true;
+  programs.zsh.ohMyZsh = {
+    enable = true;
+    plugins = [ "git" "sudo" "docker" "kubectl" ];
+  };
   programs.steam = {
     enable = true;
     gamescopeSession.enable = true;
@@ -148,6 +149,10 @@
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
+  nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
+    "claude-code"
+    "plasticity"
+  ];
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
@@ -157,7 +162,6 @@
     gnome-tweaks
     gnome-software
     gnomeExtensions.appindicator
-    gruvbox-plus-icons
     git
     qemu
   ];
@@ -222,6 +226,12 @@
     base16Scheme = "${pkgs.base16-schemes}/share/themes/gruvbox-dark-soft.yaml";
     polarity = "dark";
     targets.qt.enable = false;  # Disable Qt theming - qgnomeplatform is broken
+    iconTheme = {
+      enable = true;
+      package = pkgs.gruvbox-plus-icons;
+      dark = "Gruvbox-Plus-Dark";
+      light = "Gruvbox-Plus-Light";
+    };
   };
 
   virtualisation.docker.enable = true;
@@ -248,5 +258,5 @@
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "25.05"; # Did you read the comment?
+  system.stateVersion = "25.11"; # Did you read the comment?
 }

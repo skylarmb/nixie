@@ -27,7 +27,7 @@
     let
       # Machine-specific configuration
       # To add a new machine: create machines/<name>.nix and update the line below
-      userConfig = import ./machines/mini.nix;
+      userConfig = import ./machines/rog.nix;
 
     in
     {
