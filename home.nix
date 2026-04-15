@@ -95,6 +95,7 @@
 
   home.file = {
     # shell stuff
+    ".zshenv".source = dotfiles/.zshenv;
     ".zprofile".source = dotfiles/.zprofile;
     ".zshrc".source = dotfiles/.zshrc;
     ".wezterm.lua".source = dotfiles/.wezterm.lua;
