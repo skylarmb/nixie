@@ -12,3 +12,4 @@ Session.vim
 .*_idea
 nohup.out
 session_control.json
+.codex/
