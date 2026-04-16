@@ -541,7 +541,6 @@ ag_default_cmd(){
     rg --passthru --no-line-number "${@}"
 }
 
-alias bg='batgrep'
 alias gg='ag_default_cmd'
 alias ggf='ag_default_cmd --files-with-matches'
 alias gga='ag_with_context'

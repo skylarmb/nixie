@@ -1,37 +1,48 @@
-{ config, pkgs, lib, userConfig, tpm, isDarwin ? true, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  userConfig,
+  tpm,
+  isDarwin ? true,
+  ...
+}:
 
 {
   home.username = userConfig.username;
-  home.homeDirectory = if isDarwin then "/Users/${userConfig.username}" else "/home/${userConfig.username}";
+  home.homeDirectory =
+    if isDarwin then "/Users/${userConfig.username}" else "/home/${userConfig.username}";
   home.stateVersion = "25.05"; # Please read the comment before changing.
   home.file.".icons/default".source = "${pkgs.vanilla-dmz}/share/icons/Vanilla-DMZ";
   home.packages = [
-      # dependencies
-      # pkgs.gccgo
-      # pkgs.gnumake
-      pkgs.nodejs_22
-      (pkgs.python313.withPackages (ps: [ps.libtmux]))
-      pkgs.python313Packages.libtmux
-      # programs
-      pkgs.tmux
-      # pkgs.wezterm
-      pkgs.helix
-      pkgs.neovim
-      pkgs.expect
-      pkgs.glow # terminal markdown viewer
-      pkgs.act
-      pkgs.devcontainer
-      pkgs.htop
-      pkgs.hgrep
-      pkgs.wget
-      # pkgs.codex
-      # pkgs.orca-slicer
+    # dependencies
+    # pkgs.gccgo
+    # pkgs.gnumake
+    pkgs.nodejs_22
+    (pkgs.python313.withPackages (ps: [ ps.libtmux ]))
+    pkgs.python313Packages.libtmux
+    # programs
+    pkgs.tmux
+    # pkgs.wezterm
+    pkgs.helix
+    pkgs.neovim
+    pkgs.expect
+    pkgs.glow # terminal markdown viewer
+    pkgs.act
+    pkgs.devcontainer
+    pkgs.htop
+    pkgs.hgrep
+    pkgs.wget
+    # pkgs.codex
+    # pkgs.orca-slicer
 
     # LSP / languages
     pkgs.stylua
     pkgs.prettierd
     pkgs.eslint_d
     pkgs.nil
+    pkgs.nixfmt-rfc-style # nix formatter (official RFC 166 style)
+    pkgs.statix # nix linter (used by nvim-lint via LazyVim's lang.nix extra)
     pkgs.typescript-language-server
     pkgs.gopls
     pkgs.unison-ucm
@@ -54,20 +65,19 @@
     pkgs.tree
     pkgs.sd
     pkgs.htmlq
-    pkgs.bat-extras.core
     pkgs.awscli2
     pkgs.kubectl
     pkgs.gemini-cli
 
-      # seagoat semantic code search — rename `gt` to `sgt` to avoid conflict with Graphite CLI
-      (pkgs.symlinkJoin {
-        name = "seagoat-no-gt";
-        paths = [ pkgs.seagoat ];
-        postBuild = ''
-          rm $out/bin/gt
-          ln -s ${pkgs.seagoat}/bin/gt $out/bin/sgt
-        '';
-      })
+    # seagoat semantic code search — rename `gt` to `sgt` to avoid conflict with Graphite CLI
+    (pkgs.symlinkJoin {
+      name = "seagoat-no-gt";
+      paths = [ pkgs.seagoat ];
+      postBuild = ''
+        rm $out/bin/gt
+        ln -s ${pkgs.seagoat}/bin/gt $out/bin/sgt
+      '';
+    })
 
     pkgs.cargo
     pkgs.portaudio
@@ -79,7 +89,8 @@
     # pkgs.docker-buildx
     # pkgs.docker-compose
     # pkgs.nvidia-container-toolkit
-  ] ++ lib.optionals (!isDarwin) [
+  ]
+  ++ lib.optionals (!isDarwin) [
     # linux only packages
     pkgs.calibre
     pkgs.calibre-web
@@ -98,7 +109,8 @@
     ".zprofile".source = dotfiles/.zprofile;
     ".zshrc".source = dotfiles/.zshrc;
     ".wezterm.lua".source = dotfiles/.wezterm.lua;
-    ".oh-my-zsh/custom/themes/af-magic-ansi.zsh-theme".source = dotfiles/.oh-my-zsh/custom/themes/af-magic-ansi.zsh-theme;
+    ".oh-my-zsh/custom/themes/af-magic-ansi.zsh-theme".source =
+      dotfiles/.oh-my-zsh/custom/themes/af-magic-ansi.zsh-theme;
 
     # applications
     ".config/git".source = dotfiles/.config/git;
@@ -107,7 +119,6 @@
     ".config/nvim/lua".source = dotfiles/.config/nvim/lua;
     ".config/nvim/init.lua".source = dotfiles/.config/nvim/init.lua;
     ".config/nvim/.neoconf.json".source = dotfiles/.config/nvim/.neoconf.json;
-
 
     # Tmux - symlink config files individually to allow TPM management
     ".config/tmux/tmux.conf".source = dotfiles/.config/tmux/tmux.conf;
@@ -121,9 +132,7 @@
     ".config/tmux/plugins/tpm".source = tpm;
 
     # Nix config
-    ".config/nix/nix.conf".text = ''
-      experimental-features = nix-command flakes
-    '';
+    ".config/nix/nix.conf".source = dotfiles/.config/nix/nix.conf;
 
     ".config/nixpkgs/config.nix".text = ''
       { allowUnfree = true; }
@@ -162,12 +171,18 @@
   home.sessionVariables = {
     EDITOR = "nvim";
     RIPGREP_CONFIG_PATH = "$HOME/.config/ripgrep/config";
-    NPM_CONFIG_USERCONFIG="$HOME/.config/npm/npmrc";
+    NPM_CONFIG_USERCONFIG = "$HOME/.config/npm/npmrc";
     SYSTEM_NODEJS = "${pkgs.nodejs_22}/bin/node";
     SYSTEM_PYTHON = "${pkgs.python3}/bin/python3";
-    NIX_PROFILE_ETC = if isDarwin then "$HOME/.nix-profile/etc" else "/etc/profiles/per-user/${userConfig.username}/etc";
-    NIX_PROFILE_BIN = if isDarwin then "$HOME/.nix-profile/bin" else "/etc/profiles/per-user/${userConfig.username}/bin";
-    NIX_PROFILE_SHARE = if isDarwin then "$HOME/.nix-profile/share" else "/etc/profiles/per-user/${userConfig.username}/share";
+    NIX_PROFILE_ETC =
+      if isDarwin then "$HOME/.nix-profile/etc" else "/etc/profiles/per-user/${userConfig.username}/etc";
+    NIX_PROFILE_BIN =
+      if isDarwin then "$HOME/.nix-profile/bin" else "/etc/profiles/per-user/${userConfig.username}/bin";
+    NIX_PROFILE_SHARE =
+      if isDarwin then
+        "$HOME/.nix-profile/share"
+      else
+        "/etc/profiles/per-user/${userConfig.username}/share";
     COPY_CMD = if isDarwin then "pbcopy" else "wl-copy";
     # DOCKER_HOST = "unix:///run/user/1000/podman/podman-machine-default-api.sock";
   };
@@ -175,7 +190,7 @@
   # Activation scripts
   home.activation = {
     # Install TPM plugins automatically
-    installTmuxPlugins = config.lib.dag.entryAfter ["installPackages"] ''
+    installTmuxPlugins = config.lib.dag.entryAfter [ "installPackages" ] ''
       if [ -x "$HOME/.config/tmux/plugins/tpm/bin/install_plugins" ]; then
         export PATH="${pkgs.tmux}/bin:${pkgs.gawk}/bin:${pkgs.gnused}/bin:${pkgs.gnugrep}/bin:${pkgs.coreutils}/bin:${pkgs.git}/bin:$PATH"
         $DRY_RUN_CMD "$HOME/.config/tmux/plugins/tpm/bin/install_plugins" || true
@@ -183,20 +198,24 @@
     '';
 
     # Symlink WezTerm CLI into ~/.local/bin on macOS (installed as .app, not in PATH)
-    symlinkWeztermCli = lib.mkIf isDarwin (config.lib.dag.entryAfter ["installPackages"] ''
-      WEZTERM_BIN="/Applications/WezTerm.app/Contents/MacOS/wezterm"
-      LINK_DIR="$HOME/.local/bin"
-      if [ -x "$WEZTERM_BIN" ]; then
-        mkdir -p "$LINK_DIR"
-        ln -sf "$WEZTERM_BIN" "$LINK_DIR/wezterm"
-      fi
-    '');
+    symlinkWeztermCli = lib.mkIf isDarwin (
+      config.lib.dag.entryAfter [ "installPackages" ] ''
+        WEZTERM_BIN="/Applications/WezTerm.app/Contents/MacOS/wezterm"
+        LINK_DIR="$HOME/.local/bin"
+        if [ -x "$WEZTERM_BIN" ]; then
+          mkdir -p "$LINK_DIR"
+          ln -sf "$WEZTERM_BIN" "$LINK_DIR/wezterm"
+        fi
+      ''
+    );
 
     # Patch tmux-window-name plugin to use wrapped Python with libtmux
-    patchTmuxWindowNameShebang = config.lib.dag.entryAfter ["installTmuxPlugins"] ''
+    patchTmuxWindowNameShebang = config.lib.dag.entryAfter [ "installTmuxPlugins" ] ''
       SCRIPT="$HOME/.local/share/tmux/plugins/tmux-window-name/scripts/rename_session_windows.py"
       if [ -f "$SCRIPT" ]; then
-        ${pkgs.gnused}/bin/sed -i '1s|.*|#!${(pkgs.python313.withPackages (ps: [ps.libtmux]))}/bin/python3|' "$SCRIPT"
+        ${pkgs.gnused}/bin/sed -i '1s|.*|#!${
+          (pkgs.python313.withPackages (ps: [ ps.libtmux ]))
+        }/bin/python3|' "$SCRIPT"
       fi
     '';
   };

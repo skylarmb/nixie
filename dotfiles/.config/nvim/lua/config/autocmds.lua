@@ -78,3 +78,12 @@ vim.api.nvim_create_autocmd({ "TextYankPost" }, {
     vim.highlight.on_yank({ higroup = "Visual", timeout = 200 })
   end,
 })
+
+------------ LSP Default Keymap Overrides ------------
+-- Nvim 0.11+ core sets buffer-local K -> vim.lsp.buf.hover() on LspAttach.
+-- Remove it so our global K -> 10gk (fast scroll up) applies instead.
+vim.api.nvim_create_autocmd("LspAttach", {
+  callback = function(args)
+    pcall(vim.keymap.del, "n", "K", { buffer = args.buf })
+  end,
+})
