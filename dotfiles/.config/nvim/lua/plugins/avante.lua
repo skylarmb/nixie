@@ -1,3 +1,9 @@
+-- Avante disabled — replaced with CodeCompanion (see plugins/codecompanion.lua).
+-- To re-enable: uncomment the block below AND re-add
+-- "lazyvim.plugins.extras.ai.avante" to lazyvim.json.
+return {}
+
+--[[
 return {
   {
     "yetone/avante.nvim",
@@ -22,3 +28,4 @@ return {
     },
   },
 }
+--]]

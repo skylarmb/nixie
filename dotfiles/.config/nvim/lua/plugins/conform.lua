@@ -10,6 +10,7 @@ return {
         typescript = { "eslint_d", "prettierd" },
         typescriptreact = { "eslint_d", "prettierd" },
         json = { "prettierd" },
+        nix = { "nixfmt" },
         -- Fallback: remove trailing whitespace for all files
         ["*"] = { "trim_whitespace" },
       },

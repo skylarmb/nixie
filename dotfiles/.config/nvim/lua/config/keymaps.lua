@@ -12,6 +12,8 @@ map("n", "<S-l>", "<cmd>bnext<CR>", opts_noremap)
 map("n", "<S-h>", "<cmd>bprevious<CR>", opts_noremap)
 map("n", "}", "<cmd>bnext<CR>", opts_noremap)
 map("n", "{", "<cmd>bprevious<CR>", opts_noremap)
+-- Delete current buffer (keeps window layout)
+map("n", "<leader>d", function() Snacks.bufdelete() end, opts_noremap)
 
 ------------ Movement & Navigation ------------
 -- Move by display lines when wrapping
