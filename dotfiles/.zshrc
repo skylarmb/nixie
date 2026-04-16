@@ -185,7 +185,7 @@ alias dka='docker kill $(docker ps -q)'
 alias vimwipe='rm -rf $HOME/.vim/tmp/swap; mkdir -p $HOME/.vim/tmp/swap'
 alias g='git'
 alias cc='claude --continue'
-alias ccwd='pwd | pbcopy'
+alias ccd='pwd | pbcopy'
 alias unwip='git reset --soft HEAD~'
 alias vm='cd $(git rev-parse --show-toplevel) && nvim `git --no-pager diff --name-only --diff-filter=U`'
 alias todo='gg "todo before"'
@@ -395,6 +395,31 @@ fzf_branches() {
   git checkout $(echo "$branch" | sed "s/.* //" | sed "s#remotes/[^/]*/##")
 }
 
+wt() {
+	local selection worktree_path
+	selection="$(
+		git worktree list --porcelain |
+			awk '
+				/^worktree / {
+					worktree_path = substr($0, 10)
+					branch = "(detached)"
+				}
+				/^branch / {
+					branch = substr($0, 8)
+					sub("^refs/heads/", "", branch)
+				}
+				/^$/ {
+					printf "%s\t%s\n", branch, worktree_path
+				}
+			' |
+			fzf-tmux -d 12 \
+				--delimiter=$'\t' \
+				--with-nth=1,2 \
+				--preview 'git -C {2} status --short --branch'
+	)" || return
+	worktree_path="${selection#*$'\t'}"
+	cd "$worktree_path" || return
+}
 
 # fzf my PRs, return the PR number
 fzf_pr_number() {

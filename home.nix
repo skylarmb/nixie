@@ -58,7 +58,6 @@
     pkgs.awscli2
     pkgs.kubectl
     pkgs.gemini-cli
-    pkgs.claude-code
 
       # seagoat semantic code search — rename `gt` to `sgt` to avoid conflict with Graphite CLI
       (pkgs.symlinkJoin {
@@ -121,8 +120,13 @@
     # TPM - Tmux Plugin Manager (managed by Nix)
     ".config/tmux/plugins/tpm".source = tpm;
 
+    # Nix config
     ".config/nix/nix.conf".text = ''
       experimental-features = nix-command flakes
+    '';
+
+    ".config/nixpkgs/config.nix".text = ''
+      { allowUnfree = true; }
     '';
 
     ".config/npm/npmrc".text = ''
