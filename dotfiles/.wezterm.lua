@@ -158,47 +158,47 @@ config.keys = {
 
 -- Tab bar styling to match tmux theme (simple background colors)
 -- Colors from tmux colorscheme.conf
-local BG_CURRENT = "#4a482c" -- GREEN_DIM - active tab background
-local FG_CURRENT = "#dcbb7e" -- FG0 - active tab text
-local BG_B = "#292827" -- BG4 - inactive tab background
-local FG_B = "#c49138" -- FG4 - inactive tab text
-local BG_BAR = "#1a1a19" -- BG0 from tmux theme - tab bar background
+-- local BG_CURRENT = "#4a482c" -- GREEN_DIM - active tab background
+-- local FG_CURRENT = "#dcbb7e" -- FG0 - active tab text
+-- local BG_B = "#292827" -- BG4 - inactive tab background
+-- local FG_B = "#c49138" -- FG4 - inactive tab text
+-- local BG_BAR = "#1a1a19" -- BG0 from tmux theme - tab bar background
 
 -- Fancy tab bar configuration
-config.window_frame = {
-	font = wezterm.font({ family = "DankMono Nerd Font Mono", weight = "Bold" }),
-	font_size = 20.0,
-	active_titlebar_bg = BG_BAR,
-	inactive_titlebar_bg = BG_BAR,
-}
-
-config.colors.tab_bar = {
-	background = BG_BAR,
-	inactive_tab_edge = BG_B,
-	active_tab = {
-		bg_color = BG_CURRENT,
-		fg_color = FG_CURRENT,
-	},
-	inactive_tab = {
-		bg_color = BG_B,
-		fg_color = FG_B,
-	},
-	inactive_tab_hover = {
-		bg_color = BG_B,
-		fg_color = FG_CURRENT,
-	},
-	new_tab = {
-		bg_color = BG_BAR,
-		fg_color = FG_B,
-	},
-	new_tab_hover = {
-		bg_color = BG_B,
-		fg_color = FG_CURRENT,
-	},
-}
-
-config.inactive_pane_hsb = {
-	brightness = 0.7,
-}
+-- config.window_frame = {
+-- 	font = wezterm.font({ family = "DankMono Nerd Font Mono", weight = "Bold" }),
+-- 	font_size = 20.0,
+-- 	active_titlebar_bg = BG_BAR,
+-- 	inactive_titlebar_bg = BG_BAR,
+-- }
+--
+-- config.colors.tab_bar = {
+-- 	background = BG_BAR,
+-- 	inactive_tab_edge = BG_B,
+-- 	active_tab = {
+-- 		bg_color = BG_CURRENT,
+-- 		fg_color = FG_CURRENT,
+-- 	},
+-- 	inactive_tab = {
+-- 		bg_color = BG_B,
+-- 		fg_color = FG_B,
+-- 	},
+-- 	inactive_tab_hover = {
+-- 		bg_color = BG_B,
+-- 		fg_color = FG_CURRENT,
+-- 	},
+-- 	new_tab = {
+-- 		bg_color = BG_BAR,
+-- 		fg_color = FG_B,
+-- 	},
+-- 	new_tab_hover = {
+-- 		bg_color = BG_B,
+-- 		fg_color = FG_CURRENT,
+-- 	},
+-- }
+--
+-- config.inactive_pane_hsb = {
+-- 	brightness = 0.7,
+-- }
 
 return config
