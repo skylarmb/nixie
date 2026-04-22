@@ -4,18 +4,51 @@ _self="$(basename "$0")"
 # uncomment to enable debug logs for script
 # export DEBUG="$_self"
 
+# Disable gh's auto-pager — this script is meant to be streamed / piped.
+export GH_PAGER=
+
 log() { debug_log "$_self" "$*"; }
 
 main() {
   local pr="${1:?Usage: pr-comments <PR number or URL>}"
 
-  # Fetch PR review threads with comments and diff context via GraphQL
+  # Accept either a bare PR number (uses the current repo via gh's :owner /
+  # :repo placeholders) or a full PR URL (parse owner/repo/number so the
+  # script works from anywhere).
+  local owner=":owner"
+  local repo=":repo"
+  local pr_num="$pr"
+  if [[ "$pr" =~ ^https?://github\.com/([^/]+)/([^/]+)/pull/([0-9]+) ]]; then
+    owner="${BASH_REMATCH[1]}"
+    repo="${BASH_REMATCH[2]}"
+    pr_num="${BASH_REMATCH[3]}"
+  fi
+
+  # Fetch all three PR comment surfaces via GraphQL:
+  #   - comments:      top-level PR conversation (issue-style comments)
+  #   - reviews:       the summary body attached to each submitted review
+  #   - reviewThreads: inline file/line code review comments
   gh api graphql -f query='
     query($owner: String!, $repo: String!, $pr: Int!) {
       repository(owner: $owner, name: $repo) {
         pullRequest(number: $pr) {
           title
           url
+          comments(first: 100) {
+            nodes {
+              author { login }
+              createdAt
+              body
+            }
+          }
+          reviews(first: 100) {
+            nodes {
+              author { login }
+              createdAt
+              state
+              body
+            }
+          }
           reviewThreads(first: 100) {
             nodes {
               isResolved
@@ -44,41 +77,64 @@ main() {
       }
     }
   ' \
-    -F owner=":owner" \
-    -F repo=":repo" \
-    -F pr="$pr" \
+    -F owner="$owner" \
+    -F repo="$repo" \
+    -F pr="$pr_num" \
     --jq '
       .data.repository.pullRequest |
-      "PR: \(.title)\n\(.url)\n" + (
+
+      # Header: PR title + URL.
+      "PR: \(.title)\n\(.url)\n"
+
+      # Section 1: top-level PR conversation comments.
+      + (
+        if (.comments.nodes | length) > 0 then
+          "\n" + ("─" * 80) + "\n### Top-level comments\n"
+          + ([
+              .comments.nodes[] |
+              "\n@\(.author.login) at \(.createdAt[:16] | gsub("T"; " ")):\n"
+              + (.body | split("\n") | map("  " + .) | join("\n"))
+            ] | join("\n"))
+          + "\n"
+        else "" end
+      )
+
+      # Section 2: review summary bodies. Skip reviews whose body is empty —
+      # those are just the parent of inline threads and carry no standalone
+      # text (they would show up below in the inline section anyway).
+      + (
+        (.reviews.nodes | map(select((.body // "") != ""))) as $reviews
+        | if ($reviews | length) > 0 then
+            "\n" + ("─" * 80) + "\n### Review summaries\n"
+            + ([
+                $reviews[] |
+                "\n@\(.author.login) [\(.state)] at \(.createdAt[:16] | gsub("T"; " ")):\n"
+                + (.body | split("\n") | map("  " + .) | join("\n"))
+              ] | join("\n"))
+            + "\n"
+          else "" end
+      )
+
+      # Section 3: inline review threads (file/line code comments). Existing
+      # format — separator per thread, diff hunk, then each comment indented.
+      + (
         [
           .reviewThreads.nodes[] |
           . as $thread |
-          "\n" + ("─" * 80) + "\n" +
-          "File: \(.path)" +
-          (if .line then " (line \(.line))" elif .originalLine then " (line ~\(.originalLine))" else "" end) +
-          (if .isResolved then " [RESOLVED]" else "" end) +
-          "\n" +
-          (
-            .comments.nodes[0].diffHunk |
-            split("\n") |
-            map("  " + .) |
-            join("\n")
-          ) +
-          "\n" +
-          (
-            [
+          "\n" + ("─" * 80) + "\n"
+          + "File: \(.path)"
+          + (if .line then " (line \(.line))" elif .originalLine then " (line ~\(.originalLine))" else "" end)
+          + (if .isResolved then " [RESOLVED]" else "" end)
+          + "\n"
+          + (.comments.nodes[0].diffHunk | split("\n") | map("  " + .) | join("\n"))
+          + "\n"
+          + ([
               $thread.comments.nodes[] |
-              "\n  @\(.author.login) at \(.createdAt[:16] | gsub("T"; " "))" +
-              (if .outdated then " [OUTDATED]" else "" end) +
-              ":\n" +
-              (
-                .body |
-                split("\n") |
-                map("    " + .) |
-                join("\n")
-              )
-            ] | join("\n")
-          )
+              "\n  @\(.author.login) at \(.createdAt[:16] | gsub("T"; " "))"
+              + (if .outdated then " [OUTDATED]" else "" end)
+              + ":\n"
+              + (.body | split("\n") | map("    " + .) | join("\n"))
+            ] | join("\n"))
         ] | join("\n")
       )
     '

@@ -1,0 +1,83 @@
+#!/usr/bin/env bash
+set -euo pipefail
+_self="$(basename "$0")"
+# uncomment to enable debug logs for script
+# export DEBUG="$_self"
+
+# Disable gh's auto-pager — this script is meant to be streamed / piped.
+export GH_PAGER=
+
+log() { debug_log "$_self" "$*"; }
+
+main() {
+  local pr="${1:?Usage: pr-checks <PR number or URL>}"
+  local max_lines=50
+
+  # Header: PR title and URL
+  gh pr view "$pr" --json title,url --jq '"PR: \(.title)\n\(.url)"'
+
+  # Collect failing checks only. bucket=="fail" excludes cancel/skip/pending/pass.
+  local checks
+  checks=$(gh pr checks "$pr" --json name,state,link,workflow,bucket \
+    --jq '[.[] | select(.bucket == "fail")]')
+
+  if [[ "$(printf '%s' "$checks" | jq 'length')" -eq 0 ]]; then
+    printf '\nNo failing checks.\n'
+    return 0
+  fi
+
+  local sep
+  sep=$(printf '─%.0s' {1..80})
+
+  local name workflow link state job_id logs total
+  while IFS=$'\t' read -r name workflow link state; do
+    printf '\n%s\n' "$sep"
+    if [[ -n "$workflow" && "$workflow" != "$name" ]]; then
+      printf '%s / %s [%s]\n' "$workflow" "$name" "$state"
+    else
+      printf '%s [%s]\n' "$name" "$state"
+    fi
+    [[ -n "$link" ]] && printf '%s\n' "$link"
+
+    # Extract owner/repo and job ID from GH Actions link:
+    #   https://github.com/<owner>/<repo>/actions/runs/<runId>/job/<jobId>
+    local repo=""
+    job_id=""
+    if [[ "$link" =~ github\.com/([^/]+/[^/]+)/actions/ ]]; then
+      repo="${BASH_REMATCH[1]}"
+    fi
+    if [[ "$link" =~ /job/([0-9]+) ]]; then
+      job_id="${BASH_REMATCH[1]}"
+    fi
+
+    if [[ -z "$job_id" || -z "$repo" ]]; then
+      printf '\n  (non-Actions check — logs not available here)\n'
+      continue
+    fi
+
+    # Fetch only the failed-step log lines for this job. Combine stderr so we
+    # can surface the gh error if the fetch fails.
+    if ! logs=$(gh run view --repo "$repo" --job "$job_id" --log-failed 2>&1); then
+      printf '\n  (failed to fetch job logs: %s)\n' "$logs"
+      continue
+    fi
+    if [[ -z "$logs" ]]; then
+      printf '\n  (no failed-step log content)\n'
+      continue
+    fi
+    # gh prefixes each line with "<job-name>\t<step-name>\t<raw line>" — drop
+    # those first two columns to keep just the actual log content.
+    logs=$(printf '%s\n' "$logs" | cut -f3-)
+
+    total=$(printf '%s\n' "$logs" | wc -l | tr -d ' ')
+    printf '\n'
+    if ((total > max_lines)); then
+      printf '  [truncated — showing last %d of %d lines]\n' "$max_lines" "$total"
+      printf '%s\n' "$logs" | tail -n "$max_lines" | sed 's/^/  /'
+    else
+      printf '%s\n' "$logs" | sed 's/^/  /'
+    fi
+  done < <(printf '%s' "$checks" | jq -r '.[] | [.name, .workflow // "", .link // "", .state] | @tsv')
+}
+
+main "$@"

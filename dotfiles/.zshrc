@@ -156,6 +156,7 @@ alias qq='q'
 alias qa='q'
 alias :q='q'
 alias :qa='q'
+alias yn='pwd|pbcopy'
 alias :h='nvim_help'
 alias :man='f(){ nvim "+:Man $* | only" };f'
 alias tt="nvim +'execute \"ToDoTxtTasksToggle\" | wincmd o'"
