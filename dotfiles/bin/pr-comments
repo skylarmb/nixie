@@ -39,6 +39,7 @@ main() {
               author { login }
               createdAt
               body
+              url
             }
           }
           reviews(first: 100) {
@@ -47,6 +48,7 @@ main() {
               createdAt
               state
               body
+              url
             }
           }
           reviewThreads(first: 100) {
@@ -69,6 +71,7 @@ main() {
                   outdated
                   replyTo { id }
                   id
+                  url
                 }
               }
             }
@@ -92,7 +95,7 @@ main() {
           "\n" + ("─" * 80) + "\n### Top-level comments\n"
           + ([
               .comments.nodes[] |
-              "\n@\(.author.login) at \(.createdAt[:16] | gsub("T"; " ")):\n"
+              "\n\(.url)\n@\(.author.login) at \(.createdAt[:16] | gsub("T"; " ")):\n"
               + (.body | split("\n") | map("  " + .) | join("\n"))
             ] | join("\n"))
           + "\n"
@@ -108,7 +111,7 @@ main() {
             "\n" + ("─" * 80) + "\n### Review summaries\n"
             + ([
                 $reviews[] |
-                "\n@\(.author.login) [\(.state)] at \(.createdAt[:16] | gsub("T"; " ")):\n"
+                "\n\(.url)\n@\(.author.login) [\(.state)] at \(.createdAt[:16] | gsub("T"; " ")):\n"
                 + (.body | split("\n") | map("  " + .) | join("\n"))
               ] | join("\n"))
             + "\n"
@@ -130,7 +133,7 @@ main() {
           + "\n"
           + ([
               $thread.comments.nodes[] |
-              "\n  @\(.author.login) at \(.createdAt[:16] | gsub("T"; " "))"
+              "\n  \(.url)\n  @\(.author.login) at \(.createdAt[:16] | gsub("T"; " "))"
               + (if .outdated then " [OUTDATED]" else "" end)
               + ":\n"
               + (.body | split("\n") | map("    " + .) | join("\n"))

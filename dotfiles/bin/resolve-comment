@@ -1,0 +1,117 @@
+#!/usr/bin/env bash
+set -euo pipefail
+_self="$(basename "$0")"
+# uncomment to enable debug logs for script
+# export DEBUG="$_self"
+
+# Disable gh's auto-pager — this script prints one URL at the end.
+export GH_PAGER=
+
+log() { debug_log "$_self" "$*"; }
+
+usage() {
+  cat >&2 <<EOF
+Usage: $_self <URL-or-discussion_rID> <reply body>
+
+Posts a reply to a PR review comment's thread and marks the thread resolved.
+
+Accepted forms for the first argument:
+  https://github.com/<owner>/<repo>/pull/<N>#discussion_r<id>
+  discussion_r<id>         (uses the current git repo's owner/repo)
+  <id>                     (bare numeric id; uses the current git repo)
+EOF
+  exit 2
+}
+
+main() {
+  [[ $# -eq 2 ]] || usage
+  local input="$1"
+  local body="$2"
+
+  # Parse input into owner / repo / pr_num / comment_id. owner+repo and
+  # pr_num may be empty after this block; we fill them in below.
+  local owner="" repo="" pr_num="" comment_id=""
+  if [[ "$input" =~ ^https?://github\.com/([^/]+)/([^/]+)/pull/([0-9]+)#discussion_r([0-9]+)$ ]]; then
+    owner="${BASH_REMATCH[1]}"
+    repo="${BASH_REMATCH[2]}"
+    pr_num="${BASH_REMATCH[3]}"
+    comment_id="${BASH_REMATCH[4]}"
+  elif [[ "$input" =~ ^discussion_r([0-9]+)$ ]]; then
+    comment_id="${BASH_REMATCH[1]}"
+  elif [[ "$input" =~ ^[0-9]+$ ]]; then
+    comment_id="$input"
+  else
+    echo "Error: expected a PR review-comment URL (ending in #discussion_r<id>) or a discussion_r<id>, got: $input" >&2
+    exit 1
+  fi
+
+  # If the URL didn't carry owner/repo (bare id form), fall back to the
+  # current repository reported by gh.
+  if [[ -z "$owner" || -z "$repo" ]]; then
+    local nwo
+    nwo=$(gh repo view --json nameWithOwner --jq .nameWithOwner)
+    owner="${nwo%/*}"
+    repo="${nwo#*/}"
+  fi
+
+  # If we still don't have a PR number, look up the comment via REST —
+  # the response's pull_request_url embeds the PR number.
+  if [[ -z "$pr_num" ]]; then
+    pr_num=$(gh api "/repos/$owner/$repo/pulls/comments/$comment_id" \
+      --jq '.pull_request_url | split("/") | last')
+  fi
+
+  log "owner=$owner repo=$repo pr=$pr_num comment=$comment_id"
+
+  # Find the review-thread node id that contains this comment. GitHub's
+  # GraphQL doesn't expose a direct Comment → Thread edge, so we have to
+  # scan the PR's reviewThreads and match on the comment's databaseId.
+  local thread_id
+  thread_id=$(gh api graphql \
+    -f query='
+      query($owner: String!, $repo: String!, $pr: Int!) {
+        repository(owner: $owner, name: $repo) {
+          pullRequest(number: $pr) {
+            reviewThreads(first: 100) {
+              nodes {
+                id
+                isResolved
+                comments(first: 50) {
+                  nodes { databaseId }
+                }
+              }
+            }
+          }
+        }
+      }
+    ' \
+    -F owner="$owner" -F repo="$repo" -F pr="$pr_num" \
+    --jq "[.data.repository.pullRequest.reviewThreads.nodes[] | select(any(.comments.nodes[]; .databaseId == $comment_id)) | .id][0] // empty")
+
+  if [[ -z "$thread_id" ]]; then
+    echo "Error: could not find a review thread in $owner/$repo#$pr_num containing comment $comment_id" >&2
+    exit 1
+  fi
+
+  log "thread_id=$thread_id"
+
+  # Reply + resolve in a single request. GitHub executes the two mutations
+  # sequentially, so the reply lands before the thread is flipped to
+  # resolved. resolveReviewThread is idempotent if the thread is already
+  # resolved.
+  gh api graphql \
+    -f query='
+      mutation($threadId: ID!, $body: String!) {
+        reply: addPullRequestReviewThreadReply(input: {pullRequestReviewThreadId: $threadId, body: $body}) {
+          comment { url }
+        }
+        resolve: resolveReviewThread(input: {threadId: $threadId}) {
+          thread { isResolved }
+        }
+      }
+    ' \
+    -F threadId="$thread_id" -f body="$body" \
+    --jq '"Replied and resolved: \(.data.reply.comment.url)"'
+}
+
+main "$@"
