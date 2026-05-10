@@ -68,6 +68,7 @@
     pkgs.awscli2
     pkgs.kubectl
     pkgs.gemini-cli
+    pkgs.tree-sitter
 
     # seagoat semantic code search — rename `gt` to `sgt` to avoid conflict with Graphite CLI
     (pkgs.symlinkJoin {
@@ -95,8 +96,8 @@
     pkgs.calibre
     pkgs.calibre-web
     pkgs.orca-slicer
-    pkgs.plasticity
-    pkgs.wezterm
+    # pkgs.plasticity
+    # pkgs.wezterm
     pkgs.wl-clipboard
     pkgs.vanilla-dmz
     pkgs.libgcc
@@ -124,6 +125,38 @@
     ".config/tmux/tmux.conf".source = dotfiles/.config/tmux/tmux.conf;
     ".config/tmux/colorscheme.conf".source = dotfiles/.config/tmux/colorscheme.conf;
 
+    # Linux: export Nix profile path vars into the systemd user environment so
+    # GUI-launched apps (tmux, wezterm, etc.) inherit them. home.sessionVariables
+    # only loads via shell init, which doesn't reach apps started outside a shell.
+    ".config/environment.d/nix-profile.conf" = lib.mkIf (!isDarwin) {
+      text = ''
+        NIX_PROFILE_BIN=${
+          if userConfig.isNixOS then
+            "/etc/profiles/per-user/${userConfig.username}/bin"
+          else
+            "/home/${userConfig.username}/.nix-profile/bin"
+        }
+        NIX_PROFILE_ETC=${
+          if userConfig.isNixOS then
+            "/etc/profiles/per-user/${userConfig.username}/etc"
+          else
+            "/home/${userConfig.username}/.nix-profile/etc"
+        }
+        NIX_PROFILE_SHARE=${
+          if userConfig.isNixOS then
+            "/etc/profiles/per-user/${userConfig.username}/share"
+          else
+            "/home/${userConfig.username}/.nix-profile/share"
+        }
+      '';
+    };
+
+    # Linux: pre-create $XDG_RUNTIME_DIR/wezterm at session start so wezterm's
+    # SSH_AUTH_SOCK symlink doesn't race the dir creation on launch.
+    ".config/user-tmpfiles.d/wezterm.conf" = lib.mkIf (!isDarwin) {
+      text = "d %t/wezterm 0700 - - -\n";
+    };
+
     ".config/ripgrep/config".source = dotfiles/.config/ripgrep/config;
     ".config/containers/registries.conf".source = dotfiles/.config/containers/registries.conf;
     ".config/containers/policy.json".source = dotfiles/.config/containers/policy.json;
@@ -147,7 +180,7 @@
 
     # Claude Code configuration - synced across machines
     ".claude/CLAUDE.md".source = dotfiles/.claude/CLAUDE.md;
-    ".claude/settings.json".source = dotfiles/.claude/settings.json;
+    # ".claude/settings.json".source = dotfiles/.claude/settings.json;
     ".claude/explore.md".source = dotfiles/.claude/explore.md;
 
     # Symlink agent files individually to allow directory to remain writable
@@ -155,8 +188,15 @@
     ".claude/agents/console-log-analyzer.md".source = dotfiles/.claude/agents/console-log-analyzer.md;
     ".claude/agents/eslint-fixer.md".source = dotfiles/.claude/agents/eslint-fixer.md;
 
-    ".claude/commands".source = dotfiles/.claude/commands;
     ".claude/output-styles".source = dotfiles/.claude/output-styles;
+
+    # Symlink skill files individually so the skills directory remains
+    # writable (plugins install skills into ~/.claude/skills/ as well).
+    ".claude/skills/pr/SKILL.md".source = dotfiles/.claude/skills/pr/SKILL.md;
+    ".claude/skills/feedback/SKILL.md".source = dotfiles/.claude/skills/feedback/SKILL.md;
+    ".claude/skills/checks/SKILL.md".source = dotfiles/.claude/skills/checks/SKILL.md;
+    ".claude/skills/resolve-comments/SKILL.md".source =
+      dotfiles/.claude/skills/resolve-comments/SKILL.md;
 
     # Gemini configuration - same as Claude.md
     ".gemini/GEMINI.md".source = dotfiles/.claude/CLAUDE.md;
@@ -174,16 +214,27 @@
     NPM_CONFIG_USERCONFIG = "$HOME/.config/npm/npmrc";
     SYSTEM_NODEJS = "${pkgs.nodejs_22}/bin/node";
     SYSTEM_PYTHON = "${pkgs.python3}/bin/python3";
+    # NixOS installs home-manager at the system level, exposing the user profile
+    # at /etc/profiles/per-user/<user>. Standalone home-manager (Darwin or
+    # non-NixOS Linux) uses $HOME/.nix-profile instead.
     NIX_PROFILE_ETC =
-      if isDarwin then "$HOME/.nix-profile/etc" else "/etc/profiles/per-user/${userConfig.username}/etc";
-    NIX_PROFILE_BIN =
-      if isDarwin then "$HOME/.nix-profile/bin" else "/etc/profiles/per-user/${userConfig.username}/bin";
-    NIX_PROFILE_SHARE =
-      if isDarwin then
-        "$HOME/.nix-profile/share"
+      if userConfig.isNixOS then
+        "/etc/profiles/per-user/${userConfig.username}/etc"
       else
-        "/etc/profiles/per-user/${userConfig.username}/share";
-    COPY_CMD = if isDarwin then "pbcopy" else "wl-copy";
+        "$HOME/.nix-profile/etc";
+    NIX_PROFILE_BIN =
+      if userConfig.isNixOS then
+        "/etc/profiles/per-user/${userConfig.username}/bin"
+      else
+        "$HOME/.nix-profile/bin";
+    NIX_PROFILE_SHARE =
+      if userConfig.isNixOS then
+        "/etc/profiles/per-user/${userConfig.username}/share"
+      else
+        "$HOME/.nix-profile/share";
+    # On Linux, write to both Wayland clipboards (CLIPBOARD + PRIMARY) so Ctrl+V
+    # and middle-click see the same text (Mac-like single-clipboard UX).
+    COPY_CMD = if isDarwin then "pbcopy" else "$HOME/bin/clip-copy";
     # DOCKER_HOST = "unix:///run/user/1000/podman/podman-machine-default-api.sock";
   };
 

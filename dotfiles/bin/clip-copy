@@ -1,0 +1,16 @@
+#!/bin/sh
+# Copy stdin to both Wayland clipboards (CLIPBOARD and PRIMARY) so that
+# Ctrl+V and middle-click both paste the same text — Mac-like single-clipboard UX.
+# Used as $COPY_CMD by tmux on Linux.
+
+# Buffer stdin to a temp file so we can feed both wl-copy invocations
+# with identical bytes (avoids issues with $() stripping trailing newlines).
+tmp=$(mktemp)
+trap 'rm -f "$tmp"' EXIT INT TERM
+
+cat > "$tmp"
+
+# CLIPBOARD (Ctrl+C / Ctrl+V)
+wl-copy < "$tmp"
+# PRIMARY (mouse-select / middle-click)
+wl-copy --primary < "$tmp"

@@ -1,8 +1,10 @@
-# Source home-manager session variables (handle Darwin vs Linux paths)
-if [[ "$OSTYPE" == "darwin"* ]]; then
-  . "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
-else
+# Source home-manager session variables
+# NixOS
+if test -f "/etc/profiles/per-user/$USER/etc/profile.d/hm-session-vars.sh"; then
   . "/etc/profiles/per-user/$USER/etc/profile.d/hm-session-vars.sh"
+# Stand-alone installs (Other linux, Darwin)
+else
+  . "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
 fi
 
 # profile shell startup time
@@ -13,7 +15,11 @@ zmodload zsh/parameter
 autoload -U add-zsh-hook
 
 # Path to your Oh My Zsh installation.
-export ZSH="$HOME/.oh-my-zsh"
+# Framework comes from the Nix-provided pkgs.oh-my-zsh (read-only in /nix/store);
+# custom themes/plugins live under $HOME/.oh-my-zsh/custom and are symlinked in
+# by home-manager (see home.nix `home.file.".oh-my-zsh/custom/..."`).
+export ZSH="$NIX_PROFILE_SHARE/oh-my-zsh"
+export ZSH_CUSTOM="$HOME/.oh-my-zsh/custom"
 export ZSH_THEME="robbyrussell"
 # ZSH_THEME="af-magic"
 plugins=(git)
@@ -62,6 +68,7 @@ bindkey "^X^X" expand-all
 
 ## Private
 # .private should define:
+# - $NIX_MACHINE_NAME (machine key in flake.nix's `machines` attrset, used by `hs`)
 # - $WORKSPACE
 # - $GITHUB_TOKEN
 # - $GITHUB_EMAIL
@@ -156,7 +163,7 @@ alias qq='q'
 alias qa='q'
 alias :q='q'
 alias :qa='q'
-alias yn='pwd|pbcopy'
+alias yn='pwd | $COPY_CMD'
 alias :h='nvim_help'
 alias :man='f(){ nvim "+:Man $* | only" };f'
 alias tt="nvim +'execute \"ToDoTxtTasksToggle\" | wincmd o'"
@@ -178,7 +185,16 @@ alias wtc="$EDITOR $DOTFILES_DIR/.wezterm.lua"
 alias tc="$EDITOR $DOTFILES_DIR/.config/tmux/tmux.conf"
 alias tcc="$EDITOR $DOTFILES_DIR/.config/tmux/colorscheme.conf"
 alias hc="cd $HOME/nixie && nvim ./home.nix"
-alias hs='nix run home-manager/master -- switch --flake "$HOME/nixie#$USER@$(uname -s | tr A-Z a-z)" -b backup'
+# home-manager switch — selects the per-machine flake output. Requires
+# $NIX_MACHINE_NAME (set in ~/.private/.zshrc) to match a key in flake.nix's
+# `machines` attrset.
+hs() {
+  if [ -z "$NIX_MACHINE_NAME" ]; then
+    echo "hs: \$NIX_MACHINE_NAME is not set; add 'export NIX_MACHINE_NAME=<machine>' to ~/.private/.zshrc" >&2
+    return 1
+  fi
+  nix run home-manager/master -- switch --flake "$HOME/nixie#$USER@$NIX_MACHINE_NAME" -b backup
+}
 alias nrs='sudo nixos-rebuild switch --flake "$HOME/nixie#nixos"'
 alias nrb='sudo nixos-rebuild boot --flake "$HOME/nixie#nixos"'
 alias zu='exec zsh'
@@ -186,7 +202,7 @@ alias dka='docker kill $(docker ps -q)'
 alias vimwipe='rm -rf $HOME/.vim/tmp/swap; mkdir -p $HOME/.vim/tmp/swap'
 alias g='git'
 alias cc='claude --continue'
-alias ccd='pwd | pbcopy'
+alias ccd='pwd | $COPY_CMD'
 alias unwip='git reset --soft HEAD~'
 alias vm='cd $(git rev-parse --show-toplevel) && nvim `git --no-pager diff --name-only --diff-filter=U`'
 alias todo='gg "todo before"'
@@ -194,6 +210,11 @@ alias installglobals='npm install -g prettier diff-so-fancy neovim npm-why serve
 alias scr='v $WORKSPACE/scratchpad/scratch.tsx'
 alias tm='tmux a -t main || tmux new -s main'
 alias md='glow' # markdown viewer
+alias gtm='gt modify -a'
+
+gtc() {
+  gt modify -cam "${@}"
+}
 
 # Use function instead of alias to detect if output is a TTY
 cat() {
@@ -397,10 +418,32 @@ fzf_branches() {
 }
 
 wt() {
-	local selection worktree_path
+	local selection worktree_path repo_root
+	# Use the parent of the main worktree as the base for displayed relative paths.
+	repo_root="$(dirname "$(git worktree list --porcelain | awk '/^worktree / {print substr($0, 10); exit}')")"
 	selection="$(
 		git worktree list --porcelain |
-			awk '
+			awk -v base="$repo_root" '
+				# Compute path of `target` relative to `base` (both absolute, no trailing slash).
+				function relpath(target,    t_arr, b_arr, t_n, b_n, i, j, result) {
+					if (target == base) return "."
+					t_n = split(target, t_arr, "/")
+					b_n = split(base, b_arr, "/")
+					# Skip the shared prefix of components.
+					i = 1
+					while (i <= t_n && i <= b_n && t_arr[i] == b_arr[i]) i++
+					result = ""
+					# One ".." per remaining base component.
+					for (j = i; j <= b_n; j++) result = result "../"
+					# Then the remaining target components.
+					for (j = i; j <= t_n; j++) {
+						result = result t_arr[j]
+						if (j < t_n) result = result "/"
+					}
+					sub("/$", "", result)
+					if (result == "") result = "."
+					return result
+				}
 				/^worktree / {
 					worktree_path = substr($0, 10)
 					branch = "(detached)"
@@ -410,15 +453,29 @@ wt() {
 					sub("^refs/heads/", "", branch)
 				}
 				/^$/ {
-					printf "%s\t%s\n", branch, worktree_path
+					# Columns: branch, relative path (display), absolute path (cd + preview).
+					printf "%s\t%s\t%s\n", branch, relpath(worktree_path), worktree_path
 				}
 			' |
 			fzf-tmux -d 12 \
+				--ansi \
 				--delimiter=$'\t' \
 				--with-nth=1,2 \
-				--preview 'git -C {2} status --short --branch'
+				--preview '
+					# Resolve the default branch (origin/HEAD), fall back to origin/main.
+					base=$(git -C {3} symbolic-ref --short refs/remotes/origin/HEAD 2>/dev/null || echo origin/main)
+					# Compute merge base of HEAD with the default branch.
+					mb=$(git -C {3} merge-base HEAD "$base" 2>/dev/null)
+					# Force color since git auto-disables it when stdout is a pipe.
+					if [ -n "$mb" ]; then
+						git -C {3} --no-pager -c color.ui=always diff --stat "$mb"
+					else
+						git -C {3} --no-pager -c color.ui=always status --short --branch
+					fi
+				'
 	)" || return
-	worktree_path="${selection#*$'\t'}"
+	# The absolute path is the last tab-separated field.
+	worktree_path="${selection##*$'\t'}"
 	cd "$worktree_path" || return
 }
 
@@ -624,12 +681,12 @@ toggle_tmux_popup() {
   fi
 }
 
-_nvr="$(which nvr)"
-nvr_socket="/tmp/nvimsocket"
-nvrd() {
-  nohup nvim --listen ${nvr_socket} --headless >/dev/null &
-  nvim --server ${nvr_socket} --remote-send ":e /tmp/.KEEPALIVE<CR>:call KeepAlive()<CR>"
-}
+# _nvr="$(which nvr)"
+# nvr_socket="/tmp/nvimsocket"
+# nvrd() {
+#   nohup nvim --listen ${nvr_socket} --headless >/dev/null &
+#   nvim --server ${nvr_socket} --remote-send ":e /tmp/.KEEPALIVE<CR>:call KeepAlive()<CR>"
+# }
 
 # get the hex bytes of a string, e.g. for getting tmux/alacritty key codes
 gethex(){

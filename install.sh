@@ -123,7 +123,7 @@ USERNAME=$(whoami)
 if [ "$PLATFORM" == "darwin" ]; then
     FLAKE_CONFIG="${USERNAME}@darwin"
 else
-    FLAKE_CONFIG="${USERNAME}@linux"
+    FLAKE_CONFIG="${USERNAME}@workstation"
 fi
 
 info "Using configuration: $FLAKE_CONFIG"

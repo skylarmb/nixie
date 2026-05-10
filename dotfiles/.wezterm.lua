@@ -17,7 +17,7 @@ config.window_padding = {
 	bottom = 0,
 }
 
-config.font_size = 22.0
+config.font_size = 16.5
 config.font = wezterm.font("DankMono Nerd Font Mono", { weight = "Bold" })
 -- config.font = wezterm.font("AtkinsonHyperlegibleMono Nerd Font")
 -- local fg = "#E3CA9A"
@@ -128,10 +128,10 @@ config.keys = {
 	-- { key = "Enter", mods = mod_key, action = wezterm.action.TogglePaneZoomState },
 	{ key = "b", mods = mod_key, action = tmux_prefix("p") },
 	{ key = "g", mods = mod_key, action = tmux_prefix("g") },
-	-- Word movement: Alt+Left/Right and Ctrl+b/f send ESC+b/f for zsh vi-mode
+	-- Word movement: Alt+Left/Right send ESC+b/f for zsh vi-mode.
+	-- Ctrl+b/f intentionally NOT bound here so nvim (and other TUIs) can use them.
 	{ key = "LeftArrow", mods = "ALT", action = wezterm.action({ SendString = "\27b" }) },
 	{ key = "RightArrow", mods = "ALT", action = wezterm.action({ SendString = "\27f" }) },
-	{ key = "e", mods = "CTRL", action = wezterm.action({ SendString = "\27f" }) },
 	-- Word deletion: Alt+Backspace and Alt+d
 	{ key = "Backspace", mods = "ALT", action = wezterm.action({ SendString = "\27\127" }) },
 	{ key = "d", mods = "ALT", action = wezterm.action({ SendString = "\27d" }) },
@@ -154,7 +154,21 @@ config.keys = {
 	-- { key = "a", mods = "LEADER|CTRL", action = wezterm.action.SendKey({ key = "a", mods = "CTRL" }) },
 }
 
--- config.window_decorations = "TITLE"
+-- Middle-click paste from CLIPBOARD instead of PRIMARY (wezterm's default).
+-- Linux normally has two clipboards: CLIPBOARD (Ctrl+C) and PRIMARY (mouse-select).
+-- Browsers/most apps only write to CLIPBOARD on Ctrl+C, so default middle-click
+-- (paste from PRIMARY) misses them. Our tmux config writes selections to BOTH
+-- clipboards via clip-copy, so retargeting middle-click to CLIPBOARD covers
+-- both cases (tmux yank AND external Ctrl+C) for Mac-like single-clipboard UX.
+config.mouse_bindings = {
+	{
+		event = { Down = { streak = 1, button = "Middle" } },
+		mods = "NONE",
+		action = wezterm.action.PasteFrom("Clipboard"),
+	},
+}
+
+config.window_decorations = "INTEGRATED_BUTTONS|RESIZE"
 
 -- Tab bar styling to match tmux theme (simple background colors)
 -- Colors from tmux colorscheme.conf

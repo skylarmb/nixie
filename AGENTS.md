@@ -45,9 +45,9 @@ trim-generations.sh    # Nix garbage collection helper
 
 ## Key concepts
 
-- **`flake.nix`** defines two home-manager configurations: `<user>@darwin` and `<user>@linux`. Both use `home.nix` with an `isDarwin` flag for platform-specific behavior.
+- **`flake.nix`** defines one home-manager configuration per machine, keyed `<user>@<machine>` (e.g. `skylar@workstation`, `skylar@rog`, `skylar@hh`). New machines are added by creating `machines/<name>.nix` and adding an entry to the `machines` attrset in `flake.nix`. Two flags drive platform-specific behavior: `isDarwin` (passed from the flake based on the machine spec) and `userConfig.isNixOS` (set in the machine config; controls whether home-manager is system-level on NixOS or standalone).
 - **`home.nix`** is the main config: installs packages, symlinks dotfiles, sets env vars, and runs activation scripts (e.g. TPM install, wezterm CLI symlink on macOS).
-- **`machines/*.nix`** contain per-machine values (username, git email, timezone). To switch machines, update the import in `flake.nix`.
+- **`machines/*.nix`** contain per-machine values (username, git email, timezone, `isNixOS`). The `hs` shell function picks the right config via `$NIX_MACHINE_NAME` (set in `~/.private/.zshrc`).
 - **Dotfiles** are stored in `dotfiles/` and symlinked to `$HOME` by home-manager. The directory structure mirrors `$HOME` — e.g. `dotfiles/.config/ripgrep/config` → `~/.config/ripgrep/config`. Don't break this convention. Edit them in-place; changes take effect after `home-manager switch`.
 - **Neovim** uses LazyVim (`dotfiles/.config/nvim/`). Plugin specs are in `lua/plugins/`, keymaps in `lua/config/keymaps.lua`. `dotfiles/.config/nvim-old/` is a legacy config, not in use.
 - **CLAUDE.md files**: `dotfiles/.claude/CLAUDE.md` is the **global** agent instructions file, symlinked to `~/.claude/CLAUDE.md` via home-manager — it applies to all projects. This file (`CLAUDE.md` at repo root) is the **project-specific** instructions for this repo only.
@@ -55,12 +55,10 @@ trim-generations.sh    # Nix garbage collection helper
 ## Applying changes
 
 ```sh
-# macOS
-home-manager switch --flake .#<user>@darwin
+# Standalone home-manager (Darwin or non-NixOS Linux): selector is per-machine.
+# The `hs` shell alias wraps this and reads $NIX_MACHINE_NAME from ~/.private/.zshrc.
+home-manager switch --flake .#<user>@<machine>   # e.g. skylar@workstation, skylar@hh
 
-# Linux
-home-manager switch --flake .#<user>@linux
-
-# NixOS (full system rebuild)
+# NixOS (full system rebuild) — uses machines/rog.nix
 sudo nixos-rebuild switch --flake .
 ```

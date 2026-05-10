@@ -34,3 +34,12 @@ path=(
   /usr/local/{bin,sbin}
   $path
 )
+
+# claude code uses our login shell, so it doesnt enherit direnv from the shell
+# it is run in. this manually hooks direnv for claude code
+if command -v direnv >/dev/null; then
+  if [[ ! -z "$CLAUDECODE" ]]; then
+    eval "$(direnv hook zsh)"
+    eval "$(DIRENV_LOG_FORMAT= direnv export zsh)"  # Need to trigger "hook" manually
+  fi
+fi

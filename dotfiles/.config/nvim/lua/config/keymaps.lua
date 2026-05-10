@@ -62,10 +62,10 @@ map("n", "qq", "m'" .. "<cmd>close<CR>", opts_noremap)
 map("n", "qa", "m'<cmd>wqa<CR>", opts_noremap)
 -- Save from normal mode
 map("n", "ww", "<cmd>w<CR>", opts_noremap)
--- Yank filename and line number
-map("n", "yl", "<cmd>let @*=expand('%') . ':' . line('.')<CR>", opts_noremap)
--- Yank filename
-map("n", "yn", "<cmd>let @*=expand('%')<CR>", opts_noremap)
+-- Yank filename and line number to system clipboard (+ register; * is PRIMARY on Wayland/X11)
+map("n", "yl", "<cmd>let @+=expand('%') . ':' . line('.')<CR>", opts_noremap)
+-- Yank filename to system clipboard
+map("n", "yn", "<cmd>let @+=expand('%')<CR>", opts_noremap)
 -- Duplicate line
 map({ "n", "v", "o" }, "<C-d>", "yyp", opts_noremap)
 -- Copy from register 0
@@ -111,8 +111,8 @@ map("n", "<leader>j", "<cmd>wincmd J<CR>", opts_noremap)
 map("n", "<leader>k", "<cmd>wincmd K<CR>", opts_noremap)
 
 ------------ File Navigation & Creation ------------
--- Toggle file explorer
-map("n", "`", "<cmd>Neotree toggle<CR>", opts_noremap)
+-- Toggle file explorer (reveal: jump to / expand the current file's location)
+map("n", "`", "<cmd>Neotree toggle reveal<CR>", opts_noremap)
 -- New file
 map("n", "<leader>n", "<cmd>n<CR>", opts_noremap)
 
