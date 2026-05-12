@@ -185,6 +185,7 @@ alias wtc="$EDITOR $DOTFILES_DIR/.wezterm.lua"
 alias tc="$EDITOR $DOTFILES_DIR/.config/tmux/tmux.conf"
 alias tcc="$EDITOR $DOTFILES_DIR/.config/tmux/colorscheme.conf"
 alias hc="cd $HOME/nixie && nvim ./home.nix"
+alias tu="sudo tailscale up --operator=$USER --accept-routes"
 # home-manager switch — selects the per-machine flake output. Requires
 # $NIX_MACHINE_NAME (set in ~/.private/.zshrc) to match a key in flake.nix's
 # `machines` attrset.
@@ -680,13 +681,6 @@ toggle_tmux_popup() {
       tmux popup -d '#{pane_current_path}' -xC -yC -w80% -h75% -E "tmux attach -t popup || tmux new -s popup"
   fi
 }
-
-# _nvr="$(which nvr)"
-# nvr_socket="/tmp/nvimsocket"
-# nvrd() {
-#   nohup nvim --listen ${nvr_socket} --headless >/dev/null &
-#   nvim --server ${nvr_socket} --remote-send ":e /tmp/.KEEPALIVE<CR>:call KeepAlive()<CR>"
-# }
 
 # get the hex bytes of a string, e.g. for getting tmux/alacritty key codes
 gethex(){
