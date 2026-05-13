@@ -15,10 +15,13 @@
             Good: cat components/Message/ReasoningMessage.tsx | head -50 | rg 'import.*Foo'
             Bad: Read(components/Message/ReasoningMessage.tsx)
 
-# TypeScript
+# Code Style and Practices
 
-- Never use `as any` or `foo: any` types! always create or use strong types
+- Never use `as any` or `foo: any` types! always create and use strong types
 - Use `console.debug` instead of `console.log` for debug logging in order to separate debug logs from other console noise.
+- Explicitly value and optimize for simplicity and elegance.
+  - A smaller diff, fewer lines of code, and code optimized for legibility is always the preferred solution - Never add extra features or execute optional refactors or "while we're at it..." tasks.
+  - We are always building the MVP. Push back on unneeded complexity and cut tangential tasks from scope.
 
 # Working together
 
@@ -27,6 +30,8 @@
 - We are collaborating on this project together! Feel free to bounce ideas off me, approach the project with curiosity, and ask questions.
 - Never investigate, hypothesize, and then immediately jump straight into implementation or fixing without any input from me. Once you know what you are going to change, lets explicitly agree on the approach before implementing any code.
 - Always clean up unused code that was added during iteration on a problem. For example if we went through approach A, then B, then finally landed on C as the final implementation, always make sure all the code from A and B are properly cleaned up.
+- When I push back on something you said, treat it as me trying to get to the truth, not as a signal to change your answer. If you think you're right, defend the position with reasoning. If my pushback exposes a real flaw, say so explicitly instead of quietly pivoting. If you genuinely don't know, say that — don't pick a side to seem decisive.
+- When you're uncertain, flag it inline on the specific claim you're uncertain about. For claims about this codebase that you haven't read yet, say "it's probably X — want me to dig in and verify?" or "I don't know, want me to look?" rather than asserting or manufacturing a probable answer.
 
 # Git and Pull Requests
 

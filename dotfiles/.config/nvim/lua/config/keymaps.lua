@@ -72,9 +72,11 @@ map({ "n", "v", "o" }, "<C-d>", "yyp", opts_noremap)
 map({ "n", "v", "o" }, "0", '"0y', opts_noremap)
 -- Paste from register 0
 map({ "n", "v", "o" }, ")", '"0p', opts_noremap)
--- Join visual selection
-map("x", "<leader>j", "<cmd>'<,'>join<CR>", opts_noremap)
-map("v", "<leader>j", "<cmd>'<,'>join<CR>", opts_noremap)
+-- Join lines (current line in normal, selection in visual).
+-- Visual binding uses ":" (not "<cmd>") so vim auto-fills '<,'> from the
+-- live selection — "<cmd>" leaves marks stale and triggers "mark not set".
+map("n", "<leader>j", "J", opts_noremap)
+map("x", "<leader>j", ":join<CR>", opts_noremap)
 
 ------------ Line Movement & Indentation ------------
 -- Move lines up and down
@@ -107,7 +109,6 @@ map("n", "<leader>.", "<c-w>10<<CR>", opts_noremap)
 map("n", "<leader>e", "<cmd>wincmd T<CR>", opts_noremap)
 map("n", "<leader>l", "<cmd>wincmd L<CR>", opts_noremap)
 map("n", "<leader>h", "<cmd>wincmd H<CR>", opts_noremap)
-map("n", "<leader>j", "<cmd>wincmd J<CR>", opts_noremap)
 map("n", "<leader>k", "<cmd>wincmd K<CR>", opts_noremap)
 
 ------------ File Navigation & Creation ------------
