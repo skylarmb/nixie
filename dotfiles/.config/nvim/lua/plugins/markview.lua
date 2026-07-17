@@ -1,5 +1,9 @@
 -- In-buffer markdown previewer. Replaces LazyVim's `lang.markdown` extra
 -- (which bundled render-markdown.nvim + markdown-preview.nvim).
+if true then
+  return {}
+end
+
 return {
   {
     "OXY2DEV/markview.nvim",

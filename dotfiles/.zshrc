@@ -112,6 +112,7 @@ export PATH="$PATH:/usr/local/go/bin"
 export PATH="$PATH:$HOME/.local/bin"
 export PATH="$PATH:$HOME/.cargo/bin"
 export PATH="$PATH:$HOME/dotfiles/bin"
+export PATH="$PATH:$HOME/.config/emacs/bin" # doom CLI
 export PATH="$PATH:/Applications/Postgres.app/Contents/Versions/latest/bin"
 export PATH="$PATH:$HOME/.opencode/bin"
 # export DOCKER_HOST="unix:///run/user/1000/podman/podman-machine-default-api.sock"
@@ -458,7 +459,7 @@ wt() {
 					printf "%s\t%s\t%s\n", branch, relpath(worktree_path), worktree_path
 				}
 			' |
-			fzf-tmux -d 12 \
+			fzf -d 12 \
 				--ansi \
 				--delimiter=$'\t' \
 				--with-nth=1,2 \
@@ -596,8 +597,7 @@ export HG_DEFAULT_OPTS=(
 
 ag_default_cmd(){
   env BAT_PAGER="" BAT_STYLE="plain" \
-    hgrep "${HG_DEFAULT_OPTS[@]}" "${@}" | \
-    rg --passthru --no-line-number "${@}"
+    hgrep "${HG_DEFAULT_OPTS[@]}" "${@}"
 }
 
 alias gg='ag_default_cmd'

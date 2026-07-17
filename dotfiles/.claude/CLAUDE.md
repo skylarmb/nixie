@@ -36,22 +36,9 @@
 # Git and Pull Requests
 
 - Use git-aware tools when operating within a git repo, e.g. `rg` instead of `grep`, `eza -l --git` instead of `ls -l`, unless otherwise needed for debugging.
-- Signoff your commit messages with "✨ Created with [Claude Code/Codex/Gemini/OpenCode/etc]"
-- If you make a PR with the `gh` CLI, open it in the browser after creation: `gh repo view --web --branch <branch-name>`
+- Signoff your commit messages with "✨ Created by [Claude Code/Codex/Gemini/OpenCode/etc]"
 - Use the `pr-comments` util script (available in PATH) to fetch code review comments / PR feedback from GitHub, e.g. `pr-comments 1234`
-- Open all PRs as draft PRs until they are ready for review. Mark PRs as ready to review when you are ready for feedback (this triggers automated code review).
-- Open all PRs with the following format exactly:
-
-```
-
-# Summary
-
-1-3 sentences of concise but informative PR description for this branch. Inspect files changed and consider the conversation history to provide relevant info.
-
-# Details
-
-- up to 4-5 bullet points here, but keep it high level
-```
+- Use the `create-pr` skill to open pull requests.
 
 # Sub-agents
 

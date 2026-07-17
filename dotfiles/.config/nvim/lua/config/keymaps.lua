@@ -12,8 +12,13 @@ map("n", "<S-l>", "<cmd>bnext<CR>", opts_noremap)
 map("n", "<S-h>", "<cmd>bprevious<CR>", opts_noremap)
 map("n", "}", "<cmd>bnext<CR>", opts_noremap)
 map("n", "{", "<cmd>bprevious<CR>", opts_noremap)
+-- Override default tab navigation to cycle buffers instead
+map("n", "gt", "<cmd>bnext<CR>", opts_noremap)
+map("n", "gT", "<cmd>bprevious<CR>", opts_noremap)
 -- Delete current buffer (keeps window layout)
-map("n", "<leader>d", function() Snacks.bufdelete() end, opts_noremap)
+map("n", "<leader>d", function()
+  Snacks.bufdelete()
+end, opts_noremap)
 
 ------------ Movement & Navigation ------------
 -- Move by display lines when wrapping
@@ -119,11 +124,18 @@ map("n", "<leader>n", "<cmd>n<CR>", opts_noremap)
 
 ------------ Picker (Snacks) ------------
 -- File picker
-map("n", "<C-p>", function() Snacks.picker.files() end, opts_noremap)
+map("n", "<C-p>", function()
+  -- hidden = true shows dotfiles; ignored stays false so .gitignore'd files are still excluded
+  Snacks.picker.files({ hidden = true })
+end, opts_noremap)
 -- Live grep (search in files)
-map("n", "<C-f>", function() Snacks.picker.grep() end, opts_noremap)
+map("n", "<C-f>", function()
+  Snacks.picker.grep()
+end, opts_noremap)
 -- Search word under cursor in all files
-map("n", "F", function() Snacks.picker.grep_word() end, opts_noremap)
+map("n", "F", function()
+  Snacks.picker.grep_word()
+end, opts_noremap)
 
 ------------ Git Mergetool ------------
 -- Toggle mergetool
@@ -206,13 +218,6 @@ map("n", "gD", "<CMD>Glance type_definitions<CR>", opts_noremap)
 -- end, opts_noremap)
 
 ------------ Smart Splits (overrides LazyVim defaults for mux integration) ------------
--- Navigate between nvim splits AND wezterm panes with Ctrl+h/j/k/l
-map("n", "<C-h>", require("smart-splits").move_cursor_left)
-map("n", "<C-j>", require("smart-splits").move_cursor_down)
-map("n", "<C-k>", require("smart-splits").move_cursor_up)
-map("n", "<C-l>", require("smart-splits").move_cursor_right)
--- Resize splits with Ctrl+Alt+h/j/k/l
-map("n", "<C-A-h>", require("smart-splits").resize_left)
-map("n", "<C-A-j>", require("smart-splits").resize_down)
-map("n", "<C-A-k>", require("smart-splits").resize_up)
-map("n", "<C-A-l>", require("smart-splits").resize_right)
+-- Loaded here (not from the plugin's `config`) because this file is guaranteed
+-- to load after LazyVim's own <C-h/j/k/l> defaults on the VeryLazy event.
+dofile(vim.fn.expand("~/workspace/vim-herdr-navigation/editor/nvim.lua"))

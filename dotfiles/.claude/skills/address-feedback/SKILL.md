@@ -1,5 +1,5 @@
 ---
-name: feedback
+name: address-feedback
 description: Fetch and incorporate code review feedback for the current PR. Use when the user asks to "address PR feedback", "fix review comments", "check PR comments", or similar. Pulls comments via `pr-comments`, proposes a plan, and after changes are pushed, marks resolved comments via `resolve-comment`.
 ---
 
@@ -21,6 +21,7 @@ description: Fetch and incorporate code review feedback for the current PR. Use 
    resolve-comment <full URL or discussion_rID> <reply body>
    ```
    See `resolve-comment --help` for usage details.
+7. Make sure the PR description is not stale due to changes pushed from code review or CI fixes. If it is stale,update it.
 
 ## Reply style
 

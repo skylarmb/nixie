@@ -3,7 +3,8 @@ local wezterm = require("wezterm")
 
 local config = wezterm.config_builder()
 
--- Launch the default shell; start tmux manually when desired.
+-- Attach to the "main" tmux session, creating it if it doesn't exist yet.
+-- config.default_prog = { "/bin/zsh", "-l", "-c", "tmux a -t main || tmux new -s main" }
 
 config.enable_tab_bar = false
 config.use_fancy_tab_bar = false

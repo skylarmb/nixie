@@ -2,6 +2,15 @@
 
 Cross-platform dotfiles and system configuration managed with Nix flakes and home-manager. Supports macOS (aarch64-darwin) and Linux (x86_64-linux / NixOS).
 
+## Two sets of agent instructions — don't mix them up
+
+This repo has **two separate CLAUDE.md/AGENTS.md files** with different scopes:
+
+- **This file** (`AGENTS.md` at repo root, symlinked from `CLAUDE.md`) — project-specific instructions for working on *this* nixie repo itself.
+- `dotfiles/.claude/CLAUDE.md` — the user's **global** agent instructions, symlinked to `~/.claude/CLAUDE.md` by home-manager. It applies to *every* project the user works on, not just this one.
+
+If asked to update "CLAUDE.md" or "AGENTS.md" without qualification, check which one is actually meant — global preferences/workflow rules belong in `dotfiles/.claude/CLAUDE.md`, while nixie-repo-specific conventions belong here.
+
 ## Repo structure
 
 ```
@@ -50,7 +59,6 @@ trim-generations.sh    # Nix garbage collection helper
 - **`machines/*.nix`** contain per-machine values (username, git email, timezone, `isNixOS`). The `hs` shell function picks the right config via `$NIX_MACHINE_NAME` (set in `~/.private/.zshrc`).
 - **Dotfiles** are stored in `dotfiles/` and symlinked to `$HOME` by home-manager. The directory structure mirrors `$HOME` — e.g. `dotfiles/.config/ripgrep/config` → `~/.config/ripgrep/config`. Don't break this convention. Edit them in-place; changes take effect after `home-manager switch`.
 - **Neovim** uses LazyVim (`dotfiles/.config/nvim/`). Plugin specs are in `lua/plugins/`, keymaps in `lua/config/keymaps.lua`. `dotfiles/.config/nvim-old/` is a legacy config, not in use.
-- **CLAUDE.md files**: `dotfiles/.claude/CLAUDE.md` is the **global** agent instructions file, symlinked to `~/.claude/CLAUDE.md` via home-manager — it applies to all projects. This file (`CLAUDE.md` at repo root) is the **project-specific** instructions for this repo only.
 
 ## Applying changes
 

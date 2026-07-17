@@ -1,6 +1,6 @@
 ---
 name: resolve-comments
-description: Use when the user asks to "resolve PR comments", "resolve feedback", "close out the threads", or similar — after fixes have been pushed and review threads need to be replied to and marked resolved via the `resolve-comment` helper. Complements the `feedback` skill (which proposes the plan and makes changes).
+description: Use when the user asks to "resolve PR comments", "resolve feedback", "close out the threads", or similar — after fixes have been pushed and review threads need to be replied to and marked resolved via the `resolve-comment` helper. Complements the `address-feedback` skill (which proposes the plan and makes changes).
 ---
 
 # Resolve PR Comments
@@ -31,7 +31,7 @@ The `--help` text suggests a bare numeric `<id>` works — **it does not**. Pass
 
 ## Reply style
 
-Match the `feedback` skill's brevity. Lead with the commit SHA:
+Match the `address-feedback` skill's brevity. Lead with the commit SHA:
 
 - `fixed in <sha> — <one-line summary>.`
 - `addressed by changing A to B in <sha>.`

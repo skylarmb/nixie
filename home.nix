@@ -23,9 +23,10 @@
     pkgs.python313Packages.libtmux
     # programs
     pkgs.tmux
-    # pkgs.wezterm
+    # pkgs.herdr # installed via official channel as nix package is out of date
     pkgs.helix
     pkgs.neovim
+    pkgs.emacs # for trying out Doom Emacs
     pkgs.expect
     pkgs.glow # terminal markdown viewer
     pkgs.act
@@ -42,7 +43,7 @@
     pkgs.eslint_d
     pkgs.nil
     pkgs.nixfmt-rfc-style # nix formatter (official RFC 166 style)
-    pkgs.statix # nix linter (used by nvim-lint via LazyVim's lang.nix extra)
+    # pkgs.statix # nix linter (used by nvim-lint via LazyVim's lang.nix extra)
     pkgs.typescript-language-server
     pkgs.gopls
     pkgs.unison-ucm
@@ -69,16 +70,6 @@
     pkgs.kubectl
     pkgs.gemini-cli
     pkgs.tree-sitter
-
-    # seagoat semantic code search — rename `gt` to `sgt` to avoid conflict with Graphite CLI
-    (pkgs.symlinkJoin {
-      name = "seagoat-no-gt";
-      paths = [ pkgs.seagoat ];
-      postBuild = ''
-        rm $out/bin/gt
-        ln -s ${pkgs.seagoat}/bin/gt $out/bin/sgt
-      '';
-    })
 
     pkgs.cargo
     pkgs.portaudio
@@ -192,9 +183,9 @@
 
     # Symlink skill files individually so the skills directory remains
     # writable (plugins install skills into ~/.claude/skills/ as well).
-    ".claude/skills/pr/SKILL.md".source = dotfiles/.claude/skills/pr/SKILL.md;
-    ".claude/skills/feedback/SKILL.md".source = dotfiles/.claude/skills/feedback/SKILL.md;
-    ".claude/skills/checks/SKILL.md".source = dotfiles/.claude/skills/checks/SKILL.md;
+    ".claude/skills/create-pr/SKILL.md".source = dotfiles/.claude/skills/create-pr/SKILL.md;
+    ".claude/skills/address-feedback/SKILL.md".source = dotfiles/.claude/skills/address-feedback/SKILL.md;
+    ".claude/skills/monitor-pr/SKILL.md".source = dotfiles/.claude/skills/monitor-pr/SKILL.md;
     ".claude/skills/resolve-comments/SKILL.md".source =
       dotfiles/.claude/skills/resolve-comments/SKILL.md;
 
@@ -256,6 +247,23 @@
         if [ -x "$WEZTERM_BIN" ]; then
           mkdir -p "$LINK_DIR"
           ln -sf "$WEZTERM_BIN" "$LINK_DIR/wezterm"
+        fi
+      ''
+    );
+
+    # Alias Emacs.app into ~/Applications so Spotlight/Finder can find it.
+    # nixpkgs' emacs ships a real .app bundle, but it lives on the Nix Store
+    # volume, which is mounted `nobrowse` and excluded from Spotlight's index
+    # entirely -- a plain symlink into it is invisible to Spotlight even after
+    # mdimport. A real macOS alias file (what `mkalias` produces, same tool
+    # nix-darwin uses for this) resolves through that boundary correctly.
+    aliasEmacsApp = lib.mkIf isDarwin (
+      config.lib.dag.entryAfter [ "installPackages" ] ''
+        LINK_DIR="$HOME/Applications"
+        if [ -d "${pkgs.emacs}/Applications/Emacs.app" ]; then
+          mkdir -p "$LINK_DIR"
+          rm -f "$LINK_DIR/Emacs.app"
+          $DRY_RUN_CMD ${pkgs.mkalias}/bin/mkalias "${pkgs.emacs}/Applications/Emacs.app" "$LINK_DIR/Emacs.app"
         fi
       ''
     );

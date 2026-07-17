@@ -10,11 +10,18 @@ export GH_PAGER=
 log() { debug_log "$_self" "$*"; }
 
 main() {
-  local pr="${1:?Usage: pr-checks <PR number or URL>}"
+  local pr="${1:?Usage: wait-for-ci <PR number or URL>}"
   local max_lines=50
 
   # Header: PR title and URL
   gh pr view "$pr" --json title,url --jq '"PR: \(.title)\n\(.url)"'
+
+  # Block until every check finishes; only the exit code matters here, so
+  # discard gh's own streamed table output.
+  if gh pr checks "$pr" --watch >/dev/null 2>&1; then
+    printf '\n✓ All checks passed.\n'
+    return 0
+  fi
 
   # Collect failing checks only. bucket=="fail" excludes cancel/skip/pending/pass.
   local checks
@@ -22,7 +29,7 @@ main() {
     --jq '[.[] | select(.bucket == "fail")]')
 
   if [[ "$(printf '%s' "$checks" | jq 'length')" -eq 0 ]]; then
-    printf '\nNo failing checks.\n'
+    printf '\nCI finished unsuccessfully, but no failing checks were found (possibly cancelled).\n'
     return 0
   fi
 
