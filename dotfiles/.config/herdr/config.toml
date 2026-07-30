@@ -1,0 +1,70 @@
+onboarding = false
+
+[keys]
+prefix = "ctrl+a"
+split_vertical = "prefix+s"
+split_horizontal = "prefix+v"
+switch_workspace = "cmd+1..9"
+switch_tab = "prefix+1..9"
+previous_workspace = "prefix+p"
+next_workspace = "prefix+n"
+next_agent = "prefix+j"
+previous_agent = "prefix+k"
+detach = "prefix+d"
+close_pane = "prefix+q"
+open_notification_target = "prefix+o"
+remove_worktree = "prefix+-"
+
+[theme]
+name = "terminal"
+auto_switch = false
+accent = "#a113a1"
+
+[ui.toast]
+delivery = "terminal"
+delay_seconds = 5
+
+[ui]
+show_agent_labels_on_pane_borders = false
+pane_gaps = false
+hide_tab_bar_when_single_tab = true
+accent = "#e3a138"
+
+[ui.sidebar.spaces]
+row_gap = 1
+
+agent_panel_sort = "spaces"
+[[keys.command]]
+key = "ctrl+h"
+type = "plugin_action"
+command = "vim-herdr-navigation.left"
+description = "navigate left (vim/herdr)"
+
+[[keys.command]]
+key = "ctrl+j"
+type = "plugin_action"
+command = "vim-herdr-navigation.down"
+description = "navigate down (vim/herdr)"
+
+[[keys.command]]
+key = "ctrl+k"
+type = "plugin_action"
+command = "vim-herdr-navigation.up"
+description = "navigate up (vim/herdr)"
+
+[[keys.command]]
+key = "ctrl+l"
+type = "plugin_action"
+command = "vim-herdr-navigation.right"
+description = "navigate right (vim/herdr)"
+
+[[keys.command]]
+key = "prefix+shift+p"
+type = "plugin_action"
+command = "jt.command-palette.open"
+description = "Command palette"
+
+[[keys.command]]
+key = "prefix+r"
+type = "plugin_action"
+command = "persiyanov.reviewr.toggle"   # <plugin_id>.<action_id> — note the id, not the name

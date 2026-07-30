@@ -1,8 +1,7 @@
 {
   "permissions": {
+    "ask": ["Bash(git push -f *)", "Bash(git push --force-with-lease *)"],
     "allow": [
-      "mcp__serena__*",
-      "mcp__context7__*",
       "Edit",
       "Write",
       "Read",
@@ -11,11 +10,11 @@
       "Bash(pwd)",
       "Bash(whoami)",
       "Bash(git :*)",
-      "Bash(npm test)",
-      "Bash(npm run :*)",
-      "Bash(npm install :*)",
+      "Bash(git push *)",
+      "Bash(git commit *)",
+      "Bash(pnpm :*)",
       "Bash(pytest :*)",
-      "Bash(docker ps :*)",
+      "Bash(docker :*)",
       "Bash(echo :*)",
       "Bash(mkdir :*)",
       "Bash(mv :*)",
@@ -25,10 +24,12 @@
       "Bash(awk :*)",
       "Bash(sed :*)",
       "Bash(head :*)",
-      "Bash(find :*)"
+      "Bash(find :*)",
+      "Bash(rg :*)"
     ]
   },
   "model": "opus",
   "env": { "ENABLE_LSP_TOOL": "1" },
-  "alwaysThinkingEnabled": true
+  "alwaysThinkingEnabled": true,
+  "useAutoModeDuringPlan": true
 }

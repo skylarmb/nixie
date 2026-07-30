@@ -18,11 +18,11 @@ return {
       interactions = {
         chat = {
           adapter = "anthropic",
-          model = "claude-sonnet-4-6",
+          model = "claude-sonnet-5",
         },
         inline = {
           adapter = "anthropic",
-          model = "claude-sonnet-4-6",
+          model = "claude-sonnet-5",
         },
       },
     },
@@ -37,7 +37,7 @@ return {
       -- Action palette (inline edits, prompt library, etc)
       {
         "<leader>ac",
-        "<cmd>CodeCompanionActions<cr>",
+        ":'<,'>CodeCompanion ",
         mode = { "n", "v" },
         desc = "CodeCompanion: Actions",
       },

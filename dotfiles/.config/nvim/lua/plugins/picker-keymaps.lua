@@ -6,5 +6,9 @@ return {
     keys = {
       { "<leader><space>", false },
     },
+    opts = {
+      -- Show dotfiles/dot-dirs (e.g. .github/) in pickers while still respecting .gitignore
+      picker = { hidden = true },
+    },
   },
 }

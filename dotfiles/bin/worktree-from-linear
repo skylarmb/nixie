@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+set -euo pipefail
+_self="$(basename "$0")"
+# uncomment to enable debug logs for script
+# export DEBUG="$_self"
+
+log() { debug_log "$_self" "$*"; }
+
+main() {
+  # must be run from the root of the repo
+  local origin
+  origin="$(git rev-parse --abbrev-ref origin/HEAD)"
+
+  # create a new worktree from the repo origin/HEAD, not current HEAD
+  local worktree_cwd
+  worktree_cwd=$(
+    "$HOME/.local/bin/herdr" worktree create \
+      --workspace 1 \
+      --branch "sbrown/$LINEAR_ISSUE_BRANCH_NAME" \
+      --base "$origin" \
+      --label "$LINEAR_ISSUE_IDENTIFIER" \
+      --focus | jq -r '.result.root_pane.cwd'
+  )
+  echo "WORKTREE CWD: $worktree_cwd"
+
+  # LINEAR_PROMPT is multi-line and can contain quotes, which breaks direnv's
+  # .env parser. Write it to a plain text file instead.
+  printf '%s' "${LINEAR_PROMPT}" >"${worktree_cwd}/_PROMPT.txt"
+
+  # Append remaining LINEAR env vars to .env in the worktree_cwd
+  # Only if LINEAR_ vars are not already present
+  if ! grep -q 'LINEAR_' .env 2>/dev/null; then
+    cat >>"${worktree_cwd}/.env" <<EOF
+LINEAR_ISSUE_IDENTIFIER="${LINEAR_ISSUE_IDENTIFIER}"
+LINEAR_ISSUE_BRANCH_NAME="${LINEAR_ISSUE_BRANCH_NAME}"
+LINEAR_PROJECT_NAME="${LINEAR_PROJECT_NAME}"
+EOF
+  fi
+}
+
+main "$@"

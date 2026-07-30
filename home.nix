@@ -21,6 +21,7 @@
     pkgs.nodejs_22
     (pkgs.python313.withPackages (ps: [ ps.libtmux ]))
     pkgs.python313Packages.libtmux
+    pkgs.uv # provides `uv` and `uvx`
     # programs
     pkgs.tmux
     # pkgs.herdr # installed via official channel as nix package is out of date
@@ -51,6 +52,9 @@
     # shell
     pkgs.zsh
     pkgs.ripgrep
+    pkgs.spr # stacked pull requests
+    pkgs.actionlint
+    pkgs.shellcheck
 
     # pkgs.direnv
     pkgs.oh-my-zsh
@@ -148,6 +152,11 @@
       text = "d %t/wezterm 0700 - - -\n";
     };
 
+    # Herdr terminal - symlink config files individually since herdr manages
+    # its own plugin installs and state (session.json, logs, sockets) in the
+    # same directory.
+    ".config/herdr/config.toml".source = dotfiles/.config/herdr/config.toml;
+
     ".config/ripgrep/config".source = dotfiles/.config/ripgrep/config;
     ".config/containers/registries.conf".source = dotfiles/.config/containers/registries.conf;
     ".config/containers/policy.json".source = dotfiles/.config/containers/policy.json;
@@ -184,10 +193,14 @@
     # Symlink skill files individually so the skills directory remains
     # writable (plugins install skills into ~/.claude/skills/ as well).
     ".claude/skills/create-pr/SKILL.md".source = dotfiles/.claude/skills/create-pr/SKILL.md;
-    ".claude/skills/address-feedback/SKILL.md".source = dotfiles/.claude/skills/address-feedback/SKILL.md;
+    ".claude/skills/address-feedback/SKILL.md".source =
+      dotfiles/.claude/skills/address-feedback/SKILL.md;
     ".claude/skills/monitor-pr/SKILL.md".source = dotfiles/.claude/skills/monitor-pr/SKILL.md;
     ".claude/skills/resolve-comments/SKILL.md".source =
       dotfiles/.claude/skills/resolve-comments/SKILL.md;
+
+    # Generic agent instructions
+    ".config/AGENTS.md".source = dotfiles/.claude/CLAUDE.md;
 
     # Gemini configuration - same as Claude.md
     ".gemini/GEMINI.md".source = dotfiles/.claude/CLAUDE.md;
@@ -277,6 +290,27 @@
         }/bin/python3|' "$SCRIPT"
       fi
     '';
+  };
+
+  # Honeyhive daemon, kept running in the background via launchd. The API
+  # key and URL live only in ~/.private/.zshrc (untracked, outside this repo)
+  # and are read at runtime by sourcing that file directly, so neither ever
+  # ends up in this repo or the Nix store. RunAtLoad + KeepAlive means
+  # launchd starts it once on load and restarts it if it dies; launchd
+  # itself guarantees only one running instance per label.
+  launchd.agents.honeyhive-daemon = lib.mkIf isDarwin {
+    enable = true;
+    config = {
+      ProgramArguments = [
+        "${pkgs.zsh}/bin/zsh"
+        "-c"
+        ''source "$HOME/.private/.zshrc" >/dev/null 2>&1; exec "${pkgs.uv}/bin/uvx" honeyhive-daemon run --key "$HH_API_KEY" --url "$HH_API_URL" --ci''
+      ];
+      RunAtLoad = true;
+      KeepAlive = true;
+      StandardOutPath = "${config.home.homeDirectory}/Library/Logs/honeyhive-daemon.log";
+      StandardErrorPath = "${config.home.homeDirectory}/Library/Logs/honeyhive-daemon.log";
+    };
   };
 
   # Let Home Manager install and manage itself.

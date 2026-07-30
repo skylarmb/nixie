@@ -10,7 +10,7 @@ description: Wait for CI on a PR to finish, auto-fix and re-push on failure, the
 1. Determine the PR to inspect:
    - If the user names a PR number or URL, use that.
    - Otherwise, get the current branch's PR: `gh pr view --json number -q .number`. If there's no PR yet, tell the user — `wait-for-ci` requires one.
-2. Run the `wait-for-ci` shell helper (already on `$PATH`) in the background, since it blocks until CI finishes:
+2. Run the `wait-for-ci` shell helper (already on `$PATH`). It blocks until CI finishes, so should be run synchronously in the current session. You may also run it in the background if your particular shell / job manager supports notifying you when the command completes.
    ```sh
    wait-for-ci <PR_NUMBER_OR_URL>
    ```
@@ -21,12 +21,13 @@ description: Wait for CI on a PR to finish, auto-fix and re-push on failure, the
    - On failure: one block per failing check (skips passing/pending/skipped/cancelled), with workflow/job name, link, and the tail of failed-step logs (truncated to 50 lines per job).
 3. If checks failed:
    - Read the failure logs and diagnose the root cause. If a failure is unclear from the truncated log, fetch the full log with `gh run view --repo <owner/repo> --job <jobId> --log-failed` (the `link` and `jobId` are visible in the `wait-for-ci` output).
-   - For all relevant CI failures, fix the issue, commit, and push to the branch.
+   - For all relevant CI failures, fix the issue, commit, push to the branch.
    - For CI fixes that would bloat PR scope or require extensive refactors, STOP. The user has already reviewed the code before the PR was created, so no significant changes should be made without approval.
    - If failures look unrelated to the current branch, especially for flaky integration / e2e tests, retry the relevant jobs either via pushing relevant fixes to the branch or via `gh run rerun --failed`.
    - Go back to step 2 and re-run `wait-for-ci` to recheck.
    - If unrelated failures persist on after a retry / new push, STOP. There may be a broken trunk, infra outage, or other issue. Explain what's broken, confer with the user.
-4. When CI is green, mark the draft PR as ready for review (unless it is not a draft). Draft -> Open triggers an automated code review that runs as a CI job, so go back to step 2 and re-run `wait-for-ci` to wait for the review job to complete.
+4. Once CI is green and ready for code review, check the PR description and make sure it has not become stale due to changes pushed for CI fixes.
+5. Mark the draft PR as ready for review (unless it is not a draft). Draft -> Open triggers an automated code review that runs as a CI job, so go back to step 2 and re-run `wait-for-ci` to wait for the review job to complete.
 5. Once the code review job is complete, use the `address-feedback` skill to fetch PR review comments and propose a plan. **Confer with the user** on how to proceed before implementing ANY feedback changes.
 
 ## Notes

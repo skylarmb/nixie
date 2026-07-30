@@ -187,16 +187,6 @@ alias tc="$EDITOR $DOTFILES_DIR/.config/tmux/tmux.conf"
 alias tcc="$EDITOR $DOTFILES_DIR/.config/tmux/colorscheme.conf"
 alias hc="cd $HOME/nixie && nvim ./home.nix"
 alias tu="sudo tailscale up --operator=$USER --accept-routes"
-# home-manager switch — selects the per-machine flake output. Requires
-# $NIX_MACHINE_NAME (set in ~/.private/.zshrc) to match a key in flake.nix's
-# `machines` attrset.
-hs() {
-  if [ -z "$NIX_MACHINE_NAME" ]; then
-    echo "hs: \$NIX_MACHINE_NAME is not set; add 'export NIX_MACHINE_NAME=<machine>' to ~/.private/.zshrc" >&2
-    return 1
-  fi
-  nix run home-manager/master -- switch --flake "$HOME/nixie#$USER@$NIX_MACHINE_NAME" -b backup
-}
 alias nrs='sudo nixos-rebuild switch --flake "$HOME/nixie#nixos"'
 alias nrb='sudo nixos-rebuild boot --flake "$HOME/nixie#nixos"'
 alias zu='exec zsh'
@@ -213,22 +203,12 @@ alias scr='v $WORKSPACE/scratchpad/scratch.tsx'
 alias tm='tmux a -t main || tmux new -s main'
 alias md='glow' # markdown viewer
 alias gtm='gt modify -a'
-
-gtc() {
-  gt modify -cam "${@}"
-}
-
-# Use function instead of alias to detect if output is a TTY
-cat() {
-  if [[ -t 1 ]]; then
-    # stdout is a terminal - use fancy styles
-    bat --style=plain,header,grid "$@"
-  else
-    # stdout is redirected/piped - use plain output
-    bat --style=plain "$@"
-  fi
-}
-
+alias ff='fd --hidden'
+alias _eza='eza --all --oneline --group-directories-first --no-user --git'
+alias ls='_eza'
+alias cls='clear;_eza'
+alias clsa='clear;_eza -a'
+alias lsa='_eza -lah'
 alias ccat='command cat'
 # alias ag='ag --path-to-ignore ~/.ignore'
 alias notes='cd ~/notes'
@@ -264,14 +244,53 @@ alias dal='direnv allow'
 alias drl='direnv reload'
 alias gs='git switch -'
 alias cursor='cursor-agent'
+alias co='cursor-oneshot'
+
+# aliases to local zsh functions
+alias ws='cd_workspace'
+alias vl="edit_last_file"
+alias fbt='fzf_branches'
+alias fpr='fzf_checkout_pr'
+alias vlf='fzf_last_commit'
+alias vpr='v $(fzf_all_pr_files)'
+alias why='grep_inuse_ports'
+alias portkill='kill_port_process'
+alias gg='ag_default_cmd'
+alias ggf='ag_default_cmd --files-with-matches'
+alias gga='ag_with_context'
+alias ggg='ag_default_cmd --skip-vcs-ignores'
+
+# home-manager switch — selects the per-machine flake output. Requires
+# $NIX_MACHINE_NAME (set in ~/.private/.zshrc) to match a key in flake.nix's
+# `machines` attrset.
+hs() {
+  if [ -z "$NIX_MACHINE_NAME" ]; then
+    echo "hs: \$NIX_MACHINE_NAME is not set; add 'export NIX_MACHINE_NAME=<machine>' to ~/.private/.zshrc" >&2
+    return 1
+  fi
+  nix run home-manager/master -- switch --flake "$HOME/nixie#$USER@$NIX_MACHINE_NAME" -b backup
+}
+
+gtc() {
+  gt modify -cam "${@}"
+}
+
+# Use function instead of alias to detect if output is a TTY
+cat() {
+  if [[ -t 1 ]]; then
+    # stdout is a terminal - use fancy styles
+    bat --style=plain,header,grid "$@"
+  else
+    # stdout is redirected/piped - use plain output
+    bat --style=plain "$@"
+  fi
+}
 
 cursor-oneshot() {
  cursor -p "${@}" --stream-partial-output --output-format stream-json | \
    jq --unbuffered -r -j '.message.content[0].text? // empty | select(. != "")' | \
    bat -P -l markdown
 }
-
-alias co='cursor-oneshot'
 
 # ---------------- PLUGINS ----------------
 
@@ -335,13 +354,6 @@ switch_to_app() {
   osascript -e "tell application \"${1}\"" -e 'activate' -e 'end tell'
 }
 
-alias ff='fd'
-alias _eza='eza --all --oneline --group-directories-first --no-user --git'
-alias ls='_eza'
-alias cls='clear;_eza'
-alias clsa='clear;_eza -a'
-alias lsa='_eza -lah'
-
 t() {
   local d="${1}"
   [[ "${d}" =~ ^[0-9]+$ ]] && shift || d=1
@@ -364,7 +376,6 @@ wip() {
 }
 
 
-alias ws='cd_workspace'
 cd_workspace() {
   if [[ ! -z "${@}" ]]
   then
@@ -385,7 +396,6 @@ fzf_query() {
   fzf --preview="$BAT_PREVIEW_COMMAND" --query="${@}"
 }
 
-alias vl="edit_last_file"
 edit_last_file(){
  nvim "+normal! g'0"
 }
@@ -409,8 +419,6 @@ fzf_edit_grep() {
         --bind 'enter:become(nvim {1} +{2})'
 }
 
-# fbr - checkout git branch (including remote branches)
-alias fbt='fzf_branches'
 fzf_branches() {
   local branches branch
   branches=$(git branch --all --sort=-committerdate | grep -v -e HEAD -e remotes) &&
@@ -495,17 +503,14 @@ fzf_pr_number() {
   echo "$(echo "$pr" | awk '{print $1}')"
 }
 
-alias fpr='fzf_checkout_pr'
 fzf_checkout_pr() {
   gh pr checkout "$(fzf_pulls)"
 }
 
-alias vlf='fzf_last_commit'
 fzf_last_commit() {
   v "$(git rev-parse --show-toplevel)/$(git diff HEAD^ HEAD --name-only | fzf)"
 }
 
-alias vpr='v $(fzf_all_pr_files)'
 fzf_all_pr_files() {
   echo "$(git rev-parse --show-toplevel)/$(git diff master...HEAD --name-only | fzf)"
 }
@@ -535,7 +540,6 @@ randomsay() {
   cowsay -f $cow "$@" | lolcat
 }
 
-alias why='grep_inuse_ports'
 grep_inuse_ports() {
   if [[ -n "${1}" ]]; then
     lsof -nP -i4TCP:"${1}" | grep LISTEN
@@ -544,7 +548,6 @@ grep_inuse_ports() {
   lsof -nP -i4TCP | grep LISTEN
 }
 
-alias portkill='kill_port_process'
 kill_port_process() {
   if [[ -z "${1}" ]]; then
     echo "Usage: portkill <port>"
@@ -581,9 +584,8 @@ replace () {
     local replacement=$2
     rg -F -l "$search_pattern" | xargs -I{} sd -F "$search_pattern" "$replacement" {}
 }
+
 # ag / the_silver_searcher
-
-
 export HG_DEFAULT_OPTS=(
   --follow
   --hidden
@@ -599,11 +601,6 @@ ag_default_cmd(){
   env BAT_PAGER="" BAT_STYLE="plain" \
     hgrep "${HG_DEFAULT_OPTS[@]}" "${@}"
 }
-
-alias gg='ag_default_cmd'
-alias ggf='ag_default_cmd --files-with-matches'
-alias gga='ag_with_context'
-alias ggg='ag_default_cmd --skip-vcs-ignores'
 
 debug() {
   if [[ "${DEBUG}" ]]; then
