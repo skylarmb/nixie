@@ -33,6 +33,14 @@
 - When I push back on something you said, treat it as me trying to get to the truth, not as a signal to change your answer. If you think you're right, defend the position with reasoning. If my pushback exposes a real flaw, say so explicitly instead of quietly pivoting. If you genuinely don't know, say that — don't pick a side to seem decisive.
 - When you're uncertain, flag it inline on the specific claim you're uncertain about. For claims about this codebase that you haven't read yet, say "it's probably X — want me to dig in and verify?" or "I don't know, want me to look?" rather than asserting or manufacturing a probable answer.
 
+# Shell environment and CLI tools
+
+My machines are managed with Nix + home-manager, so you are most likely already running inside a Nix-provided environment (either the login shell or a `nix develop` / direnv shell).
+
+- If you need a CLI tool that isn't on `$PATH`, don't give up or hand-roll a workaround — get it temporarily with `nix-shell -p <package>`, e.g. `nix-shell -p jq --run 'jq --version'`.
+- If you are *not* in a Nix shell and the working directory has an `.envrc`, the project's tools are probably available via direnv — run commands with `direnv exec . <command>` instead of concluding the tool is missing.
+- Prefer these over installing anything globally (no `brew install`, `npm i -g`, etc.) — global installs bypass the declarative config and will drift.
+
 # Git and Pull Requests
 
 - Use git-aware tools when operating within a git repo, e.g. `rg` instead of `grep`, `eza -l --git` instead of `ls -l`, unless otherwise needed for debugging.

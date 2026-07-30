@@ -183,11 +183,6 @@
     # ".claude/settings.json".source = dotfiles/.claude/settings.json;
     ".claude/explore.md".source = dotfiles/.claude/explore.md;
 
-    # Symlink agent files individually to allow directory to remain writable
-    ".claude/agents/code-edit-executor.md".source = dotfiles/.claude/agents/code-edit-executor.md;
-    ".claude/agents/console-log-analyzer.md".source = dotfiles/.claude/agents/console-log-analyzer.md;
-    ".claude/agents/eslint-fixer.md".source = dotfiles/.claude/agents/eslint-fixer.md;
-
     ".claude/output-styles".source = dotfiles/.claude/output-styles;
 
     # Symlink skill files individually so the skills directory remains
@@ -198,9 +193,15 @@
     ".claude/skills/monitor-pr/SKILL.md".source = dotfiles/.claude/skills/monitor-pr/SKILL.md;
     ".claude/skills/resolve-comments/SKILL.md".source =
       dotfiles/.claude/skills/resolve-comments/SKILL.md;
+    ".claude/skills/ste-writing/SKILL.md".source = dotfiles/.claude/skills/ste-writing/SKILL.md;
 
     # Generic agent instructions
     ".config/AGENTS.md".source = dotfiles/.claude/CLAUDE.md;
+
+    # Same skills under the tool-agnostic ~/.agents convention. Symlinked as a
+    # whole directory (unlike ~/.claude/skills) because nothing installs skills
+    # here — switch to per-file entries if a tool ever needs to write here.
+    ".agents/skills".source = dotfiles/.claude/skills;
 
     # Gemini configuration - same as Claude.md
     ".gemini/GEMINI.md".source = dotfiles/.claude/CLAUDE.md;

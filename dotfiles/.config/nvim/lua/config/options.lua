@@ -62,6 +62,8 @@ vim.opt.autoindent = true
 ------------ Line Display Settings ------------
 vim.opt.cursorline = true
 vim.opt.number = true
+-- Absolute line numbers only; override LazyVim's default hybrid rel+abs numbers
+vim.opt.relativenumber = false
 vim.opt.laststatus = 3
 vim.opt.numberwidth = 1
 vim.opt.signcolumn = "yes:1"

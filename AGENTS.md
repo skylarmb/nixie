@@ -60,6 +60,14 @@ trim-generations.sh    # Nix garbage collection helper
 - **Dotfiles** are stored in `dotfiles/` and symlinked to `$HOME` by home-manager. The directory structure mirrors `$HOME` — e.g. `dotfiles/.config/ripgrep/config` → `~/.config/ripgrep/config`. Don't break this convention. Edit them in-place; changes take effect after `home-manager switch`.
 - **Neovim** uses LazyVim (`dotfiles/.config/nvim/`). Plugin specs are in `lua/plugins/`, keymaps in `lua/config/keymaps.lua`. `dotfiles/.config/nvim-old/` is a legacy config, not in use.
 
+## Working in this environment
+
+Everything on this machine's `$PATH` comes from Nix/home-manager, so you're almost certainly already inside a Nix-provided environment. Don't assume a tool is unavailable just because your first invocation failed.
+
+- **Need a tool that isn't installed?** Pull it in temporarily with `nix-shell -p <package>` (e.g. `nix-shell -p nixfmt --run 'nixfmt --check home.nix'`) rather than adding it to `home.nix` just to run it once. Only add packages to `home.nix` when the user actually wants them permanently installed.
+- **Not in a Nix shell, but an `.envrc` exists in the working directory?** The tools are likely provided by direnv — run commands as `direnv exec . <command>` instead of treating them as missing.
+- Never install tools globally (`brew install`, `npm i -g`, …) — this repo is the declarative source of truth for installed software.
+
 ## Applying changes
 
 ```sh
