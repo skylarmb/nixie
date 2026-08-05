@@ -5,36 +5,9 @@
   pager = delta
   excludesfile = ~/.config/git/ignore
 
-; ------------ DIFFSITTER ------------
-; [pager]
-;   difftool = true
-; [diff]
-;   tool = diffsitter
-;   colorMoved = default
-; [difftool]
-;   prompt = false
-; [difftool "diffsitter"]
-;   cmd = diffsitter --color=on --config="$HOME/diffsitter.json5" "$LOCAL" "$REMOTE"
-
-; ----------------- DIFFTASTIC -----------------
-; [diff]
-;   tool = difftastic
-;
-;
-
 [difftool "difft"]
   cmd = difft "$LOCAL" "$REMOTE"
 
-;----------------- PRETTIERDIFF -----------------
-; [diff]
-;   colorMoved = default
-;
-; [difftool]
-;   prompt = false
-;
-; [difftool "prettierdiff"]
-;   cmd = prettierdiff "$LOCAL" "$REMOTE"
-;
 [pull]
   rebase = false
 
@@ -46,14 +19,15 @@
 
 [delta]
    navigate = true
-   features = side-by-side line-numbers decorations
+   features = line-numbers decorations
+   colorMoved = default
 ; map-styles = bold purple => syntax magenta, bold cyan => syntax blue
 
 [delta "decorations"]
    commit-decoration-style = bold yellow box ul
    file-style = bold yellow ul
    ; file-decoration-style = none
-   hunk-header-decoration-style = cyan box ul
+   ; hunk-header-decoration-style = cyan box ul
 
 [delta "line-numbers"]
     line-numbers-left-style = cyan

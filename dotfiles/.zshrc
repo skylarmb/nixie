@@ -216,7 +216,6 @@ alias aa='cp ~/notes/all_around.template.md ~/notes/candidates/new.md && v ~/not
 alias todo='v ~/notes/life.todo.md'
 alias fgf='fg %$(jobs | fzf | grep -Eo "[0-9]{1,}" | head -1)'
 alias p='pnpm'
-alias pi='pnpm install'
 alias plr='git checkout origin/master **/pnpm-lock.yaml && pnpm install'
 alias prs='gh pr status'
 alias w='~/.tmux/plugins/tmux-fzf/scripts/window.sh switch'
@@ -589,10 +588,12 @@ replace () {
 export HG_DEFAULT_OPTS=(
   --follow
   --hidden
+  --smart-case
   --grid
   --printer=bat
   --wrap=never
   --fixed-strings
+  --glob='!.git/'
   --glob='!*.map'
   --glob='!pnpm-lock.yaml'
 )
