@@ -8,8 +8,8 @@ switch_workspace = "cmd+1..9"
 switch_tab = "prefix+1..9"
 previous_workspace = "prefix+p"
 next_workspace = "prefix+n"
-next_agent = "prefix+j"
-previous_agent = "prefix+k"
+next_agent = "ctrl+tab"
+previous_agent = "ctrl+shift+tab"
 detach = "prefix+d"
 close_pane = "prefix+q"
 open_notification_target = "prefix+o"
@@ -26,7 +26,7 @@ delay_seconds = 5
 
 [ui]
 show_agent_labels_on_pane_borders = false
-pane_gaps = false
+pane_gaps = true
 hide_tab_bar_when_single_tab = true
 accent = "#e3a138"
 

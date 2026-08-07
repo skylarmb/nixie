@@ -1,6 +1,6 @@
 ---
 name: ste-writing
-description: Write durable technical prose in ASD-STE100 Simplified Technical English. Short declarative sentences, active voice, one name per thing, no hedging, no marketing adjectives. Apply this automatically, without being asked, to any text that persists as an artifact for other people to read: code review comments and feedback, code comments and docstrings, commit messages, PR titles and descriptions, READMEs, AGENTS.md files, RFCs and design docs, changelogs and release notes, error messages, log lines, CLI help text, and issue or ticket descriptions. It does not apply to chat replies to the user, to code itself, or to prose that needs a voice such as blog posts and marketing copy.
+description: "Write durable technical prose in ASD-STE100 Simplified Technical English. Short declarative sentences, active voice, one name per thing, no hedging, no marketing adjectives. Apply this automatically, without being asked, to any text that persists as an artifact for other people to read: code review comments and feedback, code comments and docstrings, commit messages, PR titles and descriptions, READMEs, AGENTS.md files, RFCs and design docs, changelogs and release notes, error messages, log lines, CLI help text, and issue or ticket descriptions. It does not apply to chat replies to the user, to code itself, or to prose that needs a voice such as blog posts and marketing copy."
 ---
 
 # ste-writing

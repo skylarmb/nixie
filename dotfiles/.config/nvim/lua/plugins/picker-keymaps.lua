@@ -9,6 +9,8 @@ return {
     opts = {
       -- Show dotfiles/dot-dirs (e.g. .github/) in pickers while still respecting .gitignore
       picker = { hidden = true },
+      -- No splash screen on empty startup
+      dashboard = { enabled = false },
     },
   },
 }

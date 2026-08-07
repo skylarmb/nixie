@@ -136,6 +136,10 @@ config.keys = {
 	-- Word deletion: Alt+Backspace and Alt+d
 	{ key = "Backspace", mods = "ALT", action = wezterm.action({ SendString = "\27\127" }) },
 	{ key = "d", mods = "ALT", action = wezterm.action({ SendString = "\27d" }) },
+	-- Pass Ctrl(+Shift)+Tab through to herdr (next/previous agent) instead of
+	-- WezTerm's default ActivateTabRelative bindings.
+	{ key = "Tab", mods = "CTRL", action = wezterm.action.DisableDefaultAssignment },
+	{ key = "Tab", mods = "CTRL|SHIFT", action = wezterm.action.DisableDefaultAssignment },
 	-- tmux mode: leave Ctrl+h/j/k/l unbound in wezterm so tmux handles pane movement.
 	-- wezterm-native mode:
 	-- split_nav("move", "h"),

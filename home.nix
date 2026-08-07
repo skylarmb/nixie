@@ -200,10 +200,14 @@
     # Generic agent instructions
     ".config/AGENTS.md".source = dotfiles/.claude/CLAUDE.md;
 
-    # Same skills under the tool-agnostic ~/.agents convention. Symlinked as a
-    # whole directory (unlike ~/.claude/skills) because nothing installs skills
-    # here — switch to per-file entries if a tool ever needs to write here.
+    # Subagent definitions. Symlinked per file so the directory stays writable.
+    ".claude/agents/ste-prose.md".source = dotfiles/.claude/agents/ste-prose.md;
+
+    # Same skills and agents under the tool-agnostic ~/.agents convention.
+    # Symlinked as whole directories (unlike ~/.claude/skills) because nothing
+    # installs here — switch to per-file entries if a tool ever needs to write.
     ".agents/skills".source = dotfiles/.claude/skills;
+    ".agents/agents".source = dotfiles/.claude/agents;
 
     # Gemini configuration - same as Claude.md
     ".gemini/GEMINI.md".source = dotfiles/.claude/CLAUDE.md;
