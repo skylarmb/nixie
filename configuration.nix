@@ -2,14 +2,20 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running 'nixos-help').
 
-{ config, pkgs, lib, userConfig, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  userConfig,
+  ...
+}:
 
 {
-  imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-      ./boot.nix
-    ];
+  imports = [
+    # Include the results of the hardware scan.
+    ./hardware-configuration.nix
+    ./boot.nix
+  ];
   networking.hostName = "nixos"; # Define your hostname.
 
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -46,10 +52,10 @@
       PermitTTY = "yes";
       AllowTcpForwarding = "yes";
       AllowAgentForwarding = "yes";
-      MaxSessions = 20;  # Increased from 10 for Docker
-      MaxStartups = "20:30:100";  # Increased limits for Docker
-      ClientAliveInterval = 60;  # Keep connections alive (send keepalive every 60s)
-      ClientAliveCountMax = 10;  # Allow 10 missed keepalives (10min timeout)
+      MaxSessions = 20; # Increased from 10 for Docker
+      MaxStartups = "20:30:100"; # Increased limits for Docker
+      ClientAliveInterval = 60; # Keep connections alive (send keepalive every 60s)
+      ClientAliveCountMax = 10; # Allow 10 missed keepalives (10min timeout)
     };
   };
 
@@ -97,7 +103,12 @@
   users.users.${userConfig.username} = {
     isNormalUser = true;
     description = userConfig.fullName;
-    extraGroups = [ "networkmanager" "wheel" "dialout" "docker" ];
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+      "dialout"
+      "docker"
+    ];
   };
   users.defaultUserShell = pkgs.zsh;
 
@@ -140,8 +151,25 @@
   programs.zsh.enable = true;
   programs.zsh.ohMyZsh = {
     enable = true;
-    plugins = [ "git" "sudo" "docker" "kubectl" ];
+    plugins = [
+      "git"
+      "sudo"
+      "docker"
+      "kubectl"
+    ];
   };
+
+  # Allow generic dynamically-linked Linux binaries to run (e.g. Bazel's
+  # downloaded node from rules_nodejs, prebuilt toolchains, etc.). Provides a
+  # stub at /lib64/ld-linux-x86-64.so.2 that resolves to nixpkgs' glibc.
+  programs.nix-ld.enable = true;
+  programs.nix-ld.libraries = with pkgs; [
+    stdenv.cc.cc.lib
+    zlib
+    openssl
+    curl
+    glibc
+  ];
   programs.steam = {
     enable = true;
     gamescopeSession.enable = true;
@@ -149,10 +177,11 @@
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
-  nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
-    "claude-code"
-    "plasticity"
-  ];
+  # nixpkgs.config.allowUnfreePredicate =
+  #   pkg:
+  #   builtins.elem (lib.getName pkg) [
+  #     "plasticity"
+  #   ];
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
@@ -167,21 +196,24 @@
   ];
 
   # debloat gnome
-  environment.gnome.excludePackages = (with pkgs; [
-    atomix # puzzle game
-    cheese # webcam tool
-    epiphany # web browser
-    evince # document viewer
-    geary # email reader
-    gedit # text editor
-    gnome-characters
-    gnome-music
-    gnome-tour
-    hitori # sudoku game
-    iagno # go game
-    tali # poker game
-    totem # video player
-  ]);
+  environment.gnome.excludePackages = (
+    with pkgs;
+    [
+      atomix # puzzle game
+      cheese # webcam tool
+      epiphany # web browser
+      evince # document viewer
+      geary # email reader
+      gedit # text editor
+      gnome-characters
+      gnome-music
+      gnome-tour
+      hitori # sudoku game
+      iagno # go game
+      tali # poker game
+      totem # video player
+    ]
+  );
 
   # Nvidia
   services.xserver.videoDrivers = [ "nvidia" ];
@@ -208,7 +240,11 @@
     # accessible via `nvidia-settings`.
     nvidiaSettings = true;
     # Optionally, you may need to select the appropriate driver version for your specific GPU.
-    package = config.boot.kernelPackages.nvidiaPackages.beta;
+    # Was `beta` (595.45.04), which hit repeated GSP RM heartbeat timeouts — the driver
+    # would block ~5.2s waiting on an RPC to the GPU's GSP microcontroller, showing up as
+    # multi-second stutter with no CPU load and low GPU utilization. `production` is 595.80:
+    # newer than the beta attr and off the beta branch.
+    package = config.boot.kernelPackages.nvidiaPackages.production;
   };
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -225,8 +261,8 @@
     autoEnable = true;
     base16Scheme = "${pkgs.base16-schemes}/share/themes/gruvbox-dark-soft.yaml";
     polarity = "dark";
-    targets.qt.enable = false;  # Disable Qt theming - qgnomeplatform is broken
-    iconTheme = {
+    targets.qt.enable = false; # Disable Qt theming - qgnomeplatform is broken
+    icons = {
       enable = true;
       package = pkgs.gruvbox-plus-icons;
       dark = "Gruvbox-Plus-Dark";
@@ -239,7 +275,26 @@
     enable = true;
     setSocketVariable = true;
   };
+  # This machine is a VirtualBox *host*. Do not enable `virtualisation.virtualbox.guest.*`
+  # here — guest additions are for running inside a VM, and enabling them pulls in the
+  # vboxguest module + service that waits forever on a /dev/vboxguest that never appears.
+  virtualisation.virtualbox.host.enable = true;
+  virtualisation.virtualbox.host.enableExtensionPack = true;
+  users.extraGroups.vboxusers.members = [ userConfig.username ];
 
+  # Security
+  security.sudo.extraConfig = "Defaults timestamp_timeout=60";
+  security.sudo.extraRules = [
+    {
+      users = [ userConfig.username ];
+      commands = [
+        {
+          command = "/run/current-system/sw/bin/nixos-rebuild";
+          options = [ "NOPASSWD" ];
+        }
+      ];
+    }
+  ];
 
   # List services that you want to enable:
 

@@ -19,11 +19,17 @@
     stylix = {
       url = "github:danth/stylix";
       inputs.nixpkgs.follows = "nixpkgs";
-      inputs.home-manager.follows = "home-manager";
     };
   };
 
-  outputs = { self, nixpkgs, home-manager, tpm, stylix }:
+  outputs =
+    {
+      self,
+      nixpkgs,
+      home-manager,
+      tpm,
+      stylix,
+    }:
     let
       lib = nixpkgs.lib;
 
@@ -71,5 +77,26 @@
             }
           ];
         };
+        modules = [ ./home.nix ];
+      };
+
+      # NixOS system configuration
+      nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        specialArgs = { inherit userConfig tpm; };
+        modules = [
+          ./configuration.nix
+          stylix.nixosModules.stylix
+          home-manager.nixosModules.home-manager
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.extraSpecialArgs = {
+              inherit userConfig tpm;
+              isDarwin = false;
+            };
+          }
+        ];
+      };
     };
 }

@@ -48,6 +48,7 @@
     pkgs.typescript-language-server
     pkgs.gopls
     pkgs.unison-ucm
+    pkgs.rust-analyzer
 
     # shell
     pkgs.zsh
@@ -97,6 +98,7 @@
     pkgs.vanilla-dmz
     pkgs.libgcc
     pkgs.deluge
+    pkgs.vscode
   ];
 
   home.file = {

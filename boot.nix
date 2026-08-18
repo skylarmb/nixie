@@ -50,7 +50,9 @@
       emulatedSystems = [ "aarch64-linux" ];
       preferStaticEmulators = true;  # Make it work with Docker
     };
-    kernelPackages = pkgs.linuxPackages_latest;
+    # Pinned to the 6.18 LTS series: 7.x regressed CPU scheduling/performance
+    # on this machine. Revisit once 7.x stabilizes.
+    kernelPackages = pkgs.linuxPackages_6_18;
     # extraModulePackages = [ config.boot.kernelPackages.nvidia_x11 ];
   };
 }
