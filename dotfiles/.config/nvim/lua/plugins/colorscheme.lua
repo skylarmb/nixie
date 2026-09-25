@@ -9,4 +9,8 @@ return {
     dir = "~/workspace/torchlight.nvim",
     dev = true,
   },
+  {
+    "LazyVim/LazyVim",
+    opts = { colorscheme = "torchlight" },
+  },
 }

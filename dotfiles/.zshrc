@@ -115,6 +115,7 @@ export PATH="$PATH:$HOME/dotfiles/bin"
 export PATH="$PATH:$HOME/.config/emacs/bin" # doom CLI
 export PATH="$PATH:/Applications/Postgres.app/Contents/Versions/latest/bin"
 export PATH="$PATH:$HOME/.opencode/bin"
+export PATH="$PATH:$HOME/Library/Android/sdk/platform-tools"
 # export DOCKER_HOST="unix:///run/user/1000/podman/podman-machine-default-api.sock"
 
 # bun
@@ -258,6 +259,14 @@ alias gg='ag_default_cmd'
 alias ggf='ag_default_cmd --files-with-matches'
 alias gga='ag_with_context'
 alias ggg='ag_default_cmd --skip-vcs-ignores'
+
+sg() {
+  if [[ -t 1 ]]; then
+    semble search "$*" | jq -r '.results[] | "\(.file_path):\(.start_line):\(.content | split("\n")[0])"' | hgrep
+  else
+    semble search "$*" | jq .
+  fi
+}
 
 # home-manager switch — selects the per-machine flake output. Requires
 # $NIX_MACHINE_NAME (set in ~/.private/.zshrc) to match a key in flake.nix's
@@ -654,13 +663,26 @@ ENDHELP
 )
 }
 
-# fbr - checkout git branch (including remote branches), sorted by most recent commit, limit 30 last branches
+# fbr - checkout git branch, sorted by most recent commit.
+# If the branch is already checked out in another worktree, cd there instead.
 fbr() {
-  local branches branch
+  local branches branch worktree_path current
   branches=$(git for-each-ref --count=150 --sort=-committerdate refs/heads/ --format="%(refname:short)") &&
   branch=$(echo "$branches" |
            fzf-tmux -d $(( 2 + $(wc -l <<< "$branches") )) +m) &&
-  git checkout $(echo "$branch" | sed "s/.* //" | sed "s#remotes/[^/]*/##")
+  branch=$(echo "$branch" | sed "s/.* //" | sed "s#remotes/[^/]*/##") || return
+
+  current=$(git rev-parse --show-toplevel)
+  worktree_path=$(git worktree list --porcelain | awk -v ref="refs/heads/${branch}" '
+    /^worktree / { path = substr($0, 10) }
+    $0 == "branch " ref { print path; exit }
+  ')
+
+  if [[ -n "$worktree_path" && "$worktree_path" != "$current" ]]; then
+    cd "$worktree_path"
+  else
+    git checkout "$branch"
+  fi
 }
 
 es6() {

@@ -36,11 +36,7 @@ description: Create a pull request for the current branch. Use when the user ask
 BAD, multiple style violations:
 
 ```
-# Summary
-
 The OIDC/JWT auth runtime lived in @repo/iso-core-ts but can never run in a browser: it requires the confidential OIDC client secret, httpOnly cookie authority, and makes server-side trust decisions. This PR moves it to @repo/server-core-ts, which also unblocks migrating its remaining ~33 global console call sites to the structured logger — the last real runtime gap from the structured-logging rollout.
-
-# Details
 
 - Move auth/jwt/**, auth/oidc/**, auth/cookies.ts, and auth/utils.ts (plus their unit tests) from iso-core-ts to server-core-ts; commit 1 is a pure move with import rewiring.
 - Shared auth config, types, and schemas stay isomorphic in iso-core-ts; a few config/schema internals are newly exported for the server package to consume.
@@ -52,27 +48,19 @@ The OIDC/JWT auth runtime lived in @repo/iso-core-ts but can never run in a brow
 GOOD, focuses on the context and change, does not re-describe the file diff:
 
 ```
-# Summary
-
 The OIDC/JWT auth runtime lived in @repo/iso-core-ts but can never run in a browser: it requires the confidential OIDC client secret, httpOnly cookie authority, and makes server-side trust decisions. This moves it to @repo/server-core-ts, and migrates the remaining global console call sites to the structured logger.
 
-# Details
-
-- Moves JWT, OIDC, and cookies modules (plus utils and unit tests) from iso-core-ts to server-core-ts.
+- Moves JWT, OIDC, and cookies modules from iso-core-ts to server-core-ts and updates their imports in consumers.
 - Exports shared isomorphic auth types and consumes them in server-core-ts.
-- Updates consumers to import the moved symbols from server-core-ts.
-- Migrate the moved files' ~33 global console calls to @repo/server-logger following existing patterns. ```
+- Migrate the moved files' ~33 global console calls to @repo/server-logger following existing patterns.
+```
 
 ## PR Template
 
 Follow this template exactly.
 
 ```
-# Summary
-
 1-3 sentences of concise but informative PR description for this branch. Follow the style guidelines from above. The overall summary section should be similar in length to this placeholder paragraph text in this template. Keep it high level, concrete, and readable at a glance by a human reviewer.
-
-# Details
 
 - 2 (min) to 4 (max) bullet points here.
 - bullet points should provide details related of the changes from the summary section

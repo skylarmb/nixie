@@ -6,6 +6,7 @@ local config = wezterm.config_builder()
 -- Attach to the "main" tmux session, creating it if it doesn't exist yet.
 -- config.default_prog = { "/bin/zsh", "-l", "-c", "tmux a -t main || tmux new -s main" }
 
+config.enable_kitty_graphics = true
 config.enable_tab_bar = false
 config.use_fancy_tab_bar = false
 config.tab_max_width = 48
@@ -26,11 +27,11 @@ local fg = "#e8d4ae"
 config.colors = {
 	-- Default colors
 	foreground = fg,
-	background = "#131312",
+	background = "#0d0d0d",
 
 	-- Normal colors
 	ansi = {
-		"#131312", -- black
+		"#0d0d0d", -- black
 		"#D0654B", -- red
 		"#979764", -- green
 		"#E3A138", -- yellow
@@ -53,10 +54,15 @@ config.colors = {
 	},
 
 	-- Other settings from your config
+	-- cursor_fg = "#131312",
+	-- cursor_bg = fg,
+	-- selection_fg = "#131312",
+	-- selection_bg = fg,
+
 	cursor_fg = "#131312",
-	cursor_bg = fg,
+	cursor_bg = "#D97E4A",
 	selection_fg = "#131312",
-	selection_bg = fg,
+	selection_bg = "#D97E4A",
 }
 
 local function tmux_prefix(key)
@@ -107,9 +113,7 @@ end
 
 local mod_key = "CMD"
 
--- tmux mode: let tmux own Ctrl+A instead of wezterm leader handling.
--- wezterm-native mode:
--- config.leader = { key = "a", mods = "CTRL", timeout_milliseconds = 1000 }
+-- config.leader = { key = "d", mods = "CTRL", timeout_milliseconds = 1000 }
 
 config.keys = {
 	{ key = "1", mods = mod_key, action = tmux_prefix("1") },
@@ -123,12 +127,21 @@ config.keys = {
 	{ key = "9", mods = mod_key, action = tmux_prefix("9") },
 	{ key = "Enter", mods = "SHIFT", action = wezterm.action({ SendString = "\x1b\r" }) },
 	{ key = "Enter", mods = mod_key, action = tmux_prefix("z") },
-	{ key = "t", mods = mod_key, action = tmux_prefix("c") },
-	{ key = "w", mods = mod_key, action = tmux_prefix("q") },
+	-- { key = "t", mods = mod_key, action = tmux_prefix("c") },
+	-- { key = "w", mods = mod_key, action = tmux_prefix("q") },
 	-- wezterm-native mode:
 	-- { key = "Enter", mods = mod_key, action = wezterm.action.TogglePaneZoomState },
-	{ key = "b", mods = mod_key, action = tmux_prefix("p") },
-	{ key = "g", mods = mod_key, action = tmux_prefix("g") },
+
+	-- escape macos alt key compose behavior. these are primarily bound in herdr
+	{ key = "˙", action = wezterm.action.SendKey({ mods = "ALT", key = "h" }) },
+	{ key = "∆", action = wezterm.action.SendKey({ mods = "ALT", key = "j" }) },
+	{ key = "˚", action = wezterm.action.SendKey({ mods = "ALT", key = "k" }) },
+	{ key = "¬", action = wezterm.action.SendKey({ mods = "ALT", key = "l" }) },
+	{ key = "ø", action = wezterm.action.SendKey({ mods = "ALT", key = "o" }) },
+
+	-- { key = "a", mods = "LEADER|CTRL", action = wezterm.action.SendKey({ key = "a", mods = "CTRL" }) },
+
+	{ key = "b", mods = mod_key, action = tmux_prefix("d") },
 	-- Word movement: Alt+Left/Right send ESC+b/f for zsh vi-mode.
 	-- Ctrl+b/f intentionally NOT bound here so nvim (and other TUIs) can use them.
 	{ key = "LeftArrow", mods = "ALT", action = wezterm.action({ SendString = "\27b" }) },
@@ -173,7 +186,8 @@ config.mouse_bindings = {
 	},
 }
 
-config.window_decorations = "INTEGRATED_BUTTONS|RESIZE"
+-- config.window_decorations = "INTEGRATED_BUTTONS|RESIZE"
+config.window_decorations = "RESIZE"
 
 -- Tab bar styling to match tmux theme (simple background colors)
 -- Colors from tmux colorscheme.conf

@@ -1,4 +1,11 @@
 return {
+  -- Free <leader>gg from LazyVim's Lazygit binding so Neogit owns it
+  {
+    "folke/snacks.nvim",
+    keys = {
+      { "<leader>gg", false },
+    },
+  },
   -- Nice 3-way merging
   {
     "samoshkin/vim-mergetool",

@@ -35,6 +35,7 @@
     pkgs.htop
     pkgs.hgrep
     pkgs.wget
+    (pkgs.callPackage ./packages/slk.nix { }) # Slack TUI (not in nixpkgs)
     # pkgs.codex
     # pkgs.orca-slicer
 
@@ -157,7 +158,7 @@
     # Herdr terminal - symlink config files individually since herdr manages
     # its own plugin installs and state (session.json, logs, sockets) in the
     # same directory.
-    ".config/herdr/config.toml".source = dotfiles/.config/herdr/config.toml;
+    # ".config/herdr/config.toml".source = dotfiles/.config/herdr/config.toml;
 
     ".config/ripgrep/config".source = dotfiles/.config/ripgrep/config;
     ".config/containers/registries.conf".source = dotfiles/.config/containers/registries.conf;

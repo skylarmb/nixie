@@ -4,21 +4,29 @@ onboarding = false
 prefix = "ctrl+a"
 split_vertical = "prefix+s"
 split_horizontal = "prefix+v"
-switch_workspace = "cmd+1..9"
-switch_tab = "prefix+1..9"
-previous_workspace = "prefix+p"
-next_workspace = "prefix+n"
-next_agent = "ctrl+tab"
-previous_agent = "ctrl+shift+tab"
+# workspaces
+previous_workspace = "prefix+k"
+next_workspace = "prefix+j"
+# agents
+next_agent = "prefix+n"
+previous_agent = "prefix+p"
 detach = "prefix+d"
 close_pane = "prefix+q"
 open_notification_target = "prefix+o"
 remove_worktree = "prefix+-"
+open_worktree = "prefix+shift+o"
+goto = "prefix+g"
+workspace_picker = "ctrl+w"
+# tabs
+switch_tab = "prefix+1..9"
+close_tab = "prefix+x"
+next_tab = "ctrl+t"
 
 [theme]
 name = "terminal"
 auto_switch = false
-accent = "#a113a1"
+custom.accent = "#e3a138"
+custom.surface0 = "#575547"
 
 [ui.toast]
 delivery = "terminal"
@@ -26,14 +34,15 @@ delay_seconds = 5
 
 [ui]
 show_agent_labels_on_pane_borders = false
-pane_gaps = true
+pane_gaps = false
+pane_borders = false
 hide_tab_bar_when_single_tab = true
 accent = "#e3a138"
+prompt_new_tab_name = false
 
 [ui.sidebar.spaces]
 row_gap = 1
 
-agent_panel_sort = "spaces"
 [[keys.command]]
 key = "ctrl+h"
 type = "plugin_action"
@@ -68,3 +77,17 @@ description = "Command palette"
 key = "prefix+r"
 type = "plugin_action"
 command = "persiyanov.reviewr.toggle"   # <plugin_id>.<action_id> — note the id, not the name
+
+[[keys.command]]
+key = "prefix+b"
+type = "popup"
+command = "tmux a"
+description = "scratch terminal"
+width = "80%"
+height = "80%"
+
+[[keys.command]]
+key = "prefix+t"
+type = "plugin_action"
+command = "tab-smart-rename.rename-now"
+description = "smart rename current tab"
