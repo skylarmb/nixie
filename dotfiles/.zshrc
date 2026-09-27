@@ -196,6 +196,8 @@ alias vimwipe='rm -rf $HOME/.vim/tmp/swap; mkdir -p $HOME/.vim/tmp/swap'
 alias g='git'
 alias cc='claude --continue'
 alias ccd='pwd | $COPY_CMD'
+alias bd='br' # mcp_agent_mail: beads compat alias (installer can't write nix-managed .zshrc)
+alias am='cd "$HOME/.local/share/mcp_agent_mail" && scripts/run_server_with_token.sh' # start mcp_agent_mail server
 alias unwip='git reset --soft HEAD~'
 alias vm='cd $(git rev-parse --show-toplevel) && nvim `git --no-pager diff --name-only --diff-filter=U`'
 alias todo='gg "todo before"'

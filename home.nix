@@ -54,6 +54,7 @@
     # shell
     pkgs.zsh
     pkgs.ripgrep
+    pkgs.jq # JSON CLI; also used by mcp_agent_mail install scripts
     pkgs.spr # stacked pull requests
     pkgs.actionlint
     pkgs.shellcheck
