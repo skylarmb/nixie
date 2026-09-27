@@ -262,9 +262,9 @@ alias ggg='ag_default_cmd --skip-vcs-ignores'
 
 sg() {
   if [[ -t 1 ]]; then
-    semble search "$*" | jq -r '.results[] | "\(.file_path):\(.start_line):\(.content | split("\n")[0])"' | hgrep
+    semble search --content=all -k 5 "$*" | jq -r '.results[] | "\(.file_path):\(.start_line):\(.content | split("\n")[0])"' | hgrep
   else
-    semble search "$*" | jq .
+    semble search --content=all -k 5 "$*" | jq .
   fi
 }
 

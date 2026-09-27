@@ -6,7 +6,7 @@
 - Always use efficient methods of exploring the codebase, reading file contents, and parsing command output. Prefer the CLI tools already on `$PATH` (via home-manager) over naive `cat`/`grep`/`find` pipelines, and always read only the slice of output you need — bound with `head`/`tail`, line ranges, `rg` filters, `wc -l`. Never dump an entire large file or unbounded command output into context.
 
   **Semantic search — use when you don't know the exact symbol:**
-  - `semble search "<natural language or code query>" [path]` — embedding search over the repo. Locate behavior by meaning ("where are websocket reconnects handled") before grepping for guessed identifiers. Useful flags: `-k/--top-k N`, `--max-snippet-lines N`, `--content code|docs|config|all`.
+  - `semble search --content all "<natural language or code query>" [path]` — embedding search over the repo. Locate behavior by meaning ("where are websocket reconnects handled") before grepping for guessed identifiers. Useful flags: `-k/--top-k N`, `--max-snippet-lines N`. `--content all` usually provides the best results but `--content code|docs|config|all` can be useful too.
   - `semble find-related <file> <line> [path]` — find code similar to a known location.
 
   **Search, find, transform:**
@@ -20,7 +20,7 @@
   **Examples:**
 
             Example: find code by meaning when you don't know the symbol name
-            Good: semble search "retry logic for failed HTTP requests" -k 10
+            Good: semble search --content all "retry logic for failed HTTP requests" -k 10
             Bad: rg -i retry && rg -i http && rg -i fetch  # guessing identifiers blindly
 
             Example: count occurrences of a lint violation without drowning in output
