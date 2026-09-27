@@ -52,6 +52,11 @@
           system = "aarch64-darwin";
           isDarwin = true;
         };
+        mini = {
+          file = ./machines/mini.nix;
+          system = "aarch64-darwin";
+          isDarwin = true;
+        };
       };
 
       # Build a homeManagerConfiguration for one machine spec.
