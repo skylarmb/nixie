@@ -1,30 +1,19 @@
 # General
 
 - When summarizing work you have performed at the end of a turn or task, keep the summary brief and high level. 1-3 sentences or bullet points is usually sufficient.
-- After changes, run the applicable project build, lint, and configured pre-commit checks. Report any checks that failed or could not run.
+- At the end of a task, run the applicable project build, lint, and configured pre-commit checks. Report any checks that failed or could not run.
 - You MUST use context-efficient methods of exploring the codebase, reading file contents, and parsing command output or logs.
-  - Prefer the more advanced CLI tools already on `$PATH` over naive `cat`/`grep`/`find` pipelines
+  - Prefer the more advanced CLI tools already on `$PATH`, e.g. `rg`/`fd`/`jq`/`yq` over naive `cat`/`grep`/`find` pipelines
   - Always read only the slice of output you need — bound with `head`/`tail`, line ranges, `rg` filters, `wc -l`, etc.
   - Never read an entire large file or unbounded command output into context.
-
-  **Semantic search — use when you don't know the exact symbol:**
-  - `semble search --content all "<natural language or code query>" [path]` — embedding search over the repo. Locate behavior by meaning ("where are websocket reconnects handled") before grepping for guessed identifiers. Useful flags: `-k/--top-k N`, `--max-snippet-lines N`. `--content all` usually provides the best results but `--content code|docs|config|all` can be useful too.
-  - `semble find-related <file> <line> [path]` — find code similar to a known location.
-
-  **Search, find, transform:**
-  - `rg` (ripgrep) — default for exact string/regex search. Prefer over `grep`.
-  - `fd` — fast file/directory finder. Prefer over `find`.
-  - `sd` — simple find-and-replace in files or pipes. Prefer over `sed` for straightforward substitutions.
-  - `jq` — query/rewrite JSON. Never scrape JSON with regex when `jq` will do.
-  - `htmlq` — CSS selectors over HTML (docs pages, CI HTML, fixtures).
-  - `tree-sitter` — parse/query source structure when regex isn't enough.
 
 # Code Style and Practices
 
 - Explicitly value and optimize for simplicity and elegance.
 - A smaller diff is usually a better diff.
   - Keep each commit and PR focused and reviewable. Use stacked PRs when a larger change has distinct reviewable parts.
-  - Never add extra features or include optional refactors or "while we're at it..." tasks. Cut scope to the bare minimum.
+  - Aim for the smallest working end-to-end slice that fulfills the agreed goal. Defer additional capabilities to later changes.
+  - Never add extra features or include optional refactors or "while we're at it..." tasks.
   - Push back on unneeded complexity and cut tangential tasks from scope.
 - Readable code is maintainable code.
   - Avoid code golf and compressed expressions. Use multiple statements when they make the logic easier to read.
@@ -35,13 +24,14 @@
   - Place comments near the logic they explain. Explain important steps, branches, and transitions throughout the implementation.
   - Prefer extra explanation when the intent or flow is unclear.
   - Write all comments for a competent audience, but one with no prior context on the specific code or module.
-- Write code assuming you are personally on the hook to maintain it forever in production.
+- For code intended to persist, write it as if you must maintain it in production indefinitely.
   - Verify prerequisites before relying on them.
   - Validate unstructured external data at runtime before relying on its shape or contents.
   - Handle failures and unexpected responses explicitly.
   - Rely on established internal types and contracts after validating data at system boundaries.
   - Stop the affected operation when prerequisites or invariants fail. Preserve a safe state and report the failure clearly.
   - Keep defensive checks focused on concrete failure modes. Avoid speculative fallback behavior and silent recovery that hides errors.
+- Keep explicitly temporary work limited to its immediate purpose. Document it as temporary.
 
 # Communication and Collaboration
 
@@ -52,6 +42,7 @@
 - We are collaborating on projects together. Approach the project with curiosity and ask questions.
 - Test hypotheses before selecting a fix.
 - Investigate first, then present the proposed approach and wait for agreement before implementing.
+  - Make important design choices explicit before asking for agreement.
   - An explicitly approved approach satisfies this requirement.
   - Ask again if the approach materially changes or the work exceeds the agreed scope.
 - When the user pushes back on something you said, treat it as an attempt to get to the truth, not as a signal to change your answer.
