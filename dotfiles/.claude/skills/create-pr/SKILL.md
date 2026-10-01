@@ -1,70 +1,135 @@
 ---
 name: create-pr
-description: Create a pull request for the current branch. Use when the user asks to "create a PR", "open a PR", "make a pull request", or similar. Inspects the diff, ensures changes are committed, and opens a PR via the gh CLI with a concise summary/details body.
+description: Create a pull request for the current branch. Use when the user asks to "create a PR", "open a PR", "make a pull request", or similar. Inspects the diff, ensures changes are committed, and opens a PR via the gh CLI with a clear description for teammates.
 ---
 
 # Create a PR
 
 ## Steps
 
-1. Inspect current `git status` and `git diff` (and `git log <base>..HEAD`) for files changed. Ensure no unintended changes are included.
-2. If there are uncommitted changes that should be part of the PR, create a commit with a conventional commit message, e.g. `feat(swizzle-service): implement foobar`. Sign off the commit message with `✨ Created by [Claude Code/Codex/Gemini/OpenCode/etc]` to indicate it was created by an agent.
-3. Consider files changed, context, and the conversation history to craft a well-written pull request body.
-4. Write a concise and informative PR description using the template below, saving it to a temporary file `$(mktemp -d)/pr-body.md`.
-5. Unless you were asked otherwise, always create a **DRAFT** PR with the `gh` CLI:
+1. Inspect current `git status` and `git diff` (and `git log <base>..HEAD`) for
+   files changed. Ensure no unintended changes are included.
+2. If there are uncommitted changes that should be part of the PR, create a
+   commit with a conventional commit message, e.g. `feat(swizzle-service):
+   implement foobar`. Sign off the commit message with `✨ Created by [Claude
+   Code/Codex/Gemini/OpenCode/etc]` to indicate it was created by an agent.
+3. Consider files changed, context, and the conversation history to craft a
+   well-written pull request body.
+4. Write the PR description using the guidance below. Save it to a temporary
+   file `$(mktemp -d)/pr-body.md`.
+5. Unless you were asked otherwise, always create a **DRAFT** PR with the `gh`
+   CLI:
+
    ```sh
-   gh pr create --draft --title "feat(swizzle-service): implement foobar in swizzle service backend" --body-file /<tmpdir>/pr-body.md
+   gh pr create --draft \
+     --title "feat(swizzle-service): implement foobar" \
+     --body-file /<tmpdir>/pr-body.md
    ```
+
 6. Open the PR in the browser after creation:
+
    ```sh
    gh repo view --web --branch <branch-name>
    ```
-7. Give a brief update to the user, then immediately continue by using `monitor-pr` skill to monitor for CI status and feedback.
 
-## Style
+7. Give a brief update to the user, then immediately continue by using
+   `monitor-pr` skill to monitor for CI status and feedback.
 
-- Err on the side of brevity and clarity in the PR description. It should be easily scanned in <30 seconds by a human reviewer.
-- Avoid dumping a wall of text. If there are important contextual details that reviewers need to understand specific pieces of the PR, they can be added later in a self-review cycle instead of overloading the PR description or details.
-- Specific file/line number pointers are usually not needed anywhere in the PR description.
-- The PR description should be focused on the context, motivation, and overall change introduced, not the specific code edits that were performed.
-- Do not describe verification, linting, or testing steps you performed in the PR description. CI runs against all PRs and is the source of truth, not your local checks. The exception is if a particular description of how an issue was debugged is useful for context.
-- Do not describe what didn't change, only what did.
-- Do not describe history of the PR or commits. Focus on the current state of the code.
+## PR description guidance
+
+### Audience and tone
+
+Write for teammates the author works with every day. Explain the change as you
+would in a normal conversation with a colleague.
+
+- Assume familiarity with the product, but explain this change without requiring
+  the ticket, earlier conversations, or knowledge of the affected code.
+- Use familiar words and direct sentences. Prefer "saves your choice in the
+  browser" to "persists client-side preference state."
+- Name the visible behavior before its implementation. Explain what a technical
+  term means here when it is needed.
+- Use technical names when they help the reader locate or understand the change.
+  Avoid dense strings of acronyms and code identifiers.
+- Natural contractions, parentheses, and phrases such as "This also adds" are
+  fine. Do not force slang, jokes, or a formal documentation voice.
+- State real uncertainty directly, such as "The settings screen is still a
+  draft." Do not make the description sound more settled than the work is.
+
+For PR descriptions, this audience and tone guidance takes precedence over
+conflicting wording rules in `ste-writing`.
+
+### Content and shape
+
+- Start with what the PR changes. Add the previous limitation or motivation when
+  it helps explain the change.
+- Match the length to the explanation. A small fix may need one or two
+  sentences. A broader change may need several distinct points.
+- Choose paragraphs, bullets, or examples to suit the content. There is no
+  required template, sentence count, or bullet count.
+- Keep details that explain behavior, rationale, dependencies, or meaningful
+  constraints. Include a scope boundary when readers could reasonably expect a
+  broader change.
+- Omit routine inventories of files, imports, manifests, compiler settings, and
+  other edits that are clear from the diff. File and line pointers are rarely
+  needed.
+- Use a small example or available screenshots when they explain the result more
+  clearly than prose. Before/after headings and tables are useful for
+  comparisons.
+- Do not include local test counts or verification, lint, and build reports. CI
+  is the source of truth. Include debugging details only when they explain the
+  problem or solution.
+- Describe the current change. Omit the sequence of commits, earlier approaches,
+  and repeated details. Link related PRs when the dependency helps explain this
+  one.
+- End with `Resolves` or `Part of` and the actual ticket link when applicable.
+  Omit this line when there is no ticket.
 
 ### Examples
 
-BAD, multiple style violations:
+These examples are fictional. They illustrate different shapes, not required
+sections or wording. Use generic examples when maintaining this public skill; do
+not copy internal PR text, identifiers, or links.
 
-```
-The OIDC/JWT auth runtime lived in @repo/iso-core-ts but can never run in a browser: it requires the confidential OIDC client secret, httpOnly cookie authority, and makes server-side trust decisions. This PR moves it to @repo/server-core-ts, which also unblocks migrating its remaining ~33 global console call sites to the structured logger — the last real runtime gap from the structured-logging rollout.
+Small fix:
 
-- Move auth/jwt/**, auth/oidc/**, auth/cookies.ts, and auth/utils.ts (plus their unit tests) from iso-core-ts to server-core-ts; commit 1 is a pure move with import rewiring.
-- Shared auth config, types, and schemas stay isomorphic in iso-core-ts; a few config/schema internals are newly exported for the server package to consume.
-- Update consumers (the web frontend, the backend api routes, and the auth middleware) to import the moved symbols from server-core-ts.
-- Commit 2 migrates the moved files' global console calls to @repo/server-logger with module-bound child loggers, levels preserved 1:1.
-- Verified: typecheck/lint/tests pass on both packages and consumers (67 + 41 + 301 tests); pre-commit clean except a pre-existing lint failure in an unrelated package.
-```
-
-GOOD, focuses on the context and change, does not re-describe the file diff:
-
-```
-The OIDC/JWT auth runtime lived in @repo/iso-core-ts but can never run in a browser: it requires the confidential OIDC client secret, httpOnly cookie authority, and makes server-side trust decisions. This moves it to @repo/server-core-ts, and migrates the remaining global console call sites to the structured logger.
-
-- Moves JWT, OIDC, and cookies modules from iso-core-ts to server-core-ts and updates their imports in consumers.
-- Exports shared isomorphic auth types and consumes them in server-core-ts.
-- Migrate the moved files' ~33 global console calls to @repo/server-logger following existing patterns.
+```text
+Hides the download button when a report has no files. The empty state now
+explains that there's nothing to download.
 ```
 
-## PR Template
+Several related UI changes:
 
-Follow this template exactly.
+```text
+Adds a compact layout to the reading list so more books fit on screen. You can
+switch layouts from the toolbar, and the browser saves your choice.
 
+- Show the title and author on one line in the compact layout.
+- Keep the toolbar visible while scrolling.
+- Show an unread marker beside each book you haven't opened.
+- Keep keyboard navigation consistent across both layouts.
+- Show a helpful empty state when a filter has no matches.
 ```
-1-3 sentences of concise but informative PR description for this branch. Follow the style guidelines from above. The overall summary section should be similar in length to this placeholder paragraph text in this template. Keep it high level, concrete, and readable at a glance by a human reviewer.
 
-- 2 (min) to 4 (max) bullet points here.
-- bullet points should provide details related of the changes from the summary section
-- use maximum of ~1 line of text per bullet point, 80-100 characters.
+A change that benefits from an example and rationale:
 
-Resolves <Linear / Jira ticket link here, if applicable>
+````markdown
+The image converter previously accepted files only at the top level of
+`images/`. It now reads nested folders and keeps their structure in the output:
+
+```text
+images/                    converted/
+├── cover.png              ├── cover.webp
+└── icons/                 └── icons/
+    └── search.png             └── search.webp
 ```
+
+This lets us organize images into folders without having to flatten them before
+conversion. It also keeps files with the same name in separate folders.
+````
+
+### Final read
+
+Read the description as a teammate who knows the product but has not followed
+this work. Can they understand what changed and why? Replace jargon that makes
+them reconstruct the meaning. Remove sentences that repeat a point or add no
+useful context.

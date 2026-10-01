@@ -68,7 +68,7 @@ config.colors = {
 local function tmux_prefix(key)
 	local act = wezterm.action
 	return act.Multiple({
-		act.SendKey({ key = "a", mods = "CTRL" }),
+		act.SendKey({ key = "d", mods = "CTRL" }),
 		-- wezterm-native/current mode:
 		-- act.SendKey({ key = "b", mods = "CTRL" }),
 		act.SendKey({ key = key }),

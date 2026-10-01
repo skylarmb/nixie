@@ -21,7 +21,8 @@ description: Fetch and incorporate code review feedback for the current PR. Use 
    resolve-comment <full URL or discussion_rID> <reply body>
    ```
    See `resolve-comment --help` for usage details.
-7. Make sure the PR description is not stale due to changes pushed from code review or CI fixes. If it is stale,update it.
+7. If the changes pushed to address feedback make the PR description stale, update the PR description to reflect the new state. ALWAYS read the current PR description before making any changes, as the user may have edited it in the meantime. If the user made manual edits to the PR description, assume their edits are the preferred length / level of detail / tone / formatting for the PR description, which may diverge from the PR template. Offer to update it when stale, but never do so without user confirmation.
+
 
 ## Reply style
 
