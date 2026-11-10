@@ -5,8 +5,6 @@
     # Enable "Silent boot"
     # consoleLogLevel = 0;
     initrd = {
-      systemd.enable = true;
-      verbose = false;
       kernelModules = [
         "i915"
         # "nvidia"
@@ -48,7 +46,7 @@
     ];
     binfmt = {
       emulatedSystems = [ "aarch64-linux" ];
-      preferStaticEmulators = true;  # Make it work with Docker
+      preferStaticEmulators = true; # Make it work with Docker
     };
     # Pinned to the 6.18 LTS series: 7.x regressed CPU scheduling/performance
     # on this machine. Revisit once 7.x stabilizes.

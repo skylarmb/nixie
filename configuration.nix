@@ -26,8 +26,14 @@
 
   # Enable networking
   networking.networkmanager.enable = true;
-  networking.firewall.allowedTCPPorts = [ 22 ];
 
+  networking.firewall = {
+    allowedTCPPorts = [
+      22
+      24800
+    ];
+    allowedUDPPorts = [ 24800 ];
+  };
   # Set your time zone.
   time.timeZone = "America/Los_Angeles";
 
@@ -108,9 +114,13 @@
       "wheel"
       "dialout"
       "docker"
+      "i2c" # DDC/CI monitor control via ddcutil
     ];
   };
   users.defaultUserShell = pkgs.zsh;
+
+  # Load i2c-dev and grant the i2c group access to /dev/i2c-* (needed by ddcutil)
+  hardware.i2c.enable = true;
 
   # Enable automatic login for the user.
   services.displayManager.autoLogin.enable = true;
@@ -127,7 +137,7 @@
 
   # Mullvad
   services.mullvad-vpn.enable = true;
-  services.mullvad-vpn.package = pkgs.mullvad-vpn;
+  services.mullvad-vpn.gui.enable = true;
 
   # enable flatpak/flathub by default
   services.flatpak.enable = true;
@@ -223,9 +233,12 @@
     modesetting.enable = true;
     # Nvidia power management. Experimental, and can cause sleep/suspend to fail.
     # Enable this if you have graphical corruption issues or application crashes after waking
-    # up from sleep. This fixes it by saving the entire VRAM memory to /tmp/ instead
-    # of just the bare essentials.
-    powerManagement.enable = false;
+    # up from sleep.
+    #
+    # This installs nvidia-{suspend,resume,hibernate}.service and sets
+    # NVreg_PreserveVideoMemoryAllocations=1 so VRAM is saved/restored across
+    # suspend.
+    powerManagement.enable = true;
     # Fine-grained power management. Turns off GPU when not in use.
     # Experimental and only works on modern Nvidia GPUs (Turing or newer).
     powerManagement.finegrained = false;

@@ -7,7 +7,7 @@ local config = wezterm.config_builder()
 -- config.default_prog = { "/bin/zsh", "-l", "-c", "tmux a -t main || tmux new -s main" }
 
 config.enable_tab_bar = false
-config.use_fancy_tab_bar = false
+-- config.use_fancy_tab_bar = false
 config.tab_max_width = 48
 config.tab_bar_at_bottom = true
 config.automatically_reload_config = true
@@ -169,7 +169,8 @@ config.mouse_bindings = {
 	},
 }
 
-config.window_decorations = "INTEGRATED_BUTTONS|RESIZE"
+config.window_decorations = "TITLE|RESIZE"
+config.enable_wayland = false
 
 -- Tab bar styling to match tmux theme (simple background colors)
 -- Colors from tmux colorscheme.conf

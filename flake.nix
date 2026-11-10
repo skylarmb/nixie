@@ -77,26 +77,5 @@
             }
           ];
         };
-        modules = [ ./home.nix ];
-      };
-
-      # NixOS system configuration
-      nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        specialArgs = { inherit userConfig tpm; };
-        modules = [
-          ./configuration.nix
-          stylix.nixosModules.stylix
-          home-manager.nixosModules.home-manager
-          {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.extraSpecialArgs = {
-              inherit userConfig tpm;
-              isDarwin = false;
-            };
-          }
-        ];
-      };
     };
 }

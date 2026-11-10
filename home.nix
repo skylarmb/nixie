@@ -38,6 +38,10 @@
     # pkgs.codex
     # pkgs.orca-slicer
 
+    # desktop software
+    pkgs.beammp-launcher # BeamNG multiplayer; run with --no-launch, start the game from Steam
+    pkgs.deskflow
+
     # LSP / languages
     pkgs.stylua
     pkgs.prettierd
@@ -91,14 +95,27 @@
     # linux only packages
     pkgs.calibre
     pkgs.calibre-web
-    pkgs.orca-slicer
+    # Render on the NVIDIA dGPU via XWayland: Mesa 26.2 on the Intel iGPU segfaults when slicing.
+    (pkgs.symlinkJoin {
+      name = "orca-slicer";
+      paths = [ pkgs.orca-slicer ];
+      nativeBuildInputs = [ pkgs.makeWrapper ];
+      postBuild = ''
+        wrapProgram $out/bin/orca-slicer \
+          --set GDK_BACKEND x11 \
+          --set __NV_PRIME_RENDER_OFFLOAD 1 \
+          --set __GLX_VENDOR_LIBRARY_NAME nvidia
+      '';
+    })
     # pkgs.plasticity
-    # pkgs.wezterm
+    pkgs.wezterm
     pkgs.wl-clipboard
     pkgs.vanilla-dmz
     pkgs.libgcc
     pkgs.deluge
-    pkgs.vscode
+    pkgs.qidi-studio
+    pkgs.ddcutil
+    pkgs.ddcui
   ];
 
   home.file = {
