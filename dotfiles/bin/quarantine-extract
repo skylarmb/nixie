@@ -1,0 +1,55 @@
+#!/usr/bin/env nix-shell
+#!nix-shell -i bash -p bubblewrap libarchive curl jq file
+# shellcheck shell=bash
+# Download (optional) and extract an untrusted archive inside a bubblewrap sandbox.
+#
+# Usage: quarantine-extract <yandex-disk-share-url | path/to/archive>
+#
+# Each run gets a fresh dir under ~/quarantine/. The archive is listed first and
+# extraction only happens after confirmation. The extractor runs with no network,
+# a read-only view of /nix and the archive, and write access only to the output dir.
+set -euo pipefail
+
+src="${1:?usage: quarantine-extract <yandex-share-url | archive>}"
+
+# Fresh, empty working dir per run.
+work="$HOME/quarantine/$(date +%Y%m%d-%H%M%S)"
+mkdir -p "$work/out"
+echo "==> Working dir: $work"
+
+if [[ "$src" =~ ^https?:// ]]; then
+  # Resolve the direct download link via Yandex's public API, skipping the web page.
+  echo "==> Resolving download link"
+  href=$(curl -fsSG "https://cloud-api.yandex.net/v1/disk/public/resources/download" \
+    --data-urlencode "public_key=$src" | jq -r .href)
+  curl -fL -o "$work/archive" "$href"
+else
+  cp -- "$src" "$work/archive"
+fi
+archive="$work/archive"
+
+# Identify and list contents without extracting.
+echo "==> Type"
+file "$archive"
+echo "==> Contents"
+bsdtar -tvf "$archive"
+
+read -rp "Extract into sandbox? [y/N] " ok
+[[ "$ok" == [yY] ]] || { echo "Aborted. Files left in $work"; exit 1; }
+
+# Extract with no network/IPC/PID sharing; only $work/out is writable.
+# bsdtar already refuses absolute paths and '..' entries by default.
+bwrap \
+  --ro-bind /nix /nix \
+  --ro-bind "$archive" /archive \
+  --bind "$work/out" /out \
+  --proc /proc --dev /dev \
+  --unshare-all --die-with-parent --clearenv \
+  --setenv LANG C.UTF-8 \
+  --chdir /out \
+  "$(command -v bsdtar)" -xvf /archive ||
+  echo "!! bsdtar reported errors (e.g. refused unsafe paths) - review output above"
+
+# Show what came out and the detected type of each file.
+echo "==> Extracted"
+find "$work/out" -type f -exec file {} +

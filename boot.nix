@@ -48,9 +48,11 @@
       emulatedSystems = [ "aarch64-linux" ];
       preferStaticEmulators = true; # Make it work with Docker
     };
-    # Pinned to the 6.18 LTS series: 7.x regressed CPU scheduling/performance
-    # on this machine. Revisit once 7.x stabilizes.
-    kernelPackages = pkgs.linuxPackages_6_18;
+    # Retrying latest (7.3.x). Early 7.x regressed CPU scheduling/performance on
+    # this machine; fall back to `pkgs.linuxPackages_6_18` if it recurs.
+    kernelPackages = pkgs.linuxPackages_latest;
+    # Allow unprivileged `perf` (e.g. `perf sched`) for diagnosing scheduler issues
+    kernel.sysctl."kernel.perf_event_paranoid" = 1;
     # extraModulePackages = [ config.boot.kernelPackages.nvidia_x11 ];
   };
 }

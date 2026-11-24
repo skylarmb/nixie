@@ -190,6 +190,8 @@ alias tu="sudo tailscale up --operator=$USER --accept-routes"
 alias nrs='sudo nixos-rebuild switch --flake "$HOME/nixie#nixos"'
 alias nrb='sudo nixos-rebuild boot --flake "$HOME/nixie#nixos"'
 alias zu='exec zsh'
+# macOS-style `open` on Linux (Darwin already has a native `open`)
+[[ "$OSTYPE" == linux* ]] && alias open='xdg-open'
 alias dka='docker kill $(docker ps -q)'
 alias vimwipe='rm -rf $HOME/.vim/tmp/swap; mkdir -p $HOME/.vim/tmp/swap'
 alias g='git'

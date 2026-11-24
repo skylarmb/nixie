@@ -75,6 +75,14 @@
   services.udev.extraRules = ''
     # Espressif USB Serial/JTAG Controller
     SUBSYSTEM=="tty", ATTRS{idVendor}=="303a", ATTRS{idProduct}=="1001", MODE="0666", TAG+="uaccess"
+    # 3Dconnexion 3D mice: let the logged-in user open the hidraw node (Orca Slicer / Qidi Studio read it via hidapi)
+    KERNEL=="hidraw*", ATTRS{idVendor}=="256f", MODE="0666"
+    # 8BitDo controllers: allow user access to the hidraw node (firmware updater / config tools)
+    SUBSYSTEM=="hidraw", ATTRS{idVendor}=="2dc8", MODE="0666", GROUP="users", TAG+="uaccess"
+    # Make Mutter composite on the NVIDIA dGPU (it drives the external HDMI monitor),
+    # avoiding a dGPU -> iGPU -> dGPU copy per frame. Mutter otherwise picks the iGPU
+    # because the builtin panel is attached to it.
+    SUBSYSTEM=="drm", KERNEL=="card*", DRIVERS=="nvidia", TAG+="mutter-device-preferred-primary"
   '';
 
   # Configure keymap in X11
@@ -153,6 +161,9 @@
   systemd.services."getty@tty1".enable = false;
   systemd.services."autovt@tty1".enable = false;
 
+  # spacenavd daemon for 3Dconnexion mice; FreeCAD (flatpak) talks to it via /run/spnav.sock
+  hardware.spacenavd.enable = true;
+
   # Programs
   programs.firefox = {
     enable = true;
@@ -198,6 +209,10 @@
   environment.systemPackages = with pkgs; [
     wget
     neovim
+    # System diagnostics (kernel update health checks)
+    perf
+    lm_sensors
+    pciutils
     gnome-tweaks
     gnome-software
     gnomeExtensions.appindicator
@@ -300,12 +315,17 @@
   security.sudo.extraRules = [
     {
       users = [ userConfig.username ];
-      commands = [
-        {
-          command = "/run/current-system/sw/bin/nixos-rebuild";
-          options = [ "NOPASSWD" ];
-        }
-      ];
+      # Passwordless read-only diagnostics so agents can check system health
+      commands =
+        map
+          (command: {
+            inherit command;
+            options = [ "NOPASSWD" ];
+          })
+          [
+            "/run/current-system/sw/bin/nixos-rebuild"
+            "/run/current-system/sw/bin/dmesg"
+          ];
     }
   ];
 

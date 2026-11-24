@@ -116,6 +116,10 @@
     pkgs.qidi-studio
     pkgs.ddcutil
     pkgs.ddcui
+    pkgs.freecad
+    pkgs.spnavcfg
+    pkgs.libspnav
+    pkgs.teamviewer
   ];
 
   home.file = {
@@ -331,6 +335,19 @@
       StandardOutPath = "${config.home.homeDirectory}/Library/Logs/honeyhive-daemon.log";
       StandardErrorPath = "${config.home.homeDirectory}/Library/Logs/honeyhive-daemon.log";
     };
+  };
+
+  # Linux: bridge spacenavd to Onshape in the browser (paired with the spacenav-ws userscript).
+  # --managed-python makes uv use its own CPython, which runs through nix-ld so numpy's
+  # wheel can find libstdc++; the Nix Python can't load it.
+  systemd.user.services.spacenav-ws = lib.mkIf (!isDarwin) {
+    Unit.Description = "spacenav-ws: SpaceMouse WebSocket bridge for Onshape";
+    Service = {
+      ExecStart = "${pkgs.uv}/bin/uvx --managed-python spacenav-ws serve";
+      Restart = "on-failure";
+      RestartSec = 5;
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
   };
 
   # Let Home Manager install and manage itself.
