@@ -79,10 +79,6 @@
     KERNEL=="hidraw*", ATTRS{idVendor}=="256f", MODE="0666"
     # 8BitDo controllers: allow user access to the hidraw node (firmware updater / config tools)
     SUBSYSTEM=="hidraw", ATTRS{idVendor}=="2dc8", MODE="0666", GROUP="users", TAG+="uaccess"
-    # Make Mutter composite on the NVIDIA dGPU (it drives the external HDMI monitor),
-    # avoiding a dGPU -> iGPU -> dGPU copy per frame. Mutter otherwise picks the iGPU
-    # because the builtin panel is attached to it.
-    SUBSYSTEM=="drm", KERNEL=="card*", DRIVERS=="nvidia", TAG+="mutter-device-preferred-primary"
   '';
 
   # Configure keymap in X11
@@ -151,6 +147,9 @@
   services.flatpak.enable = true;
   systemd.services.flatpak-repo = {
     wantedBy = [ "multi-user.target" ];
+    # Wait for the network; otherwise the flathub fetch fails at boot
+    wants = [ "network-online.target" ];
+    after = [ "network-online.target" ];
     path = [ pkgs.flatpak ];
     script = ''
       flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
@@ -254,8 +253,10 @@
     # NVreg_PreserveVideoMemoryAllocations=1 so VRAM is saved/restored across
     # suspend.
     powerManagement.enable = true;
-    # Fine-grained power management. Turns off GPU when not in use.
-    # Experimental and only works on modern Nvidia GPUs (Turing or newer).
+    # Fine-grained power management (powers the GPU off when idle).
+    # `false` does NOT disable it: it only skips forcing NVreg_DynamicPowerManagement=0x02.
+    # The driver default (0x03) already enables fine-grained PM on this Ampere+ laptop GPU,
+    # and supergfxd installs the runtime-PM udev rules. `true` also requires prime.offload.
     powerManagement.finegrained = false;
     # Use the NVidia open source kernel module (not to be confused with the
     # independent third-party "nouveau" open source driver).
