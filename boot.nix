@@ -28,6 +28,8 @@
     loader = {
       systemd-boot.enable = true;
       systemd-boot.consoleMode = "max";
+      # Keep only the 10 newest boot entries so kernels/initrds don't fill the ESP
+      systemd-boot.configurationLimit = 10;
       efi.canTouchEfiVariables = true;
     };
     kernelParams = [
