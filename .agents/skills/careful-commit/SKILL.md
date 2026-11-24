@@ -6,7 +6,10 @@ description: Creates a commit on a github repository that may contain secrets or
 After staging changes but before commit:
 
 1. **Scan for secrets**: Ensure staged changes contain no sensitive environment
-   variables, API keys, tokens, unique identifiers, shell history, etc.
+   variables, API keys, tokens, shell history, etc. Flag identifiers that have
+   meaning outside the machine: MAC addresses, public IP addresses, hardware
+   serial numbers, account IDs. Machine-local random IDs are acceptable, for
+   example filesystem UUIDs, LUKS UUIDs, and `machine-id`.
 2. **No machine info**: Ensure changes have no references to file paths with a
    user's name, repository name, company name, etc in the path.
 3. **No user info**: Ensure changes have no references to any user's real name,
